@@ -1,0 +1,88 @@
+.auth-box {
+  width: 400px;
+  margin: 100px auto;
+  padding: 30px;
+  border-radius: 12px;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+  background-color: white;
+}
+
+.auth-box input {
+  display: block;
+  width: 100%;
+  padding: 12px;
+  margin: 10px 0;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  font-size: 13px;
+  color: #5a5f67;
+  outline: none;
+  transition: border 0.2s ease;
+}
+
+.auth-box input:focus {
+  border: 2px solid #ffe600;
+  background-color: #fffef0;
+  font-size: 13px;
+  color: #000000;
+}
+
+.google-login {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  padding: 12px;
+  margin: 10px 0;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  background-color: white;
+  cursor: pointer;
+  font-family: "NanumSquareR", sans-serif;
+  font-size: 14px;
+  color: #5a5f67;
+}
+
+.google-logo {
+  width: 20px;
+  height: 20px;
+}
+
+.login-btn {
+  background-color: #ffe600;
+  border: none;
+  padding: 12px;
+  width: 100%;
+  margin-top: 10px;
+  font-family: "NanumSquareB", sans-serif;
+  font-size: 14px;
+  color: #5a5f67;
+  border-radius: 8px;
+}
+
+.signup-btn {
+  background-color: #ffe600;
+  border: none;
+  padding: 12px;
+  width: 100%;
+  margin-top: 10px;
+  font-family: "NanumSquareB", sans-serif;
+  font-size: 14px;
+  color: #5a5f67;
+  border-radius: 8px;
+}
+
+.error-message {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px;
+  margin: 10px 0;
+  border-radius: 8px;
+  background-color: #fff4f4;
+  color: #f26671;
+  border: 1.5px solid #f44336;
+  font-family: "NanumSquareR", sans-serif;
+  font-size: 13px;
+}
