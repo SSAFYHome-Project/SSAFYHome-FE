@@ -14,6 +14,17 @@ const LoginForm = () => {
   const getActiveClass = (path: string) => (location.pathname === path ? "active" : "");
 
   const handleLogin = async () => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      setErrorMessage("유효한 이메일 주소를 입력해 주세요.");
+      return;
+    }
+
+    if (!email || !password) {
+      setErrorMessage("이메일과 비밀번호를 입력해주세요.");
+      return;
+    }
+
     try {
       const response = await fetch("/api/login", {
         method: "POST",
@@ -29,8 +40,7 @@ const LoginForm = () => {
       }
 
       const data = await response.json();
-      setErrorMessage(""); // 성공 시 에러 초기화
-      //   alert("로그인 성공!");
+      setErrorMessage("");
       console.log("User data:", data);
       navigate("/");
     } catch (error) {
@@ -39,8 +49,8 @@ const LoginForm = () => {
     }
   };
 
-  const handleSignup = () => {
-    navigate("/signup");
+  const handleRegister = () => {
+    navigate("/register");
   };
 
   return (
@@ -57,7 +67,7 @@ const LoginForm = () => {
         <button className={`login-btn ${getActiveClass("/")}`} onClick={handleLogin}>
           로그인
         </button>
-        <button className="signup-btn" onClick={handleSignup}>
+        <button className={`register-btn ${getActiveClass("/register")}`} onClick={handleRegister}>
           회원가입
         </button>
       </div>
