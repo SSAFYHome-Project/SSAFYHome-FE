@@ -58,18 +58,27 @@ const Header = () => {
       </nav>
 
       <div className="auth-area">
-        {userInfo ? (
-          <div className="user-info">
-            <img src={`data:image/png;base64,${userInfo.profile}`} alt="프로필" className="profile-img" />
-            <span className="user-info-name">{userInfo.name}</span>
-            <span>님</span>
-          </div>
-        ) : (
-          <a href="/login" className={getActiveClass("/login")}>
-            <button className="login-button">로그인</button>
-          </a>
-        )}
-      </div>
+  {location.pathname === "/login" || location.pathname === "/register" ? (
+    <a href="/" className={getActiveClass("/")}>
+      <button className="login-button">메인화면</button>
+    </a>
+  ) : userInfo ? (
+    <div className="user-info">
+      <img
+        src={`data:image/png;base64,${userInfo.profile}`}
+        alt="프로필"
+        className="profile-img"
+      />
+      <span className="user-info-name">{userInfo.name}</span>
+      <span>님</span>
+    </div>
+  ) : (
+    <a href="/login" className={getActiveClass("/login")}>
+      <button className="login-button">로그인</button>
+    </a>
+  )}
+</div>
+
     </header>
   );
 };
