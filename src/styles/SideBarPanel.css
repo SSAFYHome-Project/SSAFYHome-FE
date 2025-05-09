@@ -1,0 +1,262 @@
+.sidebar-panel {
+  position: fixed;
+  right: 65px;
+  width: 460px;
+  height: 100vh;
+  background-color: #f5f6f7;
+  border-left: 0.5px solid #abb2bd;
+  z-index: 1000;
+  padding: 1.8rem;
+  overflow-y: auto;
+}
+
+/* 헤더: 제목 + 즐겨찾기 버튼 */
+.panel-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 1rem;
+  margin-top: 3rem;
+}
+
+.panel-header h2 {
+  font-family: "NanumSquareB", sans-serif;
+  font-size: 26px;
+  margin: 0;
+}
+
+.favorite-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  font-family: "NanumSquareR", sans-serif;
+  font-size: 14px;
+  color: #5a5f67;
+  cursor: pointer;
+  margin-top: 1rem;
+  margin-left: 80px;
+}
+
+.heart-img {
+  width: 30px;
+  height: 30px;
+  object-fit: contain;
+}
+
+/* 주소, 건물 요약 */
+.panel-subtitle {
+  font-family: "NanumSquareR", sans-serif;
+  font-size: 14px;
+  color: #5a5f67;
+  margin-bottom: 0.5rem;
+}
+
+.panel-meta {
+  font-family: "NanumSquareR", sans-serif;
+  font-size: 14px;
+  color: #5a5f67;
+  margin-bottom: 2rem;
+}
+
+/* 거래 타입, 면적 선택 */
+.panel-select-row {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.btn-type {
+  padding: 0.45rem 1rem;
+  border-radius: 10px;
+  font-family: "NanumSquareR", sans-serif;
+  font-size: 14px;
+  color: #5a5f67;
+  border: 1px solid #ccc;
+  background-color: white;
+  cursor: pointer;
+}
+
+.btn-type.active {
+  background-color: #ffe600;
+  font-weight: bold;
+  border: 1px solid #ccc;
+}
+
+.size-select {
+  width: 180px;
+  margin-left: 1.3rem;
+  padding: 0.4rem;
+  border-radius: 10px;
+  border: 1px solid #ccc;
+  background-color: white;
+  font-family: "NanumSquareR", sans-serif;
+  font-size: 14px;
+  color: #5a5f67;
+}
+
+/* 요약 정보 박스 전체 */
+.panel-summary {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  background-color: #fff;
+  padding: 1.8rem 1rem;
+  margin-bottom: 1.5rem;
+}
+
+/* 각각의 항목 박스 */
+.summary-item {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+/* 상단 라벨 + 날짜 */
+.summary-label {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  margin-bottom: 0.8rem;
+}
+
+.summary-title {
+  font-family: "NanumSquareR", sans-serif;
+  font-size: 16px;
+  color: #000000;
+}
+
+.summary-date {
+  font-family: "NanumSquareL", sans-serif;
+  font-size: 14px;
+  color: #000000;
+}
+
+.price-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  gap: 6px;
+}
+
+.summary-item strong {
+  font-family: "NanumSquareB", sans-serif;
+  font-size: 25px;
+  color: #3182f6;
+}
+
+.summary-floor {
+  font-family: "NanumSquareL", sans-serif;
+  font-size: 14px;
+  color: #000000;
+}
+
+.vertical-divider {
+  width: 1px;
+  background-color: #ddd;
+  margin: 0 1rem;
+}
+
+/* 차트 */
+.panel-chart {
+  background-color: white;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  padding: 0.5rem;
+  padding-top: 1.5rem;
+  padding-right: 2.5rem;
+  margin-bottom: 1.5rem;
+  height: 280px;
+}
+
+.recharts-dot {
+  stroke: #3182f6;
+  r: 4;
+}
+
+.recharts-tooltip-wrapper {
+  font-family: "NanumSquareR", sans-serif;
+  font-size: 13px;
+  color: #333;
+}
+
+.recharts-cartesian-axis-tick-value {
+  fill: #5a5f67;
+  font-family: "NanumSquareL", sans-serif;
+  font-size: 13px;
+}
+
+.custom-tooltip {
+  background-color: #ffffff;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  padding: 0.8rem;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+  font-family: "NanumSquareR", sans-serif;
+  font-size: 13px;
+}
+
+.custom-tooltip .tooltip-label {
+  margin-bottom: 0.3rem;
+  font-family: "NanumSquareR", sans-serif;
+  font-size: 14px;
+  color: #222;
+}
+
+.custom-tooltip .tooltip-price {
+  margin: 0;
+  color: #3182f6;
+  font-family: "NanumSquareB", sans-serif;
+  font-size: 16px;
+}
+
+/* 거래 테이블 */
+.panel-table {
+  background-color: white;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  padding: 1rem;
+  margin-bottom: 1.5rem;
+  font-family: "NanumSquareL", sans-serif;
+  font-size: 14px;
+}
+
+.panel-table table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.panel-table th,
+.panel-table td {
+  text-align: center;
+  padding: 0.6rem 0;
+  border-bottom: 1px solid #eee;
+}
+
+.panel-table th {
+  font-family: "NanumSquareB", sans-serif;
+  font-size: 14px;
+  color: #000000;
+}
+
+/* 페이지네이션 */
+.pagination {
+  display: flex;
+  justify-content: center;
+  margin-top: 1rem;
+  gap: 1rem;
+  font-size: 0.9rem;
+  color: #333;
+}
+
+/* 하단 출처 */
+.data-source {
+  text-align: right;
+  font-family: "NanumSquareL", sans-serif;
+  font-size: 13px;
+  color: #5a5f67;
+  margin: 0;
+  margin-top: auto;
+  padding-bottom: 3rem;
+}

@@ -1,0 +1,49 @@
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 65px;
+  padding: 1.5rem;
+  padding-right: 4rem;
+  background-color: white;
+  border-bottom: 1px solid #ddd;
+}
+
+.logo-area {
+  display: flex;
+  align-items: center;
+}
+
+.logo {
+  height: 60px;
+}
+
+.menu {
+  display: flex;
+  gap: 2rem;
+  font-size: 16px;
+}
+
+.menu a {
+  text-decoration: none;
+  color: #5a5f67;
+  font-family: "NanumSquareR", sans-serif;
+  font-size: 14px;
+}
+
+.menu a.active {
+  color: #000000;
+  font-family: "NanumSquareR", sans-serif;
+  font-size: 14px;
+}
+
+.login-button {
+  background-color: #ffeb00;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 10px;
+  font-family: "NanumSquareB", sans-serif;
+  font-size: 14px;
+  color: #5a5f67;
+  cursor: pointer;
+}

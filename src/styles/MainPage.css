@@ -1,0 +1,48 @@
+.main-wrapper {
+  display: flex;
+}
+
+.sidebar-fixed {
+  position: fixed;
+  top: 0;
+  right: 0;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  z-index: 999;
+}
+
+.main-content {
+  flex: 1;
+  width: 100%;
+  padding-right: 65px; 
+}
+
+.main-content.with-sidebar-panel {
+  padding-right: 500px; 
+}
+
+.main-layout {
+  display: flex;
+  flex-direction: column;
+  height: calc(100vh - 65px); 
+  background-color: #f9f9f9;
+}
+
+.top-bar {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  padding: 1rem;
+  gap: 4rem;
+}
+
+.map-view {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  padding: 4rem;
+  padding-top: 0rem;
+}
