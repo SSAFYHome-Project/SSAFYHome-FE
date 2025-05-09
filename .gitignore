@@ -411,4 +411,18 @@ $RECYCLE.BIN/
 # Windows shortcuts
 *.lnk
 
+# 패키지 관리자 락파일 무시 (Mac/Windows 호환)
+package-lock.json
+
+# 빌드 결과물
+dist/
+build/
+
+# 로그 파일
+*.log
+
+# TypeScript 캐시
+*.tsbuildinfo
+
+
 # End of https://www.toptal.com/developers/gitignore/api/intellij,eclipse,macos,windows,visualstudiocode,node,react
