@@ -47,3 +47,29 @@
   color: #5a5f67;
   cursor: pointer;
 }
+
+.auth-area {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.user-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: "NanumSquareR", sans-serif;
+  font-size: 14px;
+}
+
+.user-info-name {
+  font-family: "NanumSquareB", sans-serif;
+  font-size: 16px;
+}
+
+.profile-img {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+}
