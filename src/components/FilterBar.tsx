@@ -5,22 +5,25 @@ import '../styles/FilterBar.css'
 type Region = { code: string; name: string }
 
 interface Props {
-  onFilterComplete?: () => void
+  onFilterChange?: (filters: {
+    sido: string;
+    gugun: string;
+    dong: string;
+    yyyymm: string;
+  }) => void;
 }
 
-const FilterBar = ({ onFilterComplete }: Props) => {
-  // 각 지역 리스트 상태
+const FilterBar = ({ onFilterChange }: Props) => {
   const [sidoList, setSidoList] = useState<Region[]>([])
   const [gugunList, setGugunList] = useState<Region[]>([])
   const [dongList, setDongList] = useState<Region[]>([])
 
-  // 선택된 지역과 날짜
   const [selectedSido, setSelectedSido] = useState('')
   const [selectedGugun, setSelectedGugun] = useState('')
   const [selectedDong, setSelectedDong] = useState('')
   const [selectedMonth, setSelectedMonth] = useState('')
 
-  // 시도 목록 불러오기
+  // 시도 불러오기
   useEffect(() => {
     fetch('/api/map/sido')
       .then(res => res.json())
@@ -38,7 +41,7 @@ const FilterBar = ({ onFilterComplete }: Props) => {
       })
   }, [])
 
-  // 시도 선택 시 → 구군 목록 불러오기
+  // 구군 불러오기
   useEffect(() => {
     if (!selectedSido) {
       setGugunList([])
@@ -49,22 +52,22 @@ const FilterBar = ({ onFilterComplete }: Props) => {
     }
 
     fetch(`/api/map/gugun?sidoCode=${selectedSido}`)
-    .then(res => res.json())
-    .then(data => {
-      const gugunArray = data?.admVOList?.admVOList || []
-      const formatted = gugunArray.map((item: any) => ({
-        code: item.admCode,
-        name: item.lowestAdmCodeNm
-      }))
-      setGugunList(formatted)
-    })
-    .catch(err => {
-      console.error('구군 데이터를 불러오지 못했습니다.', err)
-      setGugunList([])
-    })
-}, [selectedSido])
+      .then(res => res.json())
+      .then(data => {
+        const gugunArray = data?.admVOList?.admVOList || []
+        const formatted = gugunArray.map((item: any) => ({
+          code: item.admCode,
+          name: item.lowestAdmCodeNm
+        }))
+        setGugunList(formatted)
+      })
+      .catch(err => {
+        console.error('구군 데이터를 불러오지 못했습니다.', err)
+        setGugunList([])
+      })
+  }, [selectedSido])
 
-  // 구군 선택 시 → 동 목록 불러오기
+  // 동 불러오기
   useEffect(() => {
     if (!selectedGugun) {
       setDongList([])
@@ -88,17 +91,19 @@ const FilterBar = ({ onFilterComplete }: Props) => {
       })
   }, [selectedGugun])
 
-  // 조회 버튼 클릭 시 실행
+  // ✅ 필터 전달
   const handleFilter = () => {
-    console.log('선택한 필터:', {
+    const filters = {
       sido: selectedSido,
       gugun: selectedGugun,
       dong: selectedDong,
       yyyymm: selectedMonth
-    })
+    }
 
-    if (onFilterComplete) {
-      onFilterComplete()
+    console.log('선택한 필터:', filters)
+
+    if (onFilterChange) {
+      onFilterChange(filters)
     }
   }
 

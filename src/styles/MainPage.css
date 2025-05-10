@@ -41,8 +41,9 @@
 .map-view {
   display: flex;
   justify-content: center;
-  align-items: center;
+  align-items: start; 
   height: 100%;
   padding: 4rem;
   padding-top: 0rem;
+  padding-bottom: 0rem;
 }
