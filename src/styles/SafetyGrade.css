@@ -1,0 +1,93 @@
+.safety-icon-fixed {
+    position: fixed;
+    bottom: 30px;
+    left: 30px;
+    width: 50px;
+    height: 50px;
+    z-index: 500; /* 오버레이 뒤에 있어야 하므로 낮춤 */
+    cursor: pointer;
+  }
+  
+  .safety-icon-fixed img {
+    width: 100%;
+    height: auto;
+  }
+  
+  .safety-overlay {
+    position: fixed;
+    inset: 0;
+    background-color: rgba(0, 0, 0, 0.4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 999;
+  }
+  
+  .safety-modal {
+    background: white;
+    border-radius: 1.25rem;
+    padding: 3rem 3rem 2.5rem;
+    width: 90%;
+    max-width: 720px;
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
+    position: relative;
+    text-align: left;
+    font-family: "NanumSquareR", sans-serif;
+  }
+  
+  .safety-modal h3 {
+    font-family: "NanumSquareB", sans-serif;
+    font-size: 26px;
+    margin-bottom: 1rem;
+    color: #111827;
+  }
+  
+  .safety-modal p {
+    font-family: "NanumSquareL", sans-serif;
+    font-size: 16px;
+    color: #6b7280;
+    line-height: 1.75;
+    margin-bottom: 2.5rem;
+  }
+  
+  /* 리스트 */
+  .safety-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  
+  .safety-list li {
+    display: flex;
+    align-items: flex-start;
+    gap: 1.2rem;
+    margin-bottom: 1.8rem;
+  }
+  
+  .safety-list img {
+    width: 42px;
+    height: 42px;
+    flex-shrink: 0;
+    margin-top: 4px;
+  }
+  
+  .safety-list-content {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .safety-list-content span {
+    font-family: "NanumSquareB", sans-serif;
+    font-size: 18px;
+    color: #111827;
+    margin-bottom: 0.4rem;
+  }
+  
+  .safety-list-content p {
+    font-family: "NanumSquareL", sans-serif;
+    font-size: 16px;
+    color: #374151;
+    margin: 0;
+    line-height: 1.6;
+  }
+  

@@ -111,7 +111,7 @@ const MapView = ({ filterValues }: MapViewProps) => {
               position: latlng,
               image: new kakao.maps.MarkerImage(
                 "/src/assets/img/marker.png",
-                new kakao.maps.Size(50, 50)
+                new kakao.maps.Size(60, 60)
               ),
             });
           });
@@ -149,7 +149,7 @@ const MapView = ({ filterValues }: MapViewProps) => {
           position: latlng,
           image: new kakao.maps.MarkerImage(
             "/src/assets/img/marker.png",
-            new kakao.maps.Size(50, 50)
+            new kakao.maps.Size(60, 60)
           ),
         });
       });

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import "../styles/AISummaryModal.css";
+import "../styles/AISummary.css";
 
 const AISummary = ({ summaryText, onClose }: { summaryText: string; onClose: () => void }) => {
   return (

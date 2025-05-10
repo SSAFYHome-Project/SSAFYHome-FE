@@ -13,6 +13,7 @@ import SidebarFeedback from "../components/sidebar-panels/SidebarFeedback";
 
 import MapView from "../components/MapView";
 import AISummary from "../components/AISummary";
+import SafetyGrade from "../components/SafetyGrade";
 
 import "../styles/MainPage.css";
 
@@ -77,6 +78,8 @@ const MainPage = () => {
       {showSummary && (
         <AISummary summaryText={summaryText} onClose={() => setShowSummary(false)} />
       )}
+
+      <SafetyGrade />
     </div>
   );
 };
