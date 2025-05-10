@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react'
 import '../styles/FilterBar.css'
 
-// 지역 데이터를 담는 타입 정의
 type Region = { code: string; name: string }
 
 interface Props {
@@ -23,7 +22,6 @@ const FilterBar = ({ onFilterChange }: Props) => {
   const [selectedDong, setSelectedDong] = useState('')
   const [selectedMonth, setSelectedMonth] = useState('')
 
-  // 시도 불러오기
   useEffect(() => {
     fetch('/api/map/sido')
       .then(res => res.json())
@@ -41,7 +39,6 @@ const FilterBar = ({ onFilterChange }: Props) => {
       })
   }, [])
 
-  // 구군 불러오기
   useEffect(() => {
     if (!selectedSido) {
       setGugunList([])
@@ -67,7 +64,6 @@ const FilterBar = ({ onFilterChange }: Props) => {
       })
   }, [selectedSido])
 
-  // 동 불러오기
   useEffect(() => {
     if (!selectedGugun) {
       setDongList([])
@@ -91,7 +87,6 @@ const FilterBar = ({ onFilterChange }: Props) => {
       })
   }, [selectedGugun])
 
-  // ✅ 필터 전달
   const handleFilter = () => {
     const filters = {
       sido: selectedSido,
@@ -110,7 +105,6 @@ const FilterBar = ({ onFilterChange }: Props) => {
   return (
     <div className="filter-bar-container">
       <div className="filter-box">
-        {/* 시도 선택 */}
         <select
           className="filter-select"
           value={selectedSido}
@@ -124,7 +118,6 @@ const FilterBar = ({ onFilterChange }: Props) => {
           ))}
         </select>
 
-        {/* 구군 선택 */}
         <select
           className="filter-select"
           value={selectedGugun}
@@ -139,7 +132,6 @@ const FilterBar = ({ onFilterChange }: Props) => {
           ))}
         </select>
 
-        {/* 읍면동 선택 */}
         <select
           className="filter-select"
           value={selectedDong}
@@ -154,7 +146,6 @@ const FilterBar = ({ onFilterChange }: Props) => {
           ))}
         </select>
 
-        {/* 날짜 선택 */}
         <input
           type="month"
           className="filter-select"
@@ -166,7 +157,6 @@ const FilterBar = ({ onFilterChange }: Props) => {
           onChange={e => setSelectedMonth(e.target.value.replace('-', ''))}
         />
 
-        {/* 조회 버튼 */}
         <button className="filter-button" onClick={handleFilter}>
           조회
         </button>
