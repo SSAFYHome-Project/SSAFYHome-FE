@@ -187,7 +187,7 @@ const MapView = ({ filterValues }: MapViewProps) => {
                   <p>현재 등록된<br />직장 / 학교가 없습니다.</p>
                   <button
                     className="register-button"
-                    onClick={() => (window.location.href = "/mypage")}
+                    onClick={() => (window.location.href = "/info")}
                   >
                     직장 / 학교 등록하기
                   </button>

@@ -60,6 +60,23 @@
   transition: background-color 0.2s;
 }
 
+.address-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px;
+  margin: 10px 0;
+  min-width: 25%;
+  border: none;
+  background-color: #ffe600;
+  border-radius: 8px;
+  font-size: 13px;
+  font-family: "NanumSquareB", sans-serif;
+  color: #5a5f67;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
 .signup-btn {
   background-color: #ffe600;
   border: none;
@@ -75,7 +92,7 @@
 }
 
 .signup-btn:hover {
-  background-color: #ffea00;
+  background-color: #e2cf00;
 }
 
 .error-message {
@@ -117,4 +134,29 @@
   cursor: pointer;
   font-family: "NanumSquareR", sans-serif;
   font-size: 13px;
+}
+
+.btn-group {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  margin-top: 10px;
+}
+
+.delete-btn {
+  background-color: #ff5b5b;
+  border: none;
+  padding: 12px;
+  width: 100%;
+  margin-top: 10px;
+  font-family: "NanumSquareR", sans-serif;
+  font-size: 14px;
+  color: #ffffff;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.delete-btn:hover {
+  background-color: #d34c4c;
 }

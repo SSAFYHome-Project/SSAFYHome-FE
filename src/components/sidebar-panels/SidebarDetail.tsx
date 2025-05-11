@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react'
 import '../../styles/SideBarPanel.css'
 
-import heartFilledIcon from '../../assets/img/heart-filled.png'
-import heartEmptyIcon from '../../assets/img/heart.png'
+import heartHoverIcon from '../../assets/img/heart-filled.png' // hover 시 빨간 하트
+import heartIcon from '../../assets/img/heart.png' // 기본 회색 하트
 import PriceChart from './PriceChart'
 
 interface SidebarDetailProps {
@@ -15,22 +15,22 @@ interface ChartItem {
 }
 
 const SidebarDetail = ({ aptCode }: SidebarDetailProps) => {
-  const [selectedType, setSelectedType] = useState<'매매' | '전원세'>('매매')
-  const [isFavorited, setIsFavorited] = useState(false)
+  const [selectedType, setSelectedType] = useState<'매매' | '전월세'>('매매')
   const [chartData, setChartData] = useState<ChartItem[]>([])
+  const [hovered, setHovered] = useState(false)
 
   useEffect(() => {
     const fetchFavoriteStatus = async () => {
       try {
         const res = await fetch(`/api/map/search/${aptCode}`)
         const data = await res.json()
-        setIsFavorited(data.isFavorited)
+        // 필요 시 즐겨찾기 상태 처리 가능
       } catch (err) {
         console.error('관심 여부 확인 실패', err)
       }
     }
 
-    // ★ Dummy chart data for testing
+    // Dummy data
     const dummyChartData = [
       { date: '24.11', price: 30.2 },
       { date: '24.12', price: 32.5 },
@@ -48,13 +48,19 @@ const SidebarDetail = ({ aptCode }: SidebarDetailProps) => {
     <div className="sidebar-panel">
       <div className="panel-header">
         <h2>롯데캐슬프레미어</h2>
-        <div className="favorite-box">
+        <div
+          className="favorite-box"
+          onMouseEnter={() => setHovered(true)}
+          onMouseLeave={() => setHovered(false)}
+        >
           <img
-            src={isFavorited ? heartFilledIcon : heartEmptyIcon}
-            alt="즐겨찾기"
+            src={hovered ? heartHoverIcon : heartIcon}
+            alt="등록하기"
             className="heart-img"
           />
-          <span>{isFavorited ? '삭제하기' : '추가하기'}</span>
+          <span className={`favorite-text ${hovered ? 'hover' : ''}`}>
+            등록하기
+          </span>
         </div>
       </div>
 
@@ -69,8 +75,8 @@ const SidebarDetail = ({ aptCode }: SidebarDetailProps) => {
           매매
         </button>
         <button
-          className={`btn-type ${selectedType === '전원세' ? 'active' : ''}`}
-          onClick={() => setSelectedType('전원세')}
+          className={`btn-type ${selectedType === '전월세' ? 'active' : ''}`}
+          onClick={() => setSelectedType('전월세')}
         >
           전·월세
         </button>

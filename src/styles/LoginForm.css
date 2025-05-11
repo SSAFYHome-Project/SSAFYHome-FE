@@ -49,6 +49,10 @@
   height: 20px;
 }
 
+.google-login:hover {
+  background-color: #f7f7f7;
+}
+
 .login-btn {
   background-color: #ffe600;
   border: none;
@@ -62,6 +66,10 @@
   cursor: pointer;
 }
 
+.login-btn:hover {
+  background-color: #e2cf00;
+}
+
 .register-btn {
   background-color: #ffe600;
   border: none;
@@ -73,6 +81,10 @@
   color: #5a5f67;
   border-radius: 8px;
   cursor: pointer;
+}
+
+.register-btn:hover {
+  background-color: #e2cf00;
 }
 
 .error-message {
