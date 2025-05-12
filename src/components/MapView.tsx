@@ -6,6 +6,9 @@ const KAKAO_JS_API_KEY = import.meta.env.VITE_KAKAO_JS_API_KEY;
 
 interface MapViewProps {
   filterValues: {
+    sido: string;
+    gugun: string;
+    dong: string;
     regionCode: string;
     yyyymm: string;
   } | null;
@@ -69,16 +72,19 @@ const MapView = ({ filterValues }: MapViewProps) => {
     });
   };
 
-  const getDealData = async (dongCode: string, yyymm: string) => {
+  const getDealData = async (regionCode: string, yyyymm: string) => {
     try {
-      const response = await axios.get("/api/map/search?dongCode=${dongCode}&yyyymm=${yyymm}");
-      const items = response.data?.trade?.response?.body?.items?.item || [];
-      console.log("불러온 매물 데이터:", items);
+      const response = await axios.get(`/api/map/search?regionCode=${regionCode}&yyyymm=${yyyymm}`);
 
-      setAptList(items);
-      renderMarkers(items);
+      const tradeItems = response.data?.trade?.response?.body?.items?.item || [];
+      const rentItems = response.data?.rent?.response?.body?.items?.item || [];
+
+      console.log("매매:", tradeItems);
+      console.log("전월세:", rentItems);
+
+      setAptList(tradeItems);
+      renderMarkers(tradeItems);
     } catch (error) {
-      console.log(dongCode, yyymm);
       console.error("실거래 데이터 불러오기 실패", error);
     }
   };

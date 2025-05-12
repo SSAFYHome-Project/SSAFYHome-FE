@@ -33,7 +33,7 @@ const SearchBar = ({ onFilterChange }: Props) => {
       } catch (err) {
         console.error("자동완성 실패:", err);
       }
-    }, 100); // 디바운싱
+    });
 
     return () => clearTimeout(timer);
   }, [query]);

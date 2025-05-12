@@ -74,18 +74,12 @@ const SidebarFavorite = () => {
                 onMouseLeave={() => setHoveredIdx(null)}
               >
                 <img
-                  src={
-                    hoveredIdx === item.bookmarkIdx
-                      ? heartHoverIcon
-                      : heartFilledIcon
-                  }
+                  src={hoveredIdx === item.bookmarkIdx ? heartHoverIcon : heartFilledIcon}
                   alt="하트"
                   className="heart-icon"
                 />
                 <button
-                  className={`favorite-delete-btn ${
-                    hoveredIdx === item.bookmarkIdx ? "hover" : ""
-                  }`}
+                  className={`favorite-delete-btn ${hoveredIdx === item.bookmarkIdx ? "hover" : ""}`}
                   onClick={() => handleDelete(item.bookmarkIdx)}
                 >
                   삭제하기
