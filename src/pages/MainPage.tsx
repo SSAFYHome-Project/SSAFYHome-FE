@@ -17,26 +17,40 @@ import SafetyGrade from "../components/SafetyGrade";
 
 import "../styles/MainPage.css";
 
+type Filters = {
+  sido: string;
+  gugun: string;
+  dong: string;
+  regionCode: string;
+  yyyymm: string;
+};
+
 const MainPage = () => {
   const [hasResult, setHasResult] = useState(false);
-  const [filterValues, setFilterValues] = useState<{
-    sido: string;
-    gugun: string;
-    dong: string;
-    yyyymm: string;
-  } | null>(null);
-
-  const [activeSidebar, setActiveSidebar] = useState<null | "detail" | "favorite" | "recent" | "custom" | "feedback">(null);
+  const [filterValues, setFilterValues] = useState<Filters | null>(null);
   const [showSummary, setShowSummary] = useState(false);
+  const [activeSidebar, setActiveSidebar] = useState<null | "detail" | "favorite" | "recent" | "custom" | "feedback">(
+    null
+  );
 
-  const handleResult = (filters: {
-    sido: string;
-    gugun: string;
-    dong: string;
-    yyyymm: string;
-  }) => {
+  const handleSearchResult = (filters: Filters) => {
+    console.log("검색 필터:", filters);
     setHasResult(true);
     setFilterValues(filters);
+  };
+
+  const handleFilterApply = (filters: Filters) => {
+    console.log("필터바 필터:", filters);
+    setHasResult(true);
+    setFilterValues(filters);
+  };
+
+  const sidebarPanels = {
+    detail: <SidebarDetail />,
+    favorite: <SidebarFavorite />,
+    recent: <SidebarRecent />,
+    custom: <SidebarCustom />,
+    feedback: <SidebarFeedback />,
   };
 
   const summaryText = `서울 강남구 삼성동에는 총 8개의 매물이 확인되었습니다.
@@ -54,32 +68,26 @@ const MainPage = () => {
     <div className="main-wrapper">
       <div className="sidebar-fixed">
         <SideBar setActiveSidebar={setActiveSidebar} activeSidebar={activeSidebar} />
-        {activeSidebar === "detail" && <SidebarDetail />}
-        {activeSidebar === "favorite" && <SidebarFavorite />}
-        {activeSidebar === "recent" && <SidebarRecent />}
-        {activeSidebar === "custom" && <SidebarCustom />}
-        {activeSidebar === "feedback" && <SidebarFeedback />}
+        {activeSidebar && sidebarPanels[activeSidebar]}
       </div>
 
       <div className={`main-content ${activeSidebar ? "with-sidebar-panel" : ""}`}>
         <Header />
         <div className="main-layout">
           <div className="top-bar">
-            <SearchBar onSearchComplete={() => setHasResult(true)} />
-            <FilterBar onFilterChange={handleResult} /> 
+            <SearchBar onFilterChange={handleSearchResult} />
+            <FilterBar onFilterChange={handleFilterApply} />
             <AISummaryButton isVisible={hasResult} onClick={() => setShowSummary(true)} />
           </div>
           <div className="map-view">
-            <MapView filterValues={filterValues} /> 
+            <MapView filterValues={filterValues} />
           </div>
         </div>
       </div>
 
-      {showSummary && (
-        <AISummary summaryText={summaryText} onClose={() => setShowSummary(false)} />
-      )}
+      {showSummary && <AISummary summaryText={summaryText} onClose={() => setShowSummary(false)} />}
 
-      <SafetyGrade />
+      {hasResult && <SafetyGrade />}
     </div>
   );
 };

@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
+import axios from "axios";
 import "../styles/Header.css";
 
 interface UserInfo {
@@ -14,27 +15,24 @@ const Header = () => {
   const getActiveClass = (path: string) => (location.pathname === path ? "active" : "");
 
   useEffect(() => {
-    const fetchUserInfo = async () => {
+    const getUserInfo = async () => {
       const token = sessionStorage.getItem("token");
       if (!token) return;
 
       try {
-        const response = await fetch("/api/user/info", {
+        const response = await axios.get("/api/user/info", {
           headers: {
             Authorization: `Bearer ${token}`,
           },
         });
 
-        if (response.ok) {
-          const data = await response.json();
-          setUserInfo(data);
-        }
+        setUserInfo(response.data);
       } catch (error) {
         console.error("유저 정보 불러오기 실패:", error);
       }
     };
 
-    fetchUserInfo();
+    getUserInfo();
   }, []);
 
   return (
@@ -58,27 +56,22 @@ const Header = () => {
       </nav>
 
       <div className="auth-area">
-  {location.pathname === "/login" || location.pathname === "/register" ? (
-    <a href="/" className={getActiveClass("/")}>
-      <button className="login-button">메인화면</button>
-    </a>
-  ) : userInfo ? (
-    <div className="user-info">
-      <img
-        src={`data:image/png;base64,${userInfo.profile}`}
-        alt="프로필"
-        className="profile-img"
-      />
-      <span className="user-info-name">{userInfo.name}</span>
-      <span>님</span>
-    </div>
-  ) : (
-    <a href="/login" className={getActiveClass("/login")}>
-      <button className="login-button">로그인</button>
-    </a>
-  )}
-</div>
-
+        {location.pathname === "/login" || location.pathname === "/register" ? (
+          <a href="/" className={getActiveClass("/")}>
+            <button className="login-button">메인화면</button>
+          </a>
+        ) : userInfo ? (
+          <div className="user-info">
+            <img src={`data:image/png;base64,${userInfo.profile}`} alt="프로필" className="profile-img" />
+            <span className="user-info-name">{userInfo.name}</span>
+            <span>님</span>
+          </div>
+        ) : (
+          <a href="/login" className={getActiveClass("/login")}>
+            <button className="login-button">로그인</button>
+          </a>
+        )}
+      </div>
     </header>
   );
 };

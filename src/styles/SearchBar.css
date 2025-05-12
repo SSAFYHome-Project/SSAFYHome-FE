@@ -40,3 +40,44 @@
   font-family: "NanumSquareR", sans-serif;
   font-size: 14px;
 }
+
+.suggestion-list {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  max-height: 240px;
+  overflow-y: auto;
+  background-color: #ffffff;
+  border-radius: 10px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+  margin-top: 8px;
+  padding: 4px 0;
+  z-index: 1000;
+  width: 100%;
+  border: 1px solid #e0e0e0;
+  scrollbar-width: thin;
+  scrollbar-color: #ccc transparent;
+}
+
+.suggestion-list::-webkit-scrollbar {
+  width: 6px;
+}
+
+.suggestion-list::-webkit-scrollbar-thumb {
+  background-color: #ccc;
+  border-radius: 3px;
+}
+
+.suggestion-item {
+  padding: 10px 16px;
+  cursor: pointer;
+  color: #333;
+  font-family: "NanumSquareR", sans-serif;
+  font-size: 14px;
+  transition: background-color 0.2s ease;
+}
+
+.suggestion-item:hover {
+  background-color: #f5f7fa;
+}

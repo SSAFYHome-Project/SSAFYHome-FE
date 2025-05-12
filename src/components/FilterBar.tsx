@@ -1,115 +1,113 @@
-import { useEffect, useState } from 'react'
-import '../styles/FilterBar.css'
+import { useEffect, useState } from "react";
+import axios from "axios";
+import "../styles/FilterBar.css";
 
-type Region = { code: string; name: string }
+type Region = { code: string; name: string };
 
 interface Props {
-  onFilterChange?: (filters: {
-    sido: string;
-    gugun: string;
-    dong: string;
-    yyyymm: string;
-  }) => void;
+  onFilterChange?: (filters: { sido: string; gugun: string; dong: string; regionCode: string; yyyymm: string }) => void;
 }
 
 const FilterBar = ({ onFilterChange }: Props) => {
-  const [sidoList, setSidoList] = useState<Region[]>([])
-  const [gugunList, setGugunList] = useState<Region[]>([])
-  const [dongList, setDongList] = useState<Region[]>([])
+  const [sidoList, setSidoList] = useState<Region[]>([]);
+  const [gugunList, setGugunList] = useState<Region[]>([]);
+  const [dongList, setDongList] = useState<Region[]>([]);
 
-  const [selectedSido, setSelectedSido] = useState('')
-  const [selectedGugun, setSelectedGugun] = useState('')
-  const [selectedDong, setSelectedDong] = useState('')
-  const [selectedMonth, setSelectedMonth] = useState('')
+  const [selectedSido, setSelectedSido] = useState("");
+  const [selectedGugun, setSelectedGugun] = useState("");
+  const [selectedDong, setSelectedDong] = useState("");
+  const [selectedMonth, setSelectedMonth] = useState("");
 
   useEffect(() => {
-    fetch('/api/map/sido')
-      .then(res => res.json())
-      .then(data => {
-        const sidoArray = data?.admVOList?.admVOList || []
+    const getSidoList = async () => {
+      try {
+        const response = await axios.get(`/api/map/sido`);
+        const sidoArray = response.data?.admVOList?.admVOList || [];
+
         const formatted = sidoArray.map((item: any) => ({
           code: item.admCode,
-          name: item.admCodeNm
-        }))
-        setSidoList(formatted)
-      })
-      .catch(err => {
-        console.error('시도 데이터를 불러오지 못했습니다.', err)
-        setSidoList([])
-      })
-  }, [])
+          name: item.admCodeNm,
+        }));
+
+        setSidoList(formatted);
+      } catch (error) {
+        console.error("시도 데이터를 불러오지 못했습니다.", error);
+        setSidoList([]);
+      }
+    };
+    getSidoList();
+  }, []);
 
   useEffect(() => {
     if (!selectedSido) {
-      setGugunList([])
-      setSelectedGugun('')
-      setDongList([])
-      setSelectedDong('')
-      return
+      setGugunList([]);
+      setSelectedGugun("");
+      setDongList([]);
+      setSelectedDong("");
+      return;
     }
 
-    fetch(`/api/map/gugun?sidoCode=${selectedSido}`)
-      .then(res => res.json())
-      .then(data => {
-        const gugunArray = data?.admVOList?.admVOList || []
+    const getGugunList = async () => {
+      try {
+        const response = await axios.get(`/api/map/gugun?sidoCode=${selectedSido}`);
+        const gugunArray = response.data?.admVOList?.admVOList || [];
         const formatted = gugunArray.map((item: any) => ({
           code: item.admCode,
-          name: item.lowestAdmCodeNm
-        }))
-        setGugunList(formatted)
-      })
-      .catch(err => {
-        console.error('구군 데이터를 불러오지 못했습니다.', err)
-        setGugunList([])
-      })
-  }, [selectedSido])
+          name: item.lowestAdmCodeNm,
+        }));
+        setGugunList(formatted);
+      } catch (error) {
+        console.error("구군 데이터를 불러오지 못했습니다.", error);
+        setGugunList([]);
+      }
+    };
+    getGugunList();
+  }, [selectedSido]);
 
   useEffect(() => {
     if (!selectedGugun) {
-      setDongList([])
-      setSelectedDong('')
-      return
+      setDongList([]);
+      setSelectedDong("");
+      return;
     }
 
-    fetch(`/api/map/dong?gugunCode=${selectedGugun}`)
-      .then(res => res.json())
-      .then(data => {
-        const dongArray = data?.admVOList?.admVOList || []
+    const getDongList = async () => {
+      try {
+        const response = await axios.get(`/api/map/dong?gugunCode=${selectedGugun}`);
+        const dongArray = response.data?.admVOList?.admVOList || [];
         const formatted = dongArray.map((item: any) => ({
           code: item.admCode,
-          name: item.lowestAdmCodeNm
-        }))
-        setDongList(formatted)
-      })
-      .catch(err => {
-        console.error('읍면동 데이터를 불러오지 못했습니다.', err)
-        setDongList([])
-      })
-  }, [selectedGugun])
+          name: item.lowestAdmCodeNm,
+        }));
+        setDongList(formatted);
+      } catch (error) {
+        console.error("읍면동 데이터를 불러오지 못했습니다.", error);
+        setDongList([]);
+      }
+    };
+    getDongList();
+  }, [selectedGugun]);
 
   const handleFilter = () => {
     const filters = {
       sido: selectedSido,
       gugun: selectedGugun,
       dong: selectedDong,
-      yyyymm: selectedMonth
-    }
+      regionCode: selectedDong,
+      yyyymm: selectedMonth,
+    };
 
-    console.log('선택한 필터:', filters)
+    console.log("선택한 필터:", filters);
 
     if (onFilterChange) {
-      onFilterChange(filters)
+      onFilterChange(filters);
     }
-  }
+  };
 
   return (
     <div className="filter-bar-container">
       <div className="filter-box">
-        <select
-          className="filter-select"
-          value={selectedSido}
-          onChange={e => setSelectedSido(e.target.value)}
-        >
+        <select className="filter-select" value={selectedSido} onChange={(e) => setSelectedSido(e.target.value)}>
           <option value="">시도 선택</option>
           {sidoList.map((item) => (
             <option key={item.code} value={item.code}>
@@ -121,7 +119,7 @@ const FilterBar = ({ onFilterChange }: Props) => {
         <select
           className="filter-select"
           value={selectedGugun}
-          onChange={e => setSelectedGugun(e.target.value)}
+          onChange={(e) => setSelectedGugun(e.target.value)}
           disabled={!selectedSido}
         >
           <option value="">구군 선택</option>
@@ -135,7 +133,7 @@ const FilterBar = ({ onFilterChange }: Props) => {
         <select
           className="filter-select"
           value={selectedDong}
-          onChange={e => setSelectedDong(e.target.value)}
+          onChange={(e) => setSelectedDong(e.target.value)}
           disabled={!selectedGugun}
         >
           <option value="">읍면동 선택</option>
@@ -149,12 +147,8 @@ const FilterBar = ({ onFilterChange }: Props) => {
         <input
           type="month"
           className="filter-select"
-          value={
-            selectedMonth
-              ? `${selectedMonth.slice(0, 4)}-${selectedMonth.slice(4, 6)}`
-              : ''
-          }
-          onChange={e => setSelectedMonth(e.target.value.replace('-', ''))}
+          value={selectedMonth ? `${selectedMonth.slice(0, 4)}-${selectedMonth.slice(4, 6)}` : ""}
+          onChange={(e) => setSelectedMonth(e.target.value.replace("-", ""))}
         />
 
         <button className="filter-button" onClick={handleFilter}>
@@ -162,7 +156,7 @@ const FilterBar = ({ onFilterChange }: Props) => {
         </button>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default FilterBar
+export default FilterBar;
