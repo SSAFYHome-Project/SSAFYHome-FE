@@ -25,13 +25,38 @@ const InfoForm = ({ isAdmin = false }: InfoFormProps) => {
   useEffect(() => {
     const fetchUserInfo = async () => {
       try {
-        const res = await fetch("/api/user/info");
-        const data = await res.json();
-        setName(data.name);
-        setEmail(data.email);
-        // 프로필 이미지 및 주소는 필요 시 추가
-      } catch (err) {
-        console.error("사용자 정보 오류:", err);
+        const token = localStorage.getItem("accessToken"); // 로그인 시 저장한 JWT
+
+        if (!token) {
+          setErrorMessage("로그인이 필요합니다.");
+          return;
+        }
+
+        const response = await fetch("/api/user/info", {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`, // ✅ 여기서 JWT 넘겨줌
+          },
+        });
+
+        if (!response.ok) {
+          throw new Error("인증 실패 또는 서버 오류");
+        }
+
+        const data = await response.json();
+
+        // 가져온 사용자 정보 저장
+        setName(data.name || "");
+        setEmail(data.email || "");
+        setWorkAddress(data.workAddress || "");
+        setSchoolAddress(data.schoolAddress || "");
+        if (data.profile) {
+          setPreviewUrl(`data:image/jpeg;base64,${data.profile}`);
+        }
+      } catch (error) {
+        console.error("사용자 정보 가져오기 실패:", error);
+        setErrorMessage("사용자 정보를 불러오지 못했습니다.");
       }
     };
 
@@ -63,7 +88,7 @@ const InfoForm = ({ isAdmin = false }: InfoFormProps) => {
 
     try {
       const res = await fetch("/api/user/update", {
-        method: "PUT",
+        method: "PATCH",
         body: formData,
       });
 

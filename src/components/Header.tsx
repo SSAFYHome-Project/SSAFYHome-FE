@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
 import "../styles/Header.css";
 
@@ -14,7 +14,7 @@ const Header = () => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
   const getActiveClass = (path: string) => (location.pathname === path ? "active" : "");
-
+  const navigate = useNavigate();
   useEffect(() => {
     const getUserInfo = async () => {
       const token = localStorage.getItem("accessToken");
@@ -87,7 +87,9 @@ const Header = () => {
                 <span className="greeting">
                   <strong>{userInfo.name}</strong> 님, 안녕하세요!
                 </span>
-                <button className="info-btn">내 정보 수정</button>
+                <button className="info-btn" onClick={() => navigate("/info")}>
+                  내 정보 수정
+                </button>
                 <button className="logout-btn">로그아웃</button>
               </div>
             )}
