@@ -89,6 +89,11 @@ const FilterBar = ({ onFilterChange }: Props) => {
   }, [selectedGugun]);
 
   const handleFilter = () => {
+    if (!selectedSido || !selectedGugun || !selectedDong) {
+      alert("시도, 구군, 동을 모두 선택해주세요.");
+      return;
+    }
+
     const sidoName = sidoList.find((item) => item.code === selectedSido)?.name || "";
     const gugunName = gugunList.find((item) => item.code === selectedGugun)?.name || "";
     const dongName = dongList.find((item) => item.code === selectedDong)?.name || "";

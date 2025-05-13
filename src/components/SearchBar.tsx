@@ -92,11 +92,11 @@ const SearchBar = ({ onFilterChange }: Props) => {
     }
   };
 
-  // 조회 버튼 눌렀을 때만 onFilterChange 실행
   const handleSearch = () => {
     if (filters && onFilterChange) {
       onFilterChange(filters);
     } else {
+      alert("지역을 먼저 선택해주세요.");
       console.warn("지역을 먼저 선택해주세요.");
     }
   };

@@ -75,13 +75,13 @@ const MapView = ({ filterValues }: MapViewProps) => {
             <div style="
               padding: 12px 16px;
               font-size: 13px;
-              min-width: 220px;
-              max-width: 260px;
+              min-width: 230px;
+              max-width: 280px;
               font-family: 'Apple SD Gothic Neo', sans-serif;
               color: #333;
             ">
               <div style="font-size: 14px; font-weight: bold; margin-bottom: 6px; color: #2a2a2a;">
-                🏢 ${apt.aptNm}
+                ${apt.aptNm}
               </div>
               <div style="margin-bottom: 4px;">
                 <span style="color: #3182f6; font-weight: bold;">
