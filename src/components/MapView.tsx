@@ -45,6 +45,8 @@ const MapView = ({ filterValues }: MapViewProps) => {
     });
   };
 
+  let openInfoWindow: any = null; // 전역 또는 외부 변수로 선언
+
   const renderMarkersByType = (items: any[], type: "매매" | "전월세") => {
     const kakao = (window as any).kakao;
     const geocoder = new kakao.maps.services.Geocoder();
@@ -70,23 +72,43 @@ const MapView = ({ filterValues }: MapViewProps) => {
 
           const infoWindow = new kakao.maps.InfoWindow({
             content: `
-              <div style="padding:10px;font-size:13px;min-width:200px">
-                <strong>${apt.aptNm}</strong><br/>
-                거래가: <b>
-                ${(() => {
-                  const amountStr = apt.dealAmount || apt.deposit;
-                  if (!amountStr) return "정보 없음";
-                  const num = parseInt(amountStr.replace(/,/g, ""));
-                  return (num / 10000).toFixed(1) + "억";
-                })()}
-              </b><br/>
-                유형: ${type}
+            <div style="
+              padding: 12px 16px;
+              font-size: 13px;
+              min-width: 220px;
+              max-width: 260px;
+              font-family: 'Apple SD Gothic Neo', sans-serif;
+              color: #333;
+            ">
+              <div style="font-size: 14px; font-weight: bold; margin-bottom: 6px; color: #2a2a2a;">
+                🏢 ${apt.aptNm}
               </div>
-            `,
+              <div style="margin-bottom: 4px;">
+                <span style="color: #3182f6; font-weight: bold;">
+                  ${(() => {
+                    const amountStr = apt.dealAmount || apt.deposit;
+                    if (!amountStr) return "정보 없음";
+                    const num = parseInt(amountStr.replace(/,/g, ""));
+                    return (num / 10000).toFixed(1) + "억";
+                  })()}
+                </span>
+              </div>
+              <div>
+                유형: <span style="font-weight: 600; color: #555;">${type}</span>
+              </div>
+            </div>
+          `,
           });
 
           kakao.maps.event.addListener(marker, "click", () => {
+            // 기존 열린 infoWindow가 있으면 닫기
+            if (openInfoWindow) {
+              openInfoWindow.close();
+            }
+
+            // 새 창 열기 및 현재 창 기억
             infoWindow.open(mapInstance.current, marker);
+            openInfoWindow = infoWindow;
           });
         } else {
           console.warn("좌표 변환 실패:", address);
