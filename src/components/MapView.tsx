@@ -48,7 +48,7 @@ const MapView = ({ filterValues }: MapViewProps) => {
     const geocoder = new kakao.maps.services.Geocoder();
 
     items.forEach((apt) => {
-      const address = `${apt.aptNm} ${apt.aptDong || ""}`;
+      const address = `${apt.roadAddr || apt.umdNm || ""} ${apt.jibun || ""}`.trim();
 
       geocoder.addressSearch(address, (result: any, status: any) => {
         if (status === kakao.maps.services.Status.OK) {
@@ -67,6 +67,8 @@ const MapView = ({ filterValues }: MapViewProps) => {
           kakao.maps.event.addListener(marker, "click", () => {
             infoWindow.open(mapInstance.current, marker);
           });
+        } else {
+          console.warn("매물 좌표 변환 실패 주소:", address);
         }
       });
     });
@@ -79,14 +81,41 @@ const MapView = ({ filterValues }: MapViewProps) => {
       const tradeItems = response.data?.trade?.response?.body?.items?.item || [];
       const rentItems = response.data?.rent?.response?.body?.items?.item || [];
 
-      console.log("매매:", tradeItems);
-      console.log("전월세:", rentItems);
+      const limitedTrade = tradeItems.slice(0, 10);
+      const limitedRent = rentItems.slice(0, 10);
 
-      setAptList(tradeItems);
-      renderMarkers(tradeItems);
+      console.log("매매 (10개):", limitedTrade);
+      console.log("전월세 (10개):", limitedRent);
+
+      setAptList(limitedTrade);
+      renderMarkers(limitedTrade);
     } catch (error) {
       console.error("실거래 데이터 불러오기 실패", error);
     }
+  };
+
+  const moveMapByFilters = (filters: { sido: string; gugun: string; dong: string }) => {
+    const kakao = (window as any).kakao;
+    if (!kakao?.maps || !mapInstance.current) return;
+
+    const { sido, gugun, dong } = filters;
+    const address = `${sido} ${gugun} ${dong}`;
+
+    const geocoder = new kakao.maps.services.Geocoder();
+    geocoder.addressSearch(address, (result: any, status: any) => {
+      if (status === kakao.maps.services.Status.OK) {
+        const coords = new kakao.maps.LatLng(result[0].y, result[0].x);
+
+        mapInstance.current.setCenter(coords);
+
+        new kakao.maps.Marker({
+          map: mapInstance.current,
+          position: coords,
+        });
+      } else {
+        console.warn("주소 → 좌표 변환 실패:", address);
+      }
+    });
   };
 
   useEffect(() => {
@@ -114,7 +143,6 @@ const MapView = ({ filterValues }: MapViewProps) => {
             new kakao.maps.Marker({
               map,
               position: latlng,
-              image: new kakao.maps.MarkerImage("/src/assets/img/marker.png", new kakao.maps.Size(60, 60)),
             });
           });
         }
@@ -124,24 +152,23 @@ const MapView = ({ filterValues }: MapViewProps) => {
     };
 
     initMap();
-
-    // setUserLocation({
-    //   name: "멀티캠퍼스 역삼",
-    //   carDistance: 6.2,
-    //   carTime: 18,
-    //   walkTime: "1시간 10분",
-    // });
   }, []);
 
   useEffect(() => {
-    if (filterValues) {
+    const kakao = (window as any).kakao;
+    if (filterValues && kakao?.maps) {
+      moveMapByFilters({
+        sido: filterValues.sido,
+        gugun: filterValues.gugun,
+        dong: filterValues.dong,
+      });
       getDealData(filterValues.regionCode, filterValues.yyyymm);
     }
   }, [filterValues]);
 
   const handleCurrentLocation = () => {
     const kakao = (window as any).kakao;
-    if (navigator.geolocation && mapInstance.current) {
+    if (navigator.geolocation && mapInstance.current && kakao?.maps) {
       navigator.geolocation.getCurrentPosition((pos) => {
         const latlng = new kakao.maps.LatLng(pos.coords.latitude, pos.coords.longitude);
         mapInstance.current.setCenter(latlng);
@@ -149,7 +176,6 @@ const MapView = ({ filterValues }: MapViewProps) => {
         new kakao.maps.Marker({
           map: mapInstance.current,
           position: latlng,
-          image: new kakao.maps.MarkerImage("/src/assets/img/marker.png", new kakao.maps.Size(60, 60)),
         });
       });
     }

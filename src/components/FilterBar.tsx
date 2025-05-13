@@ -89,10 +89,14 @@ const FilterBar = ({ onFilterChange }: Props) => {
   }, [selectedGugun]);
 
   const handleFilter = () => {
+    const sidoName = sidoList.find((item) => item.code === selectedSido)?.name || "";
+    const gugunName = gugunList.find((item) => item.code === selectedGugun)?.name || "";
+    const dongName = dongList.find((item) => item.code === selectedDong)?.name || "";
+
     const filters = {
-      sido: selectedSido,
-      gugun: selectedGugun,
-      dong: selectedDong,
+      sido: sidoName,
+      gugun: gugunName,
+      dong: dongName,
       regionCode: selectedDong,
       yyyymm: selectedMonth,
     };
