@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import "../../styles/LoginForm.css";
@@ -41,8 +40,11 @@ const LoginForm = () => {
       }
 
       const data = await response.json();
+      const token = data.token;
+      if (token) {
+        localStorage.setItem("accessToken", token);
+      }
       setErrorMessage("");
-      console.log("User data:", data);
       navigate("/");
     } catch (error) {
       console.error("로그인 오류:", error);

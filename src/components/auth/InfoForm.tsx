@@ -97,7 +97,6 @@ const InfoForm = ({ isAdmin = false }: InfoFormProps) => {
       }
 
       alert("계정이 삭제되었습니다.");
-      // 예시: 토큰 제거 후 메인 페이지로
       localStorage.removeItem("token");
       localStorage.removeItem("role");
       navigate("/");

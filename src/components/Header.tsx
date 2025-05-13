@@ -16,7 +16,7 @@ const Header = () => {
 
   useEffect(() => {
     const getUserInfo = async () => {
-      const token = sessionStorage.getItem("token");
+      const token = localStorage.getItem("accessToken");
       if (!token) return;
 
       try {
