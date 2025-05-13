@@ -1,6 +1,9 @@
 import { useEffect, useRef, useState } from "react";
 import axios from "axios";
 import "../styles/MapView.css";
+import myLocation from "../assets/img/my-location-marker.png";
+import rentMarker from "../assets/img/rent-marker.png";
+import tradeMarker from "../assets/img/trade-marker.png";
 
 const KAKAO_JS_API_KEY = import.meta.env.VITE_KAKAO_JS_API_KEY;
 
@@ -18,7 +21,6 @@ const MapView = ({ filterValues }: MapViewProps) => {
   const mapRef = useRef<HTMLDivElement>(null);
   const mapInstance = useRef<any>(null);
   const [showDistancePanel, setShowDistancePanel] = useState(false);
-  const [aptList, setAptList] = useState<any[]>([]);
   const [userLocation, setUserLocation] = useState<null | {
     name: string;
     carDistance: number;
@@ -43,7 +45,7 @@ const MapView = ({ filterValues }: MapViewProps) => {
     });
   };
 
-  const renderMarkers = (items: any[]) => {
+  const renderMarkersByType = (items: any[], type: "매매" | "전월세") => {
     const kakao = (window as any).kakao;
     const geocoder = new kakao.maps.services.Geocoder();
 
@@ -54,21 +56,40 @@ const MapView = ({ filterValues }: MapViewProps) => {
         if (status === kakao.maps.services.Status.OK) {
           const latlng = new kakao.maps.LatLng(result[0].y, result[0].x);
 
+          const markerImage = new kakao.maps.MarkerImage(
+            type === "매매" ? tradeMarker : rentMarker,
+            new kakao.maps.Size(40, 40)
+          );
+
           const marker = new kakao.maps.Marker({
             map: mapInstance.current,
             position: latlng,
             title: apt.aptNm,
+            image: markerImage,
           });
 
           const infoWindow = new kakao.maps.InfoWindow({
-            content: `<div style="padding:5px;font-size:13px;"><b>${apt.aptNm}</b><br/>거래가: ${apt.dealAmount}만원</div>`,
+            content: `
+              <div style="padding:10px;font-size:13px;min-width:200px">
+                <strong>${apt.aptNm}</strong><br/>
+                거래가: <b>
+                ${(() => {
+                  const amountStr = apt.dealAmount || apt.deposit;
+                  if (!amountStr) return "정보 없음";
+                  const num = parseInt(amountStr.replace(/,/g, ""));
+                  return (num / 10000).toFixed(1) + "억";
+                })()}
+              </b><br/>
+                유형: ${type}
+              </div>
+            `,
           });
 
           kakao.maps.event.addListener(marker, "click", () => {
             infoWindow.open(mapInstance.current, marker);
           });
         } else {
-          console.warn("매물 좌표 변환 실패 주소:", address);
+          console.warn("좌표 변환 실패:", address);
         }
       });
     });
@@ -87,8 +108,8 @@ const MapView = ({ filterValues }: MapViewProps) => {
       console.log("매매 (10개):", limitedTrade);
       console.log("전월세 (10개):", limitedRent);
 
-      setAptList(limitedTrade);
-      renderMarkers(limitedTrade);
+      renderMarkersByType(limitedTrade, "매매");
+      renderMarkersByType(limitedRent, "전월세");
     } catch (error) {
       console.error("실거래 데이터 불러오기 실패", error);
     }
@@ -98,20 +119,13 @@ const MapView = ({ filterValues }: MapViewProps) => {
     const kakao = (window as any).kakao;
     if (!kakao?.maps || !mapInstance.current) return;
 
-    const { sido, gugun, dong } = filters;
-    const address = `${sido} ${gugun} ${dong}`;
-
+    const address = `${filters.sido} ${filters.gugun} ${filters.dong}`;
     const geocoder = new kakao.maps.services.Geocoder();
+
     geocoder.addressSearch(address, (result: any, status: any) => {
       if (status === kakao.maps.services.Status.OK) {
         const coords = new kakao.maps.LatLng(result[0].y, result[0].x);
-
         mapInstance.current.panTo(coords);
-
-        new kakao.maps.Marker({
-          map: mapInstance.current,
-          position: coords,
-        });
       } else {
         console.warn("주소 → 좌표 변환 실패:", address);
       }
@@ -140,9 +154,12 @@ const MapView = ({ filterValues }: MapViewProps) => {
             const latlng = new kakao.maps.LatLng(pos.coords.latitude, pos.coords.longitude);
             map.panTo(latlng);
 
+            const markerImage = new kakao.maps.MarkerImage(myLocation, new kakao.maps.Size(36, 40));
+
             new kakao.maps.Marker({
               map,
               position: latlng,
+              image: markerImage,
             });
           });
         }
@@ -173,9 +190,12 @@ const MapView = ({ filterValues }: MapViewProps) => {
         const latlng = new kakao.maps.LatLng(pos.coords.latitude, pos.coords.longitude);
         mapInstance.current.panTo(latlng);
 
+        const markerImage = new kakao.maps.MarkerImage(myLocation, new kakao.maps.Size(36, 40));
+
         new kakao.maps.Marker({
           map: mapInstance.current,
           position: latlng,
+          image: markerImage,
         });
       });
     }
