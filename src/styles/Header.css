@@ -60,11 +60,36 @@
   gap: 8px;
   font-family: "NanumSquareR", sans-serif;
   font-size: 14px;
+  color: black;
+  line-height: 1.5;
 }
 
 .user-info-name {
   font-family: "NanumSquareB", sans-serif;
   font-size: 16px;
+  color: black;
+}
+
+.user-info-suffix {
+  font-family: "NanumSquareR", sans-serif;
+  font-size: 14px;
+  color: black;
+}
+
+.greeting {
+  display: block;
+  text-align: center;
+  margin-top: 0;
+  margin-bottom: 10px;
+  font-family: "NanumSquareR", sans-serif;
+  font-size: 14px;
+  color: black;
+}
+
+.greeting strong {
+  font-family: "NanumSquareB", sans-serif;
+  font-size: 14px;
+  color: black;
 }
 
 .profile-img {
@@ -72,4 +97,69 @@
   height: 40px;
   border-radius: 50%;
   object-fit: cover;
+  margin-right: 10px;
+}
+
+.user-info {
+  position: relative;
+  cursor: pointer;
+}
+
+.dropdown-menu {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  background: white;
+  padding: 30px;
+  margin: 10px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  min-width: 200px;
+  z-index: 999;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.dropdown-menu .profile-img {
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-bottom: 10px;
+}
+
+.greeting {
+  display: block;
+  text-align: center;
+  margin-top: 0;
+  margin-bottom: 20px;
+  font-size: 14px;
+}
+
+.greeting strong {
+  font-size: 14px;
+}
+
+.info-btn,
+.logout-btn {
+  display: block;
+  width: 100%;
+  margin: 6px 0;
+  padding: 10px;
+  max-width: 100px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  font-family: "NanumSquareR", sans-serif;
+  font-size: 12px;
+  color: #5a5f67;
+}
+
+.info-btn {
+  background-color: #d9d9d9;
+}
+
+.logout-btn {
+  background-color: #ffe600;
 }

@@ -208,7 +208,7 @@ const MapView = ({ filterValues }: MapViewProps) => {
         <button onClick={handleCurrentLocation}>내 위치</button>
       </div>
 
-      {!isLoggedIn && (
+      {isLoggedIn && (
         <>
           <div className={`map-button-distance ${showDistancePanel ? "active" : ""}`} style={{ left: 110 }}>
             <button onClick={() => setShowDistancePanel((prev) => !prev)}>

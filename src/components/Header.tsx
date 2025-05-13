@@ -11,6 +11,7 @@ interface UserInfo {
 const Header = () => {
   const location = useLocation();
   const [userInfo, setUserInfo] = useState<UserInfo | null>(null);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
   const getActiveClass = (path: string) => (location.pathname === path ? "active" : "");
 
@@ -33,6 +34,19 @@ const Header = () => {
     };
 
     getUserInfo();
+  }, []);
+
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (!(e.target as HTMLElement).closest(".user-info")) {
+        setIsDropdownOpen(false);
+      }
+    };
+
+    document.addEventListener("click", handleClickOutside);
+    return () => {
+      document.removeEventListener("click", handleClickOutside);
+    };
   }, []);
 
   return (
@@ -61,10 +75,22 @@ const Header = () => {
             <button className="login-button">메인화면</button>
           </a>
         ) : userInfo ? (
-          <div className="user-info">
+          <div className="user-info" onClick={() => setIsDropdownOpen(!isDropdownOpen)}>
             <img src={`data:image/png;base64,${userInfo.profile}`} alt="프로필" className="profile-img" />
-            <span className="user-info-name">{userInfo.name}</span>
-            <span>님</span>
+            <span className="user-info-name">
+              <strong>{userInfo.name}</strong>
+            </span>
+            <span className="user-info-suffix">님</span>
+            {isDropdownOpen && (
+              <div className="dropdown-menu">
+                <img src={`data:image/png;base64,${userInfo.profile}`} alt="프로필" className="profile-img" />
+                <span className="greeting">
+                  <strong>{userInfo.name}</strong> 님, 안녕하세요!
+                </span>
+                <button className="info-btn">내 정보 수정</button>
+                <button className="logout-btn">로그아웃</button>
+              </div>
+            )}
           </div>
         ) : (
           <a href="/login" className={getActiveClass("/login")}>
