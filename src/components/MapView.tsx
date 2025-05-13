@@ -106,7 +106,7 @@ const MapView = ({ filterValues }: MapViewProps) => {
       if (status === kakao.maps.services.Status.OK) {
         const coords = new kakao.maps.LatLng(result[0].y, result[0].x);
 
-        mapInstance.current.setCenter(coords);
+        mapInstance.current.panTo(coords);
 
         new kakao.maps.Marker({
           map: mapInstance.current,
@@ -138,7 +138,7 @@ const MapView = ({ filterValues }: MapViewProps) => {
         if (navigator.geolocation) {
           navigator.geolocation.getCurrentPosition((pos) => {
             const latlng = new kakao.maps.LatLng(pos.coords.latitude, pos.coords.longitude);
-            map.setCenter(latlng);
+            map.panTo(latlng);
 
             new kakao.maps.Marker({
               map,
@@ -171,7 +171,7 @@ const MapView = ({ filterValues }: MapViewProps) => {
     if (navigator.geolocation && mapInstance.current && kakao?.maps) {
       navigator.geolocation.getCurrentPosition((pos) => {
         const latlng = new kakao.maps.LatLng(pos.coords.latitude, pos.coords.longitude);
-        mapInstance.current.setCenter(latlng);
+        mapInstance.current.panTo(latlng);
 
         new kakao.maps.Marker({
           map: mapInstance.current,
