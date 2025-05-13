@@ -48,56 +48,53 @@ const RegisterForm = () => {
   };
 
   const handleRegister = async () => {
-    if (!name || !password || !confirmPassword || !email) {
-      setErrorMessage("모든 항목을 입력해 주세요.");
-      return;
-    }
+  if (!name || !password || !confirmPassword || !email) {
+    setErrorMessage("모든 항목을 입력해 주세요.");
+    return;
+  }
 
-    if (password !== confirmPassword) {
-      setErrorMessage("비밀번호가 일치하지 않습니다.");
-      return;
-    }
+  if (password !== confirmPassword) {
+    setErrorMessage("비밀번호가 일치하지 않습니다.");
+    return;
+  }
 
-    if (!isEmailChecked) {
-      setErrorMessage("이메일 중복 확인을 해주세요.");
-      return;
-    }
+  if (!isEmailChecked) {
+    setErrorMessage("이메일 중복 확인을 해주세요.");
+    return;
+  }
 
-    const formData = new FormData();
-    const userData = {
-      name,
-      email,
-      password,
-    };
+  const formData = new FormData();
+  const userData = { name, email, password };
 
-    const jsonBlob = new Blob([JSON.stringify(userData)], {
-      type: "application/json",
-    });
+  formData.append("data", new Blob([JSON.stringify(userData)], { type: "application/json" }));
 
-    formData.append("data", jsonBlob);
+  try {
     if (profileImage) {
       formData.append("profileImage", profileImage);
+    } else {
+      const defaultImageResponse = await fetch(user);
+      const defaultImageBlob = await defaultImageResponse.blob();
+      formData.append("profileImage", defaultImageBlob, "default.png");
     }
 
-    try {
-      const response = await fetch("/api/user/register", {
-        method: "POST",
-        body: formData,
-      });
+    const response = await fetch("/api/user/register", {
+      method: "POST",
+      body: formData,
+    });
 
-      const result = await response.text();
+    const result = await response.text();
 
-      if (!response.ok) {
-        setErrorMessage(result || "회원가입에 실패했습니다.");
-        return;
-      }
-
-      navigate("/login");
-    } catch (error) {
-      console.error("회원가입 오류:", error);
-      setErrorMessage("서버 오류가 발생했습니다.");
+    if (!response.ok) {
+      setErrorMessage(result || "회원가입에 실패했습니다.");
+      return;
     }
-  };
+
+    navigate("/login");
+  } catch (error) {
+    console.error("회원가입 오류:", error);
+    setErrorMessage("서버 오류가 발생했습니다.");
+  }
+};
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];

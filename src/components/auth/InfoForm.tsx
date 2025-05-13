@@ -25,8 +25,7 @@ const InfoForm = ({ isAdmin = false }: InfoFormProps) => {
   useEffect(() => {
     const fetchUserInfo = async () => {
       try {
-        const token = localStorage.getItem("accessToken"); // 로그인 시 저장한 JWT
-
+        const token = localStorage.getItem("accessToken");
         if (!token) {
           setErrorMessage("로그인이 필요합니다.");
           return;
@@ -36,7 +35,7 @@ const InfoForm = ({ isAdmin = false }: InfoFormProps) => {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`, // ✅ 여기서 JWT 넘겨줌
+            Authorization: `Bearer ${token}`,
           },
         });
 
@@ -45,8 +44,6 @@ const InfoForm = ({ isAdmin = false }: InfoFormProps) => {
         }
 
         const data = await response.json();
-
-        // 가져온 사용자 정보 저장
         setName(data.name || "");
         setEmail(data.email || "");
         setWorkAddress(data.workAddress || "");
@@ -63,32 +60,54 @@ const InfoForm = ({ isAdmin = false }: InfoFormProps) => {
     fetchUserInfo();
   }, []);
 
+  // 이미지 미리보기 URL 메모리 해제
+  useEffect(() => {
+    return () => {
+      if (previewUrl) {
+        URL.revokeObjectURL(previewUrl);
+      }
+    };
+  }, [previewUrl]);
+
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      if (previewUrl) URL.revokeObjectURL(previewUrl);
+      setProfileImage(file);
+      setPreviewUrl(URL.createObjectURL(file));
+    }
+  };
+
   const handleUpdate = async () => {
-    if (!name || !email || !password || !confirmPassword) {
-      setErrorMessage("모든 항목을 입력해 주세요.");
+    if (!name || !email) {
+      setErrorMessage("이름과 이메일은 필수 항목입니다.");
       return;
     }
 
-    if (password !== confirmPassword) {
+    if ((password || confirmPassword) && password !== confirmPassword) {
       setErrorMessage("비밀번호가 일치하지 않습니다.");
       return;
     }
 
-    const formData = new FormData();
-    const userData: any = { name, email, password };
-
+    const userData: any = { name, email };
+    if (password) userData.password = password;
     if (!isAdmin) {
       userData.workAddress = workAddress;
       userData.schoolAddress = schoolAddress;
     }
 
-    const jsonBlob = new Blob([JSON.stringify(userData)], { type: "application/json" });
-    formData.append("data", jsonBlob);
+    const formData = new FormData();
+    formData.append("data", new Blob([JSON.stringify(userData)], { type: "application/json" }));
     if (profileImage) formData.append("profileImage", profileImage);
 
     try {
+      const token = localStorage.getItem("accessToken");
+
       const res = await fetch("/api/user/update", {
         method: "PATCH",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
         body: formData,
       });
 
@@ -98,7 +117,7 @@ const InfoForm = ({ isAdmin = false }: InfoFormProps) => {
         return;
       }
 
-      alert("수정 완료!");
+      alert("수정이 완료되었습니다.");
       navigate("/");
     } catch (err) {
       console.error("업데이트 오류:", err);
@@ -111,8 +130,13 @@ const InfoForm = ({ isAdmin = false }: InfoFormProps) => {
     if (!confirmDelete) return;
 
     try {
+      const token = localStorage.getItem("accessToken");
+
       const res = await fetch("/api/user/info", {
         method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       });
 
       const result = await res.text();
@@ -122,21 +146,12 @@ const InfoForm = ({ isAdmin = false }: InfoFormProps) => {
       }
 
       alert("계정이 삭제되었습니다.");
-      localStorage.removeItem("token");
+      localStorage.removeItem("accessToken");
       localStorage.removeItem("role");
       navigate("/");
     } catch (err) {
       console.error("계정 삭제 오류:", err);
       setErrorMessage("서버 오류가 발생했습니다.");
-    }
-  };
-
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      if (previewUrl) URL.revokeObjectURL(previewUrl);
-      setProfileImage(file);
-      setPreviewUrl(URL.createObjectURL(file));
     }
   };
 
