@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import "../../styles/RegisterForm.css";
 import user from "../../assets/img/user.png";
 import useDaumPostcode from "../../hooks/useDaumPostcode";
+import axios from "axios";
 
 interface InfoFormProps {
   isAdmin?: boolean;
@@ -31,19 +32,13 @@ const InfoForm = ({ isAdmin = false }: InfoFormProps) => {
           return;
         }
 
-        const response = await fetch("/api/user/info", {
-          method: "GET",
+        const response = await axios.get("/api/user/info", {
           headers: {
-            "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
           },
         });
 
-        if (!response.ok) {
-          throw new Error("인증 실패 또는 서버 오류");
-        }
-
-        const data = await response.json();
+        const data = response.data;
         setName(data.name || "");
         setEmail(data.email || "");
         setWorkAddress(data.workAddress || "");
@@ -60,7 +55,6 @@ const InfoForm = ({ isAdmin = false }: InfoFormProps) => {
     fetchUserInfo();
   }, []);
 
-  // 이미지 미리보기 URL 메모리 해제
   useEffect(() => {
     return () => {
       if (previewUrl) {
@@ -79,8 +73,15 @@ const InfoForm = ({ isAdmin = false }: InfoFormProps) => {
   };
 
   const handleUpdate = async () => {
-    if (!name || !email) {
-      setErrorMessage("이름과 이메일은 필수 항목입니다.");
+    setErrorMessage("");
+    const token = localStorage.getItem("accessToken");
+    if (!token) {
+      setErrorMessage("로그인이 필요합니다.");
+      return;
+    }
+
+    if (!name) {
+      setErrorMessage("이름은 필수 항목입니다.");
       return;
     }
 
@@ -89,69 +90,59 @@ const InfoForm = ({ isAdmin = false }: InfoFormProps) => {
       return;
     }
 
-    const userData: any = { name, email };
-    if (password) userData.password = password;
-    if (!isAdmin) {
-      userData.workAddress = workAddress;
-      userData.schoolAddress = schoolAddress;
-    }
+    const userData: any = {
+      name,
+      password: password || undefined,
+      workAddress: workAddress || null,
+      schoolAddress: schoolAddress || null,
+    };
 
     const formData = new FormData();
     formData.append("data", new Blob([JSON.stringify(userData)], { type: "application/json" }));
-    if (profileImage) formData.append("profileImage", profileImage);
 
     try {
-      const token = localStorage.getItem("accessToken");
+      if (profileImage) {
+        formData.append("profileImage", profileImage);
+      } else {
+        const defaultImgResponse = await fetch(user);
+        const blob = await defaultImgResponse.blob();
+        formData.append("profileImage", blob, "default.png");
+      }
 
-      const res = await fetch("/api/user/update", {
-        method: "PATCH",
+      const response = await axios.patch("/api/user/info", formData, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
-        body: formData,
       });
-
-      const result = await res.text();
-      if (!res.ok) {
-        setErrorMessage(result || "정보 수정 실패");
-        return;
-      }
 
       alert("수정이 완료되었습니다.");
       navigate("/");
-    } catch (err) {
-      console.error("업데이트 오류:", err);
-      setErrorMessage("서버 오류가 발생했습니다.");
+    } catch (error: any) {
+      console.error("업데이트 오류:", error);
+      setErrorMessage(error.response?.data || "정보 수정 실패");
     }
   };
 
   const handleDeleteAccount = async () => {
-    const confirmDelete = window.confirm("정말로 계정을 삭제하시겠습니까? 삭제 후 복구할 수 없습니다.");
+    const confirmDelete = window.confirm("정말로 계정을 삭제하시겠습니까?");
     if (!confirmDelete) return;
 
     try {
       const token = localStorage.getItem("accessToken");
 
-      const res = await fetch("/api/user/info", {
-        method: "DELETE",
+      await axios.delete("/api/user/info", {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
 
-      const result = await res.text();
-      if (!res.ok) {
-        setErrorMessage(result || "계정 삭제 실패");
-        return;
-      }
-
       alert("계정이 삭제되었습니다.");
       localStorage.removeItem("accessToken");
       localStorage.removeItem("role");
       navigate("/");
-    } catch (err) {
+    } catch (err: any) {
       console.error("계정 삭제 오류:", err);
-      setErrorMessage("서버 오류가 발생했습니다.");
+      setErrorMessage(err.response?.data || "계정 삭제 실패");
     }
   };
 
@@ -160,8 +151,8 @@ const InfoForm = ({ isAdmin = false }: InfoFormProps) => {
       <img src={previewUrl || user} alt="프로필" className="profile-preview" />
 
       <input type="text" placeholder="이름" value={name} onChange={(e) => setName(e.target.value)} />
-      <input type="email" placeholder="이메일" value={email} onChange={(e) => setEmail(e.target.value)} />
-      <input type="password" placeholder="비밀번호" value={password} onChange={(e) => setPassword(e.target.value)} />
+      <input type="email" placeholder="이메일 (수정 불가)" value={email} readOnly />
+      <input type="password" placeholder="새 비밀번호" value={password} onChange={(e) => setPassword(e.target.value)} />
       <input
         type="password"
         placeholder="비밀번호 확인"
@@ -173,14 +164,14 @@ const InfoForm = ({ isAdmin = false }: InfoFormProps) => {
       {!isAdmin && (
         <>
           <div className="input-with-button">
-            <input type="text" placeholder="직장 주소 입력" value={workAddress} readOnly />
+            <input type="text" placeholder="직장 주소 입력" value={workAddress || ""} readOnly />
             <button type="button" className="address-btn" onClick={() => openPostcode(setWorkAddress)}>
               주소 검색
             </button>
           </div>
 
           <div className="input-with-button">
-            <input type="text" placeholder="학교 주소 입력" value={schoolAddress} readOnly />
+            <input type="text" placeholder="학교 주소 입력" value={schoolAddress || ""} readOnly />
             <button type="button" className="address-btn" onClick={() => openPostcode(setSchoolAddress)}>
               주소 검색
             </button>
