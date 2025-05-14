@@ -7,6 +7,19 @@ import tradeMarker from "../assets/img/trade-marker.png";
 
 const KAKAO_JS_API_KEY = import.meta.env.VITE_KAKAO_JS_API_KEY;
 
+interface DealItemRaw {
+  aptNm: string;
+  dealAmount?: string;
+  deposit?: string;
+  buildYear: number;
+  excluUseAr?: number;
+  floor?: number;
+  roadAddr?: string;
+  umdNm?: string;
+  jibun?: string;
+  [key: string]: any;
+}
+
 interface MapViewProps {
   filterValues: {
     sido: string;
@@ -15,9 +28,10 @@ interface MapViewProps {
     regionCode: string;
     yyyymm: string;
   } | null;
+  onUpdateDeals: (trades: DealItemRaw[], rents: DealItemRaw[]) => void;
 }
 
-const MapView = ({ filterValues }: MapViewProps) => {
+const MapView = ({ filterValues, onUpdateDeals }: MapViewProps) => {
   const mapRef = useRef<HTMLDivElement>(null);
   const mapInstance = useRef<any>(null);
   const [showDistancePanel, setShowDistancePanel] = useState(false);
@@ -45,9 +59,10 @@ const MapView = ({ filterValues }: MapViewProps) => {
     });
   };
 
-  let openInfoWindow: any = null; // 전역 또는 외부 변수로 선언
+  let openInfoWindow: any = null;
+  let openMarker: any = null;
 
-  const renderMarkersByType = (items: any[], type: "매매" | "전월세") => {
+  const renderMarkersByType = (items: DealItemRaw[], type: "매매" | "전월세") => {
     const kakao = (window as any).kakao;
     const geocoder = new kakao.maps.services.Geocoder();
 
@@ -75,12 +90,10 @@ const MapView = ({ filterValues }: MapViewProps) => {
             <div style="
               padding: 12px 16px;
               font-size: 13px;
-              min-width: 230px;
-              max-width: 280px;
               font-family: 'Apple SD Gothic Neo', sans-serif;
               color: #333;
             ">
-              <div style="font-size: 14px; font-weight: bold; margin-bottom: 6px; color: #2a2a2a;">
+              <div style="font-size: 14px; font-weight: bold; margin-bottom: 6px;">
                 ${apt.aptNm}
               </div>
               <div style="margin-bottom: 4px;">
@@ -93,22 +106,23 @@ const MapView = ({ filterValues }: MapViewProps) => {
                   })()}
                 </span>
               </div>
-              <div>
-                유형: <span style="font-weight: 600; color: #555;">${type}</span>
-              </div>
+              <div>유형: ${type}</div>
             </div>
           `,
           });
 
           kakao.maps.event.addListener(marker, "click", () => {
-            // 기존 열린 infoWindow가 있으면 닫기
-            if (openInfoWindow) {
-              openInfoWindow.close();
+            if (openMarker === marker) {
+              // 같은 마커면 toggle로 닫기
+              openInfoWindow?.close();
+              openInfoWindow = null;
+              openMarker = null;
+            } else {
+              // 새 마커 열기
+              infoWindow.open(mapInstance.current, marker);
+              openInfoWindow = infoWindow;
+              openMarker = marker;
             }
-
-            // 새 창 열기 및 현재 창 기억
-            infoWindow.open(mapInstance.current, marker);
-            openInfoWindow = infoWindow;
           });
         } else {
           console.warn("좌표 변환 실패:", address);
@@ -132,6 +146,8 @@ const MapView = ({ filterValues }: MapViewProps) => {
 
       renderMarkersByType(limitedTrade, "매매");
       renderMarkersByType(limitedRent, "전월세");
+
+      onUpdateDeals(limitedTrade, limitedRent); // ✅ 데이터 상위로 전달
     } catch (error) {
       console.error("실거래 데이터 불러오기 실패", error);
     }
@@ -177,12 +193,7 @@ const MapView = ({ filterValues }: MapViewProps) => {
             map.panTo(latlng);
 
             const markerImage = new kakao.maps.MarkerImage(myLocation, new kakao.maps.Size(36, 40));
-
-            new kakao.maps.Marker({
-              map,
-              position: latlng,
-              image: markerImage,
-            });
+            new kakao.maps.Marker({ map, position: latlng, image: markerImage });
           });
         }
       } catch (err) {
@@ -213,12 +224,7 @@ const MapView = ({ filterValues }: MapViewProps) => {
         mapInstance.current.panTo(latlng);
 
         const markerImage = new kakao.maps.MarkerImage(myLocation, new kakao.maps.Size(36, 40));
-
-        new kakao.maps.Marker({
-          map: mapInstance.current,
-          position: latlng,
-          image: markerImage,
-        });
+        new kakao.maps.Marker({ map: mapInstance.current, position: latlng, image: markerImage });
       });
     }
   };

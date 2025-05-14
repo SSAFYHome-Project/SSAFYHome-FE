@@ -14,6 +14,7 @@ import SidebarFeedback from "../components/sidebar-panels/SidebarFeedback";
 import MapView from "../components/MapView";
 import AISummary from "../components/AISummary";
 import SafetyGrade from "../components/SafetyGrade";
+import PropertyCardList from "../components/PropertyCardList";
 
 import "../styles/MainPage.css";
 
@@ -25,6 +26,14 @@ type Filters = {
   yyyymm: string;
 };
 
+type DealItem = {
+  aptName: string;
+  dealAmount: string;
+  buildYear: string;
+  area: string;
+  floor: string;
+};
+
 const MainPage = () => {
   const [hasResult, setHasResult] = useState(false);
   const [filterValues, setFilterValues] = useState<Filters | null>(null);
@@ -32,21 +41,23 @@ const MainPage = () => {
   const [activeSidebar, setActiveSidebar] = useState<null | "detail" | "favorite" | "recent" | "custom" | "feedback">(
     null
   );
+  const [activeTab, setActiveTab] = useState<"trade" | "rent">("trade");
+  const [tradeItems, setTradeItems] = useState<DealItem[]>([]);
+  const [rentItems, setRentItems] = useState<DealItem[]>([]);
+  const [selectedItem, setSelectedItem] = useState<DealItem | null>(null);
 
   const handleSearchResult = (filters: Filters) => {
-    console.log("검색 필터:", filters);
     setHasResult(true);
     setFilterValues(filters);
   };
 
   const handleFilterApply = (filters: Filters) => {
-    console.log("필터바 필터:", filters);
     setHasResult(true);
     setFilterValues(filters);
   };
 
   const sidebarPanels = {
-    detail: <SidebarDetail />,
+    detail: <SidebarDetail item={selectedItem} />,
     favorite: <SidebarFavorite />,
     recent: <SidebarRecent />,
     custom: <SidebarCustom />,
@@ -79,14 +90,70 @@ const MainPage = () => {
             <FilterBar onFilterChange={handleFilterApply} />
             <AISummaryButton isVisible={hasResult} onClick={() => setShowSummary(true)} />
           </div>
+
           <div className="map-view">
-            <MapView filterValues={filterValues} />
+            <MapView
+              filterValues={filterValues}
+              onUpdateDeals={(rawTrades: any[], rawRents: any[]) => {
+                const normalizedTrades = rawTrades.map((item) => ({
+                  aptName: item.aptNm,
+                  dealAmount: item.dealAmount,
+                  buildYear: String(item.buildYear),
+                  area: String(item.excluUseAr ?? "-"),
+                  floor: String(item.floor ?? "-"),
+                }));
+                const normalizedRents = rawRents.map((item) => ({
+                  aptName: item.aptNm,
+                  dealAmount: item.rentPrice || item.deposit || "-",
+                  buildYear: String(item.buildYear),
+                  area: String(item.excluUseAr ?? "-"),
+                  floor: String(item.floor ?? "-"),
+                }));
+                setTradeItems(normalizedTrades);
+                setRentItems(normalizedRents);
+              }}
+            />
           </div>
+
+          {hasResult && (
+            <>
+              <div className="property-toggle-tabs">
+                <button className={activeTab === "trade" ? "active" : ""} onClick={() => setActiveTab("trade")}>
+                  매매 매물
+                </button>
+                <button className={activeTab === "rent" ? "active" : ""} onClick={() => setActiveTab("rent")}>
+                  전월세 매물
+                </button>
+              </div>
+
+              <div className="property-lists">
+                {activeTab === "trade" && (
+                  <PropertyCardList
+                    title="매매 매물"
+                    items={tradeItems}
+                    onSelect={(item) => {
+                      setSelectedItem(item);
+                      setActiveSidebar("detail");
+                    }}
+                  />
+                )}
+                {activeTab === "rent" && (
+                  <PropertyCardList
+                    title="전월세 매물"
+                    items={rentItems}
+                    onSelect={(item) => {
+                      setSelectedItem(item);
+                      setActiveSidebar("detail");
+                    }}
+                  />
+                )}
+              </div>
+            </>
+          )}
         </div>
       </div>
 
       {showSummary && <AISummary summaryText={summaryText} onClose={() => setShowSummary(false)} />}
-
       {hasResult && <SafetyGrade />}
     </div>
   );

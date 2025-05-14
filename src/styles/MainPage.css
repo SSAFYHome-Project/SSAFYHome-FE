@@ -15,17 +15,17 @@
 .main-content {
   flex: 1;
   width: 100%;
-  padding-right: 65px; 
+  padding-right: 65px;
 }
 
 .main-content.with-sidebar-panel {
-  padding-right: 500px; 
+  padding-right: 500px;
 }
 
 .main-layout {
   display: flex;
   flex-direction: column;
-  height: calc(100vh - 65px); 
+  height: calc(100vh - 65px);
   background-color: #f9f9f9;
 }
 
@@ -41,9 +41,31 @@
 .map-view {
   display: flex;
   justify-content: center;
-  align-items: start; 
+  align-items: start;
   height: 100%;
   padding: 4rem;
   padding-top: 0rem;
   padding-bottom: 0rem;
+}
+
+.property-toggle-tabs {
+  display: flex;
+  justify-content: center;
+  margin: 1rem 0;
+  gap: 1rem;
+}
+
+.property-toggle-tabs button {
+  padding: 0.5rem 1rem;
+  border: 1px solid #ccc;
+  background: #f9f9f9;
+  cursor: pointer;
+  border-radius: 6px;
+  font-weight: bold;
+}
+
+.property-toggle-tabs button.active {
+  background: #007bff;
+  color: white;
+  border-color: #007bff;
 }
