@@ -28,10 +28,12 @@ type Filters = {
 
 type DealItem = {
   aptName: string;
-  dealAmount: string;
+  dealAmount?: string;
+  deposit?: string;
   area: string;
   floor: string;
   umdNm: string;
+  monthlyRent?: string;
 };
 
 const MainPage = () => {
@@ -76,21 +78,40 @@ const MainPage = () => {
 
 롯데월드, 코엑스몰, 대형마트, 병원 등 주요 편의시설이 가까워 실거주를 고려하시는 분들께 적합한 입지입니다.`;
 
-  const sortedItems = [...(activeTab === "trade" ? tradeItems : rentItems)].sort((a, b) => {
-    const getNum = (val: string) => parseFloat(val.replace(/,/g, ""));
-    let valA = 0,
-      valB = 0;
+  const getNum = (val: string | undefined) => parseFloat((val ?? "0").replace(/,/g, ""));
 
-    if (sortOption.startsWith("price")) {
-      valA = getNum(a.dealAmount);
-      valB = getNum(b.dealAmount);
-    } else {
-      valA = getNum(a.area);
-      valB = getNum(b.area);
-    }
+  const sortedItems = [...(activeTab === "trade" ? tradeItems : rentItems)];
 
-    return sortOption.endsWith("asc") ? valA - valB : valB - valA;
-  });
+  if (activeTab === "trade") {
+    sortedItems.sort((a, b) => {
+      let valA = 0,
+        valB = 0;
+
+      if (sortOption.startsWith("price")) {
+        valA = getNum(a.dealAmount);
+        valB = getNum(b.dealAmount);
+      } else {
+        valA = getNum(a.area);
+        valB = getNum(b.area);
+      }
+
+      return sortOption.endsWith("asc") ? valA - valB : valB - valA;
+    });
+  } else {
+    sortedItems.sort((a, b) => {
+      let valA = 0,
+        valB = 0;
+
+      if (sortOption.startsWith("area")) {
+        valA = getNum(a.area);
+        valB = getNum(b.area);
+
+        return sortOption.endsWith("asc") ? valA - valB : valB - valA;
+      }
+
+      return 0;
+    });
+  }
 
   return (
     <div className="main-wrapper">
@@ -121,7 +142,8 @@ const MainPage = () => {
                 }));
                 const normalizedRents = rawRents.map((item) => ({
                   aptName: item.aptNm,
-                  dealAmount: item.rentPrice || item.deposit || "-",
+                  deposit: item.deposit,
+                  monthlyRent: item.monthlyRent,
                   area: String(item.excluUseAr ?? "-"),
                   floor: String(item.floor ?? "-"),
                   umdNm: item.umdNm,
