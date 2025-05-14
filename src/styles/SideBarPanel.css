@@ -1,4 +1,5 @@
-body, .sidebar-panel {
+body,
+.sidebar-panel {
   font-family: "NanumSquareR", sans-serif;
   color: #5a5f67;
 }
@@ -33,7 +34,7 @@ body, .sidebar-panel {
   color: #5a5f67;
   margin: 0.5rem 0 1.5rem 0;
   padding-bottom: 1rem;
-  line-height: 1.6
+  line-height: 1.6;
 }
 
 .favorite-box {
@@ -62,7 +63,6 @@ body, .sidebar-panel {
 .panel-meta {
   margin-bottom: 2rem;
 }
-
 
 .panel-select-row {
   display: flex;
@@ -295,13 +295,13 @@ body, .sidebar-panel {
   background: none;
   border: none;
   font-size: 14px;
-  color: #F26671;
+  color: #f26671;
   cursor: pointer;
   padding: 0;
 }
 
 .favorite-delete-btn.hover {
-  color: #ABB2BD;
+  color: #abb2bd;
 }
 
 .favorite-text {
@@ -310,12 +310,12 @@ body, .sidebar-panel {
 }
 
 .favorite-text.hover {
-  color: #F26671;
+  color: #f26671;
 }
 
 .favorite-price {
   font-family: "NanumSquareEB", sans-serif;
   font-size: 20px;
-  color: #3182F6;
+  color: #3182f6;
   margin: 0 0 10px 0;
 }

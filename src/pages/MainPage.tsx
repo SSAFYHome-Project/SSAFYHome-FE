@@ -117,15 +117,17 @@ const MainPage = () => {
 
           {hasResult && (
             <>
-              <div className="property-toggle-tabs">
-                <button className={activeTab === "trade" ? "active" : ""} onClick={() => setActiveTab("trade")}>
-                  매매 매물
-                </button>
-                <button className={activeTab === "rent" ? "active" : ""} onClick={() => setActiveTab("rent")}>
-                  전월세 매물
-                </button>
+              <div className="property-toggle-tabs-container">
+                <div className="property-toggle-tabs">
+                  <div className={`indicator ${activeTab}`} />
+                  <button className={activeTab === "trade" ? "active" : ""} onClick={() => setActiveTab("trade")}>
+                    매매 매물
+                  </button>
+                  <button className={activeTab === "rent" ? "active" : ""} onClick={() => setActiveTab("rent")}>
+                    전월세 매물
+                  </button>
+                </div>
               </div>
-
               <div className="property-lists">
                 {activeTab === "trade" && (
                   <PropertyCardList

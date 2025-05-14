@@ -113,12 +113,10 @@ const MapView = ({ filterValues, onUpdateDeals }: MapViewProps) => {
 
           kakao.maps.event.addListener(marker, "click", () => {
             if (openMarker === marker) {
-              // 같은 마커면 toggle로 닫기
               openInfoWindow?.close();
               openInfoWindow = null;
               openMarker = null;
             } else {
-              // 새 마커 열기
               infoWindow.open(mapInstance.current, marker);
               openInfoWindow = infoWindow;
               openMarker = marker;
@@ -138,11 +136,11 @@ const MapView = ({ filterValues, onUpdateDeals }: MapViewProps) => {
       const tradeItems = response.data?.trade?.response?.body?.items?.item || [];
       const rentItems = response.data?.rent?.response?.body?.items?.item || [];
 
-      const limitedTrade = tradeItems.slice(0, 10);
-      const limitedRent = rentItems.slice(0, 10);
+      const limitedTrade = tradeItems.slice(0, 12);
+      const limitedRent = rentItems.slice(0, 12);
 
-      console.log("매매 (10개):", limitedTrade);
-      console.log("전월세 (10개):", limitedRent);
+      console.log("매매 (12개):", limitedTrade);
+      console.log("전월세 (12개):", limitedRent);
 
       renderMarkersByType(limitedTrade, "매매");
       renderMarkersByType(limitedRent, "전월세");

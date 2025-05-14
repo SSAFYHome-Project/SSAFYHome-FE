@@ -48,24 +48,59 @@
   padding-bottom: 0rem;
 }
 
-.property-toggle-tabs {
+.property-toggle-tabs-container {
   display: flex;
   justify-content: center;
-  margin: 1rem 0;
-  gap: 1rem;
+  margin: 1.5rem 0;
+}
+
+.property-toggle-tabs {
+  position: relative;
+  display: flex;
+  background-color: #f1f3f5;
+  padding: 4px;
+  border-radius: 9999px;
+  width: 260px;
+  height: 44px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
 .property-toggle-tabs button {
-  padding: 0.5rem 1rem;
-  border: 1px solid #ccc;
-  background: #f9f9f9;
+  flex: 1;
+  border: none;
+  background: transparent;
+  padding: 0.4rem 0;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: #495057;
+  border-radius: 9999px;
+  z-index: 1;
   cursor: pointer;
-  border-radius: 6px;
-  font-weight: bold;
+  transition: color 0.3s ease;
 }
 
 .property-toggle-tabs button.active {
-  background: #007bff;
-  color: white;
-  border-color: #007bff;
+  color: #212529;
+  font-weight: 600;
+}
+
+.property-toggle-tabs .indicator {
+  position: absolute;
+  top: 4px;
+  left: 4px;
+  width: calc(50% - 4px);
+  height: 36px;
+  background-color: white;
+  border-radius: 9999px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+  transition: transform 0.3s ease;
+  z-index: 0;
+}
+
+.property-toggle-tabs .indicator.rent {
+  transform: translateX(100%);
+}
+
+.property-toggle-tabs .indicator.trade {
+  transform: translateX(0%);
 }
