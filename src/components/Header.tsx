@@ -49,6 +49,13 @@ const Header = () => {
     };
   }, []);
 
+  const handleLogout = () => {
+    localStorage.removeItem("accessToken");
+    localStorage.removeItem("refreshToken");
+
+    window.location.href = "/";
+  };
+
   return (
     <header className="header">
       <div className="logo-area">
@@ -90,7 +97,9 @@ const Header = () => {
                 <button className="info-btn" onClick={() => navigate("/info")}>
                   내 정보 수정
                 </button>
-                <button className="logout-btn">로그아웃</button>
+                <button className="logout-btn" onClick={handleLogout}>
+                  로그아웃
+                </button>
               </div>
             )}
           </div>
