@@ -45,6 +45,7 @@ const MainPage = () => {
   const [tradeItems, setTradeItems] = useState<DealItem[]>([]);
   const [rentItems, setRentItems] = useState<DealItem[]>([]);
   const [selectedItem, setSelectedItem] = useState<DealItem | null>(null);
+  const [sortOption, setSortOption] = useState<"price-asc" | "price-desc" | "area-asc" | "area-desc">("price-asc");
 
   const handleSearchResult = (filters: Filters) => {
     setHasResult(true);
@@ -74,6 +75,22 @@ const MainPage = () => {
 지하철 2호선 삼성역까지는 도보 약 10분 거리입니다.
 
 롯데월드, 코엑스몰, 대형마트, 병원 등 주요 편의시설이 가까워 실거주를 고려하시는 분들께 적합한 입지입니다.`;
+
+  const sortedItems = [...(activeTab === "trade" ? tradeItems : rentItems)].sort((a, b) => {
+    const getNum = (val: string) => parseFloat(val.replace(/,/g, ""));
+    let valA = 0,
+      valB = 0;
+
+    if (sortOption.startsWith("price")) {
+      valA = getNum(a.dealAmount);
+      valB = getNum(b.dealAmount);
+    } else {
+      valA = getNum(a.area);
+      valB = getNum(b.area);
+    }
+
+    return sortOption.endsWith("asc") ? valA - valB : valB - valA;
+  });
 
   return (
     <div className="main-wrapper">
@@ -127,12 +144,20 @@ const MainPage = () => {
                     전월세 매물
                   </button>
                 </div>
+                <div className="sort-dropdown">
+                  <select value={sortOption} onChange={(e) => setSortOption(e.target.value as any)}>
+                    <option value="price-asc">가격 낮은 순</option>
+                    <option value="price-desc">가격 높은 순</option>
+                    <option value="area-asc">평수 낮은 순</option>
+                    <option value="area-desc">평수 높은 순</option>
+                  </select>
+                </div>
               </div>
               <div className="property-lists">
                 {activeTab === "trade" && (
                   <PropertyCardList
-                    title="매매 매물"
-                    items={tradeItems}
+                    title={activeTab === "trade" ? "매매 매물" : "전월세 매물"}
+                    items={sortedItems}
                     onSelect={(item) => {
                       setSelectedItem(item);
                       setActiveSidebar("detail");
@@ -141,8 +166,8 @@ const MainPage = () => {
                 )}
                 {activeTab === "rent" && (
                   <PropertyCardList
-                    title="전월세 매물"
-                    items={rentItems}
+                    title={activeTab === "rent" ? "매매 매물" : "전월세 매물"}
+                    items={sortedItems}
                     onSelect={(item) => {
                       setSelectedItem(item);
                       setActiveSidebar("detail");
