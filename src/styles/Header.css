@@ -160,6 +160,15 @@
   background-color: #d9d9d9;
 }
 
+.info-btn:hover {
+  background-color: #d1d1d1;
+}
+
 .logout-btn {
   background-color: #ffe600;
+}
+
+.logout-btn:hover {
+  background-color: #e2cf00;
+  color: black;
 }

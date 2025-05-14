@@ -29,9 +29,9 @@ type Filters = {
 type DealItem = {
   aptName: string;
   dealAmount: string;
-  buildYear: string;
   area: string;
   floor: string;
+  umdNm: string;
 };
 
 const MainPage = () => {
@@ -98,16 +98,16 @@ const MainPage = () => {
                 const normalizedTrades = rawTrades.map((item) => ({
                   aptName: item.aptNm,
                   dealAmount: item.dealAmount,
-                  buildYear: String(item.buildYear),
                   area: String(item.excluUseAr ?? "-"),
                   floor: String(item.floor ?? "-"),
+                  umdNm: item.umdNm,
                 }));
                 const normalizedRents = rawRents.map((item) => ({
                   aptName: item.aptNm,
                   dealAmount: item.rentPrice || item.deposit || "-",
-                  buildYear: String(item.buildYear),
                   area: String(item.excluUseAr ?? "-"),
                   floor: String(item.floor ?? "-"),
+                  umdNm: item.umdNm,
                 }));
                 setTradeItems(normalizedTrades);
                 setRentItems(normalizedRents);

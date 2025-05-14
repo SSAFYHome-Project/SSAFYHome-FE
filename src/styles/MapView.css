@@ -41,7 +41,6 @@
 
 .map-button button:hover {
   background-color: #e2cf00;
-  transform: translateY(-1px);
 }
 
 .map-button-distance {

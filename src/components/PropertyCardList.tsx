@@ -4,9 +4,9 @@ import "../styles/PropertyCardList.css";
 type DealItem = {
   aptName: string;
   dealAmount: string;
-  buildYear: string;
   area: string;
   floor: string;
+  umdNm: string;
 };
 
 type Props = {
@@ -46,11 +46,24 @@ const PropertyCardList = ({ title, items, onSelect }: Props) => {
                   /> */}
                 </div>
                 <div className="card-body">
-                  <p className="deal-amount">{item.dealAmount}만원</p>
+                  <p className="deal-amount">
+                    {parseFloat((parseInt(item.dealAmount.replace(/,/g, "")) / 10000).toFixed(2)).toString() + "억"}
+                  </p>
                   <p className="info">
                     {item.area}㎡ / {item.floor}층
                   </p>
-                  <p className="info">{item.buildYear}년 건축</p>
+                </div>
+                <div className="card-footer">
+                  <button
+                    className="card-action-btn"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      const query = encodeURIComponent(`${item.umdNm} ${item.aptName}`);
+                      window.open(`https://m.land.naver.com/search/result/${query}`, "_blank");
+                    }}
+                  >
+                    <span className="naver-icon">N</span> 매물 보기
+                  </button>
                 </div>
               </div>
             ))
