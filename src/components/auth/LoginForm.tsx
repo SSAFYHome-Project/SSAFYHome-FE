@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+import axios from "axios";
 import "../../styles/LoginForm.css";
 import googleLogo from "../../assets/img/google_logo.png";
 
@@ -26,29 +27,33 @@ const LoginForm = () => {
     }
 
     try {
-      const response = await fetch("/api/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
+      const response = await axios.post(
+        "/api/login",
+        {
+          email,
+          password,
         },
-        body: JSON.stringify({ email, password }),
-      });
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
 
-      if (!response.ok) {
-        setErrorMessage("이메일 또는 비밀번호가 올바르지 않습니다.");
-        return;
-      }
-
-      const data = await response.json();
-      const token = data.token;
+      const token = response.data.token;
       if (token) {
         localStorage.setItem("accessToken", token);
       }
+
       setErrorMessage("");
       navigate("/");
-    } catch (error) {
+    } catch (error: any) {
       console.error("로그인 오류:", error);
-      setErrorMessage("서버 오류가 발생했습니다.");
+      if (error.response?.status === 401) {
+        setErrorMessage("이메일 또는 비밀번호가 올바르지 않습니다.");
+      } else {
+        setErrorMessage("서버 오류가 발생했습니다.");
+      }
     }
   };
 

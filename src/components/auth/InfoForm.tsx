@@ -9,6 +9,13 @@ interface InfoFormProps {
   isAdmin?: boolean;
 }
 
+interface Address {
+  address: string;
+  detailAddress: string;
+  x: string;
+  y: string;
+}
+
 const InfoForm = ({ isAdmin = false }: InfoFormProps) => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -16,15 +23,26 @@ const InfoForm = ({ isAdmin = false }: InfoFormProps) => {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [profileImage, setProfileImage] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
-  const [workAddress, setWorkAddress] = useState("");
-  const [schoolAddress, setSchoolAddress] = useState("");
+  const [workAddress, setWorkAddress] = useState<Address>({
+    address: "",
+    detailAddress: "",
+    x: "",
+    y: "",
+  });
+  const [schoolAddress, setSchoolAddress] = useState<Address>({
+    address: "",
+    detailAddress: "",
+    x: "",
+    y: "",
+  });
   const [errorMessage, setErrorMessage] = useState("");
+  const [originalAddresses, setOriginalAddresses] = useState<any[]>([]);
 
   const navigate = useNavigate();
   const openPostcode = useDaumPostcode();
 
   useEffect(() => {
-    const fetchUserInfo = async () => {
+    const getUserInfo = async () => {
       try {
         const token = localStorage.getItem("accessToken");
         if (!token) {
@@ -33,16 +51,31 @@ const InfoForm = ({ isAdmin = false }: InfoFormProps) => {
         }
 
         const response = await axios.get("/api/user/info", {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+          headers: { Authorization: `Bearer ${token}` },
         });
 
         const data = response.data;
         setName(data.name || "");
         setEmail(data.email || "");
-        setWorkAddress(data.workAddress || "");
-        setSchoolAddress(data.schoolAddress || "");
+        setOriginalAddresses(data.address || []);
+
+        const school = data.address?.find((a: any) => a.title === "SCHOOL");
+        const company = data.address?.find((a: any) => a.title === "COMPANY");
+
+        setSchoolAddress({
+          address: school?.address || "",
+          detailAddress: school?.detailAddress || "",
+          x: school?.x || "",
+          y: school?.y || "",
+        });
+
+        setWorkAddress({
+          address: company?.address || "",
+          detailAddress: company?.detailAddress || "",
+          x: company?.x || "",
+          y: company?.y || "",
+        });
+
         if (data.profile) {
           setPreviewUrl(`data:image/jpeg;base64,${data.profile}`);
         }
@@ -52,14 +85,12 @@ const InfoForm = ({ isAdmin = false }: InfoFormProps) => {
       }
     };
 
-    fetchUserInfo();
+    getUserInfo();
   }, []);
 
   useEffect(() => {
     return () => {
-      if (previewUrl) {
-        URL.revokeObjectURL(previewUrl);
-      }
+      if (previewUrl) URL.revokeObjectURL(previewUrl);
     };
   }, [previewUrl]);
 
@@ -93,9 +124,36 @@ const InfoForm = ({ isAdmin = false }: InfoFormProps) => {
     const userData: any = {
       name,
       password: password || undefined,
-      workAddress: workAddress || null,
-      schoolAddress: schoolAddress || null,
     };
+
+    const addresses: any[] = [];
+
+    const originalSchool = originalAddresses.find((a: any) => a.title === "SCHOOL");
+    const originalCompany = originalAddresses.find((a: any) => a.title === "COMPANY");
+
+    if (originalCompany || workAddress.address) {
+      addresses.push({
+        title: "COMPANY",
+        address: workAddress.address || "",
+        detailAddress: workAddress.detailAddress || "",
+        x: workAddress.x || "",
+        y: workAddress.y || "",
+      });
+    }
+
+    if (originalSchool || schoolAddress.address) {
+      addresses.push({
+        title: "SCHOOL",
+        address: schoolAddress.address || "",
+        detailAddress: schoolAddress.detailAddress || "",
+        x: schoolAddress.x || "",
+        y: schoolAddress.y || "",
+      });
+    }
+
+    if (addresses.length > 0) {
+      userData.addresses = addresses;
+    }
 
     const formData = new FormData();
     formData.append("data", new Blob([JSON.stringify(userData)], { type: "application/json" }));
@@ -109,16 +167,15 @@ const InfoForm = ({ isAdmin = false }: InfoFormProps) => {
         formData.append("profileImage", blob, "default.png");
       }
 
-      const response = await axios.patch("/api/user/info", formData, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+      await axios.patch("/api/user/info", formData, {
+        headers: { Authorization: `Bearer ${token}` },
       });
 
       alert("수정이 완료되었습니다.");
       navigate("/");
     } catch (error: any) {
       console.error("업데이트 오류:", error);
+      console.error(token);
       setErrorMessage(error.response?.data || "정보 수정 실패");
     }
   };
@@ -131,9 +188,7 @@ const InfoForm = ({ isAdmin = false }: InfoFormProps) => {
       const token = localStorage.getItem("accessToken");
 
       await axios.delete("/api/user/info", {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+        headers: { Authorization: `Bearer ${token}` },
       });
 
       alert("계정이 삭제되었습니다.");
@@ -164,14 +219,14 @@ const InfoForm = ({ isAdmin = false }: InfoFormProps) => {
       {!isAdmin && (
         <>
           <div className="input-with-button">
-            <input type="text" placeholder="직장 주소 입력" value={workAddress || ""} readOnly />
+            <input type="text" placeholder="직장 주소 입력" value={workAddress.address} readOnly />
             <button type="button" className="address-btn" onClick={() => openPostcode(setWorkAddress)}>
               주소 검색
             </button>
           </div>
 
           <div className="input-with-button">
-            <input type="text" placeholder="학교 주소 입력" value={schoolAddress || ""} readOnly />
+            <input type="text" placeholder="학교 주소 입력" value={schoolAddress.address} readOnly />
             <button type="button" className="address-btn" onClick={() => openPostcode(setSchoolAddress)}>
               주소 검색
             </button>

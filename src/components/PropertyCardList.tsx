@@ -28,12 +28,10 @@ const PropertyCardList = ({ title, items, onSelect }: Props) => {
       return num >= 10000 ? (num / 10000).toFixed(2).replace(/\.?0+$/, "") + "억" : num.toLocaleString() + "만원";
     };
 
-    // 매매
     if (item.dealAmount) {
       const deal = parseInt(item.dealAmount.replace(/,/g, ""));
       return `실거래가: ${formatNumber(deal)}`;
     } else {
-      // 전월세
       const deposit = parseInt(String(item.deposit ?? "0").replace(/,/g, ""));
       const rent = parseInt(String(item.monthlyRent ?? "0").replace(/,/g, ""));
 
