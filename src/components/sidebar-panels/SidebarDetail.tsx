@@ -1,87 +1,123 @@
-import { useEffect, useState } from 'react'
-import '../../styles/SideBarPanel.css'
+import { useEffect, useState } from "react";
+import "../../styles/SideBarPanel.css";
+import axios from "axios";
 
-import heartHoverIcon from '../../assets/img/heart-filled.png' // hover 시 빨간 하트
-import heartIcon from '../../assets/img/heart.png' // 기본 회색 하트
-import PriceChart from './PriceChart'
+import heartHoverIcon from "../../assets/img/heart-filled.png";
+import heartIcon from "../../assets/img/heart.png";
+import PriceChart from "./PriceChart";
+
+interface DealItem {
+  aptName: string;
+  dealAmount?: string;
+  deposit?: string;
+  area: string;
+  floor: string;
+  umdNm: string;
+  monthlyRent?: string;
+}
 
 interface SidebarDetailProps {
-  aptCode: string
+  item: DealItem | null;
 }
 
 interface ChartItem {
-  date: string
-  price: number
+  date: string;
+  price: number;
 }
 
-const SidebarDetail = ({ aptCode }: SidebarDetailProps) => {
-  const [selectedType, setSelectedType] = useState<'매매' | '전월세'>('매매')
-  const [chartData, setChartData] = useState<ChartItem[]>([])
-  const [hovered, setHovered] = useState(false)
+const SidebarDetail = ({ item }: SidebarDetailProps) => {
+  const [selectedType, setSelectedType] = useState<"매매" | "전월세">("매매");
+  const [chartData, setChartData] = useState<ChartItem[]>([]);
+  const [hovered, setHovered] = useState(false);
 
+  if (!item) {
+    return (
+      <div className="sidebar-panel">
+        <div className="panel-header">
+          <h2>매물 상세 조회</h2>
+        </div>
+        <div className="panel-header-subtitle">
+          <p>
+            아파트 매물 정보를 확인해보세요. <br />
+            관심 매물 추가 / 삭제가 가능합니다.
+          </p>
+        </div>
+        <p className="empty-text">매물 검색 후 상세 정보를 확인할 수 있습니다.</p>
+      </div>
+    );
+  }
+
+  const { aptName, dealAmount, deposit, area, floor, umdNm, monthlyRent } = item;
+
+  // 더미 차트 데이터
   useEffect(() => {
-    const fetchFavoriteStatus = async () => {
-      try {
-        const res = await fetch(`/api/map/search/${aptCode}`)
-        const data = await res.json()
-        // 필요 시 즐겨찾기 상태 처리 가능
-      } catch (err) {
-        console.error('관심 여부 확인 실패', err)
-      }
-    }
-
-    // Dummy data
     const dummyChartData = [
-      { date: '24.11', price: 30.2 },
-      { date: '24.12', price: 32.5 },
-      { date: '25.01', price: 33.1 },
-      { date: '25.02', price: 34.0 },
-      { date: '25.03', price: 36.5 },
-      { date: '25.04', price: 37.2 }
-    ]
-    setChartData(dummyChartData)
+      { date: "24.11", price: 30.2 },
+      { date: "24.12", price: 32.5 },
+      { date: "25.01", price: 33.1 },
+      { date: "25.02", price: 34.0 },
+      { date: "25.03", price: 36.5 },
+      { date: "25.04", price: 37.2 },
+    ];
+    setChartData(dummyChartData);
+  }, [item]);
 
-    fetchFavoriteStatus()
-  }, [aptCode])
+  const handleBookmark = async () => {
+    try {
+      await axios.post(
+        "/api/user/bookmark",
+        {
+          aptNm: aptName,
+          estateAgentAggNm: "중개사무소명",
+          umdNm,
+          dealAmount: parseInt(dealAmount ?? "0"),
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+          },
+        }
+      );
+      alert("즐겨찾기에 등록했어요! ❤️");
+    } catch (error) {
+      console.error("즐겨찾기 등록 실패:", error);
+      alert("즐겨찾기 등록 중 오류가 발생했어요.");
+    }
+  };
 
   return (
     <div className="sidebar-panel">
       <div className="panel-header">
-        <h2>롯데캐슬프레미어</h2>
+        <h2>{aptName}</h2>
         <div
           className="favorite-box"
           onMouseEnter={() => setHovered(true)}
           onMouseLeave={() => setHovered(false)}
+          onClick={handleBookmark}
         >
-          <img
-            src={hovered ? heartHoverIcon : heartIcon}
-            alt="등록하기"
-            className="heart-img"
-          />
-          <span className={`favorite-text ${hovered ? 'hover' : ''}`}>
-            등록하기
-          </span>
+          <img src={hovered ? heartHoverIcon : heartIcon} alt="등록하기" className="heart-img" />
+          <span className={`favorite-text ${hovered ? "hover" : ""}`}>등록하기</span>
         </div>
       </div>
 
-      <p className="panel-subtitle">서울특별시 강남구 삼성동 11</p>
-      <p className="panel-meta">건물 11동 · 713세대 · 최저 13F / 최고 22F · 2007년</p>
+      <p className="panel-subtitle">{`주소: ${umdNm}`}</p>
+      <p className="panel-meta">{`면적: ${area}㎡ · 층수: ${floor}`}</p>
 
       <div className="panel-select-row">
         <button
-          className={`btn-type ${selectedType === '매매' ? 'active' : ''}`}
-          onClick={() => setSelectedType('매매')}
+          className={`btn-type ${selectedType === "매매" ? "active" : ""}`}
+          onClick={() => setSelectedType("매매")}
         >
           매매
         </button>
         <button
-          className={`btn-type ${selectedType === '전월세' ? 'active' : ''}`}
-          onClick={() => setSelectedType('전월세')}
+          className={`btn-type ${selectedType === "전월세" ? "active" : ""}`}
+          onClick={() => setSelectedType("전월세")}
         >
           전·월세
         </button>
         <select className="size-select">
-          <option>전용 25.56평</option>
+          <option>전용 {area}㎡</option>
         </select>
       </div>
 
@@ -92,8 +128,10 @@ const SidebarDetail = ({ aptCode }: SidebarDetailProps) => {
             <span className="summary-date">25.05.03</span>
           </div>
           <div className="price-row">
-            <strong>37.2억</strong>
-            <span className="summary-floor">(12층)</span>
+            <strong>
+              {dealAmount ? `${dealAmount}만원` : deposit && monthlyRent ? `${deposit} / ${monthlyRent}만원` : "-"}
+            </strong>
+            <span className="summary-floor">({floor}층)</span>
           </div>
         </div>
 
@@ -115,7 +153,7 @@ const SidebarDetail = ({ aptCode }: SidebarDetailProps) => {
         {chartData.length > 0 ? (
           <PriceChart data={chartData} />
         ) : (
-          <p style={{ textAlign: 'center', color: '#888' }}>차트 데이터 없음</p>
+          <p style={{ textAlign: "center", color: "#888" }}>차트 데이터 없음</p>
         )}
       </div>
 
@@ -130,14 +168,12 @@ const SidebarDetail = ({ aptCode }: SidebarDetailProps) => {
             </tr>
           </thead>
           <tbody>
-            {Array.from({ length: 6 }).map((_, idx) => (
-              <tr key={idx}>
-                <td>2025.05.03</td>
-                <td>매매</td>
-                <td>37억 2000만원</td>
-                <td>12층</td>
-              </tr>
-            ))}
+            <tr>
+              <td>2025.05.03</td>
+              <td>{dealAmount ? "매매" : "전월세"}</td>
+              <td>{dealAmount ? `${dealAmount}만원` : `${deposit} / ${monthlyRent}만원`}</td>
+              <td>{floor}</td>
+            </tr>
           </tbody>
         </table>
         <div className="pagination">&lt; 1 2 3 4 5 &gt;</div>
@@ -145,7 +181,7 @@ const SidebarDetail = ({ aptCode }: SidebarDetailProps) => {
 
       <p className="data-source">2025.05 국토교통부 기준</p>
     </div>
-  )
-}
+  );
+};
 
-export default SidebarDetail
+export default SidebarDetail;

@@ -319,3 +319,120 @@ body,
   color: #3182f6;
   margin: 0 0 10px 0;
 }
+
+.recent-card {
+  background: white;
+  border-radius: 1rem;
+  padding: 1.2rem 1.5rem;
+  margin-top: 2rem;
+  height: 150px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  position: relative;
+}
+
+.recent-close-btn {
+  position: absolute;
+  top: 10px;
+  right: 12px;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+}
+
+.close-icon {
+  width: 20px;
+  height: 20px;
+  object-fit: contain;
+  opacity: 0.5;
+}
+
+.recent-card-title {
+  font-family: "NanumSquareB", sans-serif;
+  font-size: 18px;
+  margin: 10px 0 10px 0;
+  color: #000;
+}
+
+.recent-card-address {
+  font-family: "NanumSquareR", sans-serif;
+  font-size: 14px;
+  color: #7c7e82;
+}
+
+.recent-card-price {
+  font-family: "NanumSquareEB", sans-serif;
+  font-size: 20px;
+  color: #3182f6;
+  margin: 0 0 10px 0;
+}
+
+.feedback-logo {
+  width: 170px;
+  margin: 0 auto 1rem auto;
+  display: block;
+  margin-bottom: 40px;
+}
+
+.feedback-name,
+.feedback-textarea {
+  width: 100%;
+  font-family: "NanumSquareR", sans-serif;
+  font-size: 14px;
+  padding: 0.8rem;
+  margin-bottom: 1rem;
+  border-radius: 10px;
+  border: 1px solid #ccc;
+  background-color: white;
+  resize: vertical;
+}
+
+.feedback-textarea {
+  height: 150px;
+}
+
+.send-mail-btn {
+  width: 100%;
+  padding: 0.9rem;
+  background-color: #ffe600;
+  color: #5a5f67;
+  font-size: 15px;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  font-family: "NanumSquareB", sans-serif;
+}
+
+.send-mail-btn:hover {
+  background-color: #e2cf00;
+}
+
+.feedback-footer {
+  margin-top: 3rem;
+  text-align: center;
+  color: #999;
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.footer-text {
+  margin-bottom: 1rem;
+}
+
+.github-icon-big {
+  display: inline-block;
+  transition: transform 0.2s;
+}
+
+.github-icon-big:hover {
+  transform: scale(1.15);
+}
+
+.github-icon-svg {
+  width: 32px;
+  height: 32px;
+  fill: #333;
+}

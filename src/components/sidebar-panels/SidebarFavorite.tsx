@@ -17,22 +17,22 @@ const SidebarFavorite = () => {
   const [hoveredIdx, setHoveredIdx] = useState<number | null>(null);
 
   const favorites: FavoriteItem[] = [
-    // {
-    //   bookmarkIdx: 1,
-    //   aptNm: "롯데캐슬프레미어",
-    //   estateAgentAggNm: "부동산하트",
-    //   umdNm: "강남구 삼성동 11",
-    //   dealAmount: 37200,
-    //   createdAt: "2025-05-09T04:59:00.130+00:00",
-    // },
-    // {
-    //   bookmarkIdx: 2,
-    //   aptNm: "래미안퍼스티지",
-    //   estateAgentAggNm: "해피공인중개사",
-    //   umdNm: "강남구 도곡동 88",
-    //   dealAmount: 39800,
-    //   createdAt: "2025-05-08T11:15:00.000+00:00",
-    // },
+    {
+      bookmarkIdx: 1,
+      aptNm: "롯데캐슬프레미어",
+      estateAgentAggNm: "부동산하트",
+      umdNm: "강남구 삼성동 11",
+      dealAmount: 37200,
+      createdAt: "2025-05-09T04:59:00.130+00:00",
+    },
+    {
+      bookmarkIdx: 2,
+      aptNm: "래미안퍼스티지",
+      estateAgentAggNm: "해피공인중개사",
+      umdNm: "강남구 도곡동 88",
+      dealAmount: 39800,
+      createdAt: "2025-05-08T11:15:00.000+00:00",
+    },
   ];
 
   const formatDealAmount = (amount: number) => {
@@ -54,7 +54,7 @@ const SidebarFavorite = () => {
       <div className="panel-header-subtitle">
         <p>
           내 관심 매물을 관리해보세요. <br />
-          관심 매물 추가/삭제가 가능합니다.
+          관심 매물 추가 / 삭제가 가능합니다.
         </p>
       </div>
       {favorites.length === 0 ? (
