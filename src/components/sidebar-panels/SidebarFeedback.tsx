@@ -23,10 +23,10 @@ const SidebarFeedback = () => {
           from_name: name || "익명",
           from_email: email,
           message,
-          to_name: "이민희, 이아현",
+          to_name: "minhe8564@gmail.com",
           reply_to: email,
         },
-        "vEwCUwmGYUGHclOHF"
+        `${import.meta.env.VITE_EMAILJS_API_KEY}`
       )
       .then(
         () => {
