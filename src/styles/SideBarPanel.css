@@ -559,3 +559,70 @@ body,
 .chat-send-btn:hover {
   background-color: #e2cf00;
 }
+
+.sidebar-block-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 6rem;
+  text-align: center;
+}
+
+.login-icon {
+  width: 52px;
+  height: 52px;
+  margin-bottom: 1.4rem;
+  opacity: 0.6;
+}
+
+.login-title {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #1c1f24;
+  margin-bottom: 0.5rem;
+  font-family: "NanumSquareB", sans-serif;
+  line-height: 1.4;
+}
+
+.login-subtext {
+  font-size: 14px;
+  color: #7c7e82;
+  line-height: 1.6;
+  margin-bottom: 2rem;
+  font-family: "NanumSquareR", sans-serif;
+}
+
+.sidebar-login-btn {
+  padding: 0.75rem 1.2rem;
+  width: 220px;
+  background-color: #ffe600;
+  color: #5a5f57;
+  font-size: 15px;
+  font-family: "NanumSquareB", sans-serif;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  margin-bottom: 0.75rem;
+  transition: background-color 0.2s ease;
+}
+
+.sidebar-login-btn:hover {
+  background-color: #e2cf00;
+}
+
+.skip-btn {
+  padding: 0.75rem 1.2rem;
+  width: 220px;
+  background-color: #e4e7ea;
+  color: #495057;
+  font-size: 14px;
+  font-family: "NanumSquareR", sans-serif;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.skip-btn:hover {
+  background-color: #d2d4d6;
+}

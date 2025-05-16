@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import axios from "axios";
 import "../../styles/SidebarPanel.css";
 
 import heartFilledIcon from "../../assets/img/heart-filled.png";
@@ -15,25 +16,38 @@ interface FavoriteItem {
 
 const SidebarFavorite = () => {
   const [hoveredIdx, setHoveredIdx] = useState<number | null>(null);
+  const [favorites, setFavorites] = useState<FavoriteItem[]>([]);
 
-  const favorites: FavoriteItem[] = [
-    {
-      bookmarkIdx: 1,
-      aptNm: "롯데캐슬프레미어",
-      estateAgentAggNm: "부동산하트",
-      umdNm: "강남구 삼성동 11",
-      dealAmount: 37200,
-      createdAt: "2025-05-09T04:59:00.130+00:00",
-    },
-    {
-      bookmarkIdx: 2,
-      aptNm: "래미안퍼스티지",
-      estateAgentAggNm: "해피공인중개사",
-      umdNm: "강남구 도곡동 88",
-      dealAmount: 39800,
-      createdAt: "2025-05-08T11:15:00.000+00:00",
-    },
-  ];
+  useEffect(() => {
+    const loadFavorites = async () => {
+      const data = await fetchFavorites();
+      setFavorites(data);
+    };
+    loadFavorites();
+  }, []);
+
+  const fetchFavorites = async (): Promise<FavoriteItem[]> => {
+    try {
+      const token = localStorage.getItem("accessToken");
+      const response = await axios.get("/api/user/bookmark", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      return response.data.map((item: any) => ({
+        bookmarkIdx: item.bookmarkIdx,
+        aptNm: item.aptNm,
+        estateAgentAggNm: item.estateAgentAggNm,
+        umdNm: item.umdNm,
+        dealAmount: item.dealAmount,
+        createdAt: item.createdAt,
+      }));
+    } catch (error) {
+      console.error("관심 매물 목록을 불러오지 못했습니다.", error);
+      return [];
+    }
+  };
 
   const formatDealAmount = (amount: number) => {
     const total = amount * 10000;
@@ -64,10 +78,13 @@ const SidebarFavorite = () => {
           <div className="favorite-card" key={item.bookmarkIdx}>
             <div className="favorite-card-body">
               <div>
-                <h3 className="favorite-title">{item.aptNm}</h3>
-                <p className="favorite-address">서울특별시 {item.umdNm}</p>
+                {favorites.map((item) => (
+                  <div key={item.bookmarkIdx}>
+                    <h3 className="favorite-title">{item.aptNm}</h3>
+                    <p className="favorite-address">서울특별시 {item.umdNm}</p>
+                  </div>
+                ))}
               </div>
-
               <div
                 className="favorite-delete-group"
                 onMouseEnter={() => setHoveredIdx(item.bookmarkIdx)}

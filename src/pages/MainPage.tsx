@@ -15,6 +15,8 @@ import MapView from "../components/MapView";
 import AISummary from "../components/AISummary";
 import SafetyGrade from "../components/SafetyGrade";
 import PropertyCardList from "../components/PropertyCardList";
+import SidebarBlock from "../components/sidebar-panels/SidebarBlock";
+import SidebarEmpty from "../components/sidebar-panels/SidebarEmpty";
 
 import "../styles/MainPage.css";
 
@@ -59,10 +61,24 @@ const MainPage = () => {
     setFilterValues(filters);
   };
 
+  const isLoggedIn = !!localStorage.getItem("accessToken");
+
   const sidebarPanels = {
-    detail: <SidebarDetail item={selectedItem} />,
-    favorite: <SidebarFavorite />,
-    recent: <SidebarRecent />,
+    detail: selectedItem ? (
+      <SidebarDetail item={selectedItem} />
+    ) : (
+      <SidebarEmpty onCloseSidebar={() => setActiveSidebar(null)} />
+    ),
+    favorite: isLoggedIn ? (
+      <SidebarFavorite />
+    ) : (
+      <SidebarBlock onCloseSidebar={() => setActiveSidebar(null)} message="관심 매물 확인은" />
+    ),
+    recent: isLoggedIn ? (
+      <SidebarRecent />
+    ) : (
+      <SidebarBlock onCloseSidebar={() => setActiveSidebar(null)} message="최근 본 매물 조회는" />
+    ),
     custom: <SidebarCustom />,
     feedback: <SidebarFeedback />,
   };
