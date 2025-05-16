@@ -5,6 +5,8 @@ import myLocation from "../assets/img/my-location-marker.png";
 import rentMarker from "../assets/img/rent-marker.png";
 import tradeMarker from "../assets/img/trade-marker.png";
 
+import DistancePanel from "../components/sidebar-panels/DistancePanel";
+
 const KAKAO_JS_API_KEY = import.meta.env.VITE_KAKAO_JS_API_KEY;
 
 interface DealItemRaw {
@@ -42,6 +44,7 @@ const MapView = ({ filterValues, onUpdateDeals }: MapViewProps) => {
     carTime: number;
     walkTime: string;
   }>(null);
+  const [selectedLocation, setSelectedLocation] = useState<{ x: number; y: number; name: string } | null>(null);
 
   const isLoggedIn = !!localStorage.getItem("accessToken");
 
@@ -162,9 +165,6 @@ const MapView = ({ filterValues, onUpdateDeals }: MapViewProps) => {
       const limitedTrade = tradeItems.slice(0, 120);
       const limitedRent = rentItems.slice(0, 120);
 
-      console.log("매매 (120개):", limitedTrade);
-      console.log("전월세 (120개):", limitedRent);
-
       renderMarkersByType(limitedTrade, "매매");
       renderMarkersByType(limitedRent, "전월세");
 
@@ -250,53 +250,53 @@ const MapView = ({ filterValues, onUpdateDeals }: MapViewProps) => {
     }
   };
 
+  const handleSelectLocation = (x: number, y: number, name: string) => {
+    const kakao = (window as any).kakao;
+    const latlng = new kakao.maps.LatLng(y, x);
+    mapInstance.current.panTo(latlng);
+
+    const markerImage = new kakao.maps.MarkerImage(myLocation, new kakao.maps.Size(36, 40));
+    new kakao.maps.Marker({ map: mapInstance.current, position: latlng, image: markerImage });
+  };
+
   return (
     <div className="map-wrapper">
       <div ref={mapRef} id="map" className="map-container" />
+
       <div className="map-button" style={{ left: 20 }}>
         <button onClick={handleCurrentLocation}>내 위치</button>
       </div>
 
-      {isLoggedIn && (
-        <>
-          <div className={`map-button-distance ${showDistancePanel ? "active" : ""}`} style={{ left: 110 }}>
-            <button onClick={() => setShowDistancePanel((prev) => !prev)}>
-              {showDistancePanel ? "거리 비교 닫기" : "거리 비교 보기"}
-            </button>
-          </div>
+      <div className={`map-button-distance ${showDistancePanel ? "active" : ""}`} style={{ left: 110 }}>
+        <button onClick={() => setShowDistancePanel((prev) => !prev)}>
+          {showDistancePanel ? "거리 비교 닫기" : "거리 비교 보기"}
+        </button>
+      </div>
 
-          {showDistancePanel && (
-            <div className="distance-panel">
-              <h3>거리 비교 결과</h3>
-              <p>
-                회원님의 직장 / 학교 정보와
-                <br />
-                매물 간의 거리를 비교해보세요.
-              </p>
+      {showDistancePanel && (
+        <DistancePanel
+          isLoggedIn={isLoggedIn}
+          userLocation={userLocation}
+          onSelectLocation={(x, y, name) => {
+            const kakao = (window as any).kakao;
+            const latlng = new kakao.maps.LatLng(y, x);
 
-              {userLocation ? (
-                <div className="distance-item">
-                  <strong>{userLocation.name}</strong>
-                  <p>
-                    자동차 : {userLocation.carDistance}km / {userLocation.carTime}분
-                  </p>
-                  <p>도보 : {userLocation.walkTime}</p>
-                </div>
-              ) : (
-                <div className="no-location">
-                  <p>
-                    현재 등록된
-                    <br />
-                    직장 / 학교가 없습니다.
-                  </p>
-                  <button className="register-button" onClick={() => (window.location.href = "/info")}>
-                    직장 / 학교 등록하기
-                  </button>
-                </div>
-              )}
-            </div>
-          )}
-        </>
+            mapInstance.current.panTo(latlng);
+            new kakao.maps.Marker({
+              map: mapInstance.current,
+              position: latlng,
+              title: name,
+            });
+
+            // 거리 비교용 정보로 설정
+            setUserLocation({
+              name,
+              carDistance: 0,
+              carTime: 0,
+              walkTime: "0분",
+            });
+          }}
+        />
       )}
     </div>
   );

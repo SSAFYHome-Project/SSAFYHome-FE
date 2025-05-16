@@ -4,6 +4,7 @@ import axios from "axios";
 import "../styles/Header.css";
 
 interface UserInfo {
+  isLoggedIn: boolean;
   name: string;
   profile: string;
 }
@@ -15,6 +16,7 @@ const Header = () => {
 
   const getActiveClass = (path: string) => (location.pathname === path ? "active" : "");
   const navigate = useNavigate();
+
   useEffect(() => {
     const getUserInfo = async () => {
       const token = localStorage.getItem("accessToken");
@@ -27,9 +29,18 @@ const Header = () => {
           },
         });
 
-        setUserInfo(response.data);
+        setUserInfo({
+          isLoggedIn: true,
+          name: response.data.name,
+          profile: response.data.profile,
+        });
       } catch (error) {
         console.error("유저 정보 불러오기 실패:", error);
+        setUserInfo({
+          isLoggedIn: false,
+          name: "",
+          profile: "",
+        });
       }
     };
 
@@ -52,7 +63,6 @@ const Header = () => {
   const handleLogout = () => {
     localStorage.removeItem("accessToken");
     localStorage.removeItem("refreshToken");
-
     window.location.href = "/";
   };
 
@@ -81,7 +91,7 @@ const Header = () => {
           <a href="/" className={getActiveClass("/")}>
             <button className="login-button">메인화면</button>
           </a>
-        ) : userInfo ? (
+        ) : userInfo?.isLoggedIn ? (
           <div className="user-info" onClick={() => setIsDropdownOpen(!isDropdownOpen)}>
             <img src={`data:image/png;base64,${userInfo.profile}`} alt="프로필" className="profile-img" />
             <span className="user-info-name">

@@ -144,7 +144,7 @@ const MainPage = () => {
       </div>
 
       <div className={`main-content ${activeSidebar ? "with-sidebar-panel" : ""}`}>
-        <Header />
+        <Header isLoggedIn={isLoggedIn} />
         <div className="main-layout">
           <div className="top-bar">
             <SearchBar onFilterChange={handleSearchResult} />
