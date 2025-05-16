@@ -14,6 +14,9 @@ interface DealItem {
   floor: string;
   umdNm: string;
   monthlyRent?: string;
+  aptCode?: string;
+  sggCd?: string;
+  jibun?: string;
 }
 
 interface SidebarDetailProps {
@@ -29,6 +32,23 @@ const SidebarDetail = ({ item }: SidebarDetailProps) => {
   const [selectedType, setSelectedType] = useState<"매매" | "전월세">("매매");
   const [chartData, setChartData] = useState<ChartItem[]>([]);
   const [hovered, setHovered] = useState(false);
+  const [detailData, setDetailData] = useState<any>(null);
+
+  useEffect(() => {
+    const fetchDetailData = async () => {
+      if (!item || !item.aptName || !item.sggCd) return;
+      try {
+        const response = await axios.get(
+          `/api/apt/detail?aptName=${encodeURIComponent(item.aptName)}&sggCd=${item.sggCd}`
+        );
+        setDetailData(response.data);
+        setChartData(response.data.chartData || []);
+      } catch (error) {
+        console.error("세부 정보 불러오기 실패:", error);
+      }
+    };
+    fetchDetailData();
+  }, [item]);
 
   if (!item) {
     return (
@@ -48,19 +68,6 @@ const SidebarDetail = ({ item }: SidebarDetailProps) => {
   }
 
   const { aptName, dealAmount, deposit, area, floor, umdNm, monthlyRent } = item;
-
-  // 더미 차트 데이터
-  useEffect(() => {
-    const dummyChartData = [
-      { date: "24.11", price: 30.2 },
-      { date: "24.12", price: 32.5 },
-      { date: "25.01", price: 33.1 },
-      { date: "25.02", price: 34.0 },
-      { date: "25.03", price: 36.5 },
-      { date: "25.04", price: 37.2 },
-    ];
-    setChartData(dummyChartData);
-  }, [item]);
 
   const handleBookmark = async () => {
     try {
@@ -125,7 +132,7 @@ const SidebarDetail = ({ item }: SidebarDetailProps) => {
         <div className="summary-item">
           <div className="summary-label">
             <span className="summary-title">최근 실거래</span>
-            <span className="summary-date">25.05.03</span>
+            <span className="summary-date">{detailData?.recentDate || "-"}</span>
           </div>
           <div className="price-row">
             <strong>
@@ -140,11 +147,11 @@ const SidebarDetail = ({ item }: SidebarDetailProps) => {
         <div className="summary-item">
           <div className="summary-label">
             <span className="summary-title">매물 최저가</span>
-            <span className="summary-date">25.05.03</span>
+            <span className="summary-date">{detailData?.lowestDate || "-"}</span>
           </div>
           <div className="price-row">
-            <strong>37.2억</strong>
-            <span className="summary-floor">(12층)</span>
+            <strong>{detailData?.lowestPrice || "-"}</strong>
+            <span className="summary-floor">({detailData?.lowestFloor || "-"}층)</span>
           </div>
         </div>
       </div>
@@ -168,12 +175,22 @@ const SidebarDetail = ({ item }: SidebarDetailProps) => {
             </tr>
           </thead>
           <tbody>
-            <tr>
-              <td>2025.05.03</td>
-              <td>{dealAmount ? "매매" : "전월세"}</td>
-              <td>{dealAmount ? `${dealAmount}만원` : `${deposit} / ${monthlyRent}만원`}</td>
-              <td>{floor}</td>
-            </tr>
+            {detailData?.history?.length > 0 ? (
+              detailData.history.map((row: any, idx: number) => (
+                <tr key={idx}>
+                  <td>{row.date}</td>
+                  <td>{row.type}</td>
+                  <td>{row.price}</td>
+                  <td>{row.floor}</td>
+                </tr>
+              ))
+            ) : (
+              <tr>
+                <td colSpan={4} style={{ textAlign: "center", color: "#888" }}>
+                  거래 이력이 없습니다.
+                </td>
+              </tr>
+            )}
           </tbody>
         </table>
         <div className="pagination">&lt; 1 2 3 4 5 &gt;</div>

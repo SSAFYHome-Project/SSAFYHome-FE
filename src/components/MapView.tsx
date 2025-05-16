@@ -168,6 +168,9 @@ const MapView = ({ filterValues, onUpdateDeals }: MapViewProps) => {
       renderMarkersByType(limitedTrade, "매매");
       renderMarkersByType(limitedRent, "전월세");
 
+      console.log(limitedTrade);
+      console.log(limitedRent);
+
       onUpdateDeals(limitedTrade, limitedRent);
     } catch (error) {
       console.error("실거래 데이터 불러오기 실패", error);
