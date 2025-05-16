@@ -159,11 +159,11 @@ const MapView = ({ filterValues, onUpdateDeals }: MapViewProps) => {
       const tradeItems = response.data?.trade?.response?.body?.items?.item || [];
       const rentItems = response.data?.rent?.response?.body?.items?.item || [];
 
-      const limitedTrade = tradeItems.slice(0, 12);
-      const limitedRent = rentItems.slice(0, 12);
+      const limitedTrade = tradeItems.slice(0, 120);
+      const limitedRent = rentItems.slice(0, 120);
 
-      console.log("매매 (12개):", limitedTrade);
-      console.log("전월세 (12개):", limitedRent);
+      console.log("매매 (120개):", limitedTrade);
+      console.log("전월세 (120개):", limitedRent);
 
       renderMarkersByType(limitedTrade, "매매");
       renderMarkersByType(limitedRent, "전월세");

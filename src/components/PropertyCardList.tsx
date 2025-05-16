@@ -1,4 +1,4 @@
-import { MouseEvent } from "react";
+import { MouseEvent, useState } from "react";
 import "../styles/PropertyCardList.css";
 
 type DealItem = {
@@ -43,13 +43,25 @@ const PropertyCardList = ({ title, items, onSelect }: Props) => {
     }
   };
 
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 24;
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentItems = items.slice(indexOfFirstItem, indexOfLastItem);
+  const totalPages = Math.ceil(items.length / itemsPerPage);
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+    window.scrollTo({ top: 850, behavior: "smooth" });
+  };
+
   return (
     <div className="property-card-list">
       <div className="card-container">
-        {items.length === 0 ? (
+        {currentItems.length === 0 ? (
           <p className="no-data">매물이 없습니다.</p>
         ) : (
-          items.map((item, index) => (
+          currentItems.map((item, index) => (
             <div key={index} className="property-card" onClick={(e) => handleClick(e, item)}>
               <div className="card-header">
                 <h4>{item.aptName}</h4>
@@ -76,6 +88,20 @@ const PropertyCardList = ({ title, items, onSelect }: Props) => {
           ))
         )}
       </div>
+
+      {totalPages > 1 && (
+        <div className="pagination">
+          {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+            <button
+              key={page}
+              className={page === currentPage ? "active-page" : ""}
+              onClick={() => handlePageChange(page)}
+            >
+              {page}
+            </button>
+          ))}
+        </div>
+      )}
     </div>
   );
 };

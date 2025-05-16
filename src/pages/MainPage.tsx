@@ -82,6 +82,13 @@ const MainPage = () => {
 
   const sortedItems = [...(activeTab === "trade" ? tradeItems : rentItems)];
 
+  const sortOptions = [
+    { value: "price-desc", label: "가격 높은 순" },
+    { value: "price-asc", label: "가격 낮은 순" },
+    { value: "area-desc", label: "평수 높은 순" },
+    { value: "area-asc", label: "평수 낮은 순" },
+  ];
+
   if (activeTab === "trade") {
     sortedItems.sort((a, b) => {
       let valA = 0,
@@ -166,13 +173,16 @@ const MainPage = () => {
                     전월세 매물
                   </button>
                 </div>
-                <div className="sort-dropdown">
-                  <select value={sortOption} onChange={(e) => setSortOption(e.target.value as any)}>
-                    <option value="price-asc">가격 낮은 순</option>
-                    <option value="price-desc">가격 높은 순</option>
-                    <option value="area-asc">평수 낮은 순</option>
-                    <option value="area-desc">평수 높은 순</option>
-                  </select>
+                <div className="sort-button-group">
+                  {sortOptions.map((option) => (
+                    <button
+                      key={option.value}
+                      className={`sort-button ${sortOption === option.value ? "active" : ""}`}
+                      onClick={() => setSortOption(option.value as any)}
+                    >
+                      {option.label}
+                    </button>
+                  ))}
                 </div>
               </div>
               <div className="property-lists">

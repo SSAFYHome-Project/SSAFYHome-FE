@@ -43,23 +43,6 @@ const SearchBar = ({ onFilterChange }: Props) => {
     fetchSuggestions();
   }, [query]);
 
-  const highlightMatch = (text: string, keyword: string) => {
-    const index = text.toLowerCase().indexOf(keyword.toLowerCase());
-    if (index === -1) return text;
-
-    const before = text.slice(0, index);
-    const match = text.slice(index, index + keyword.length);
-    const after = text.slice(index + keyword.length);
-
-    return (
-      <>
-        {before}
-        <mark style={{ backgroundColor: "#ffeb00", color: "#000" }}>{match}</mark>
-        {after}
-      </>
-    );
-  };
-
   const getCategoryIcon = (category: string, placeName: string) => {
     if (category.includes("교통") || placeName.includes("역"))
       return <FaSubway style={{ marginRight: 6, color: "#3478f6" }} />;
@@ -148,7 +131,7 @@ const SearchBar = ({ onFilterChange }: Props) => {
             >
               <div style={{ display: "flex", alignItems: "center" }}>
                 {getCategoryIcon(item.category_name, item.place_name)}
-                <strong>{highlightMatch(item.place_name, query)}</strong>
+                <strong>{item.place_name}</strong>
               </div>
               <small>{getSimpleCategory(item.category_name)}</small>
               <span>{item.road_address_name || item.address_name}</span>

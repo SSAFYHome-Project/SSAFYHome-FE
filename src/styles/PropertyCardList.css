@@ -130,3 +130,21 @@
   align-items: center;
   justify-content: center;
 }
+
+.pagination {
+  margin-top: 1rem;
+  text-align: center;
+}
+
+.pagination button {
+  margin: 0 4px;
+  padding: 6px 12px;
+  border: 1px solid #ccc;
+  background: white;
+  cursor: pointer;
+}
+
+.pagination .active-page {
+  font-weight: bold;
+  background-color: #eee;
+}
