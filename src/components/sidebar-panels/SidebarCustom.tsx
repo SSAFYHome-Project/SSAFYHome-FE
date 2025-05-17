@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import axios from "axios";
 import "../../styles/SidebarCustom.css";
 import logoImg from "../../assets/img/chatbot-logo.png";
@@ -9,6 +9,7 @@ const SidebarCustom = () => {
   const userInfo = JSON.parse(localStorage.getItem("userInfo") || "null");
   const userName = userInfo?.name || "이민희";
   const userAddress = userInfo?.address || "";
+  const bottomRef = useRef<HTMLDivElement | null>(null);
 
   const [messages, setMessages] = useState<{ from: "user" | "bot"; text: string; time?: string }[]>([
     {
@@ -21,6 +22,13 @@ const SidebarCustom = () => {
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [followUpOptions, setFollowUpOptions] = useState<{ text: string; value: string }[]>([]);
+
+  const handleSend = (text?: string) => {
+    const finalText = text ?? input;
+    if (!finalText.trim()) return;
+    sendMessage(finalText);
+    setInput(""); 
+  };
 
   const sendMessage = async (text: string) => {
     if (!text.trim()) return;
@@ -98,6 +106,12 @@ const SidebarCustom = () => {
 
   const today = new Date().toLocaleDateString("ko-KR", { year: 'numeric', month: 'long', day: 'numeric' });
 
+  useEffect(() => {
+  if (bottomRef.current) {
+    bottomRef.current.scrollIntoView({ behavior: "smooth" });
+  }
+  }, [messages]);
+
   return (
     <div className="sidebar-panel">
       <div className="chatbot-header-box">
@@ -139,7 +153,7 @@ const SidebarCustom = () => {
             <div className="bubble button-bubble">
               <div className="suggested-buttons">
                 {followUpOptions.map((btn, idx) => (
-                  <button key={idx} className="option-btn" onClick={() => sendMessage(btn.value)}>
+                  <button key={idx} className="option-btn" onClick={() => handleSend(btn.value)}>
                     {btn.text}
                   </button>
                 ))}
@@ -157,11 +171,13 @@ const SidebarCustom = () => {
             </div>
           </div>
         )}
+
+        <div ref={bottomRef} />
       </div>
 
       <div className="keyword-buttons">
         {keywords.map((keyword) => (
-          <button key={keyword} className="keyword-btn" onClick={() => sendMessage(keyword)}>
+          <button key={keyword} className="keyword-btn" onClick={() => handleSend(keyword)}>
             #{keyword}
           </button>
         ))}
@@ -174,9 +190,19 @@ const SidebarCustom = () => {
           placeholder="예: 강남구 30평대 전세"
           value={input}
           onChange={(e) => setInput(e.target.value)}
-          onKeyDown={(e) => e.key === "Enter" && sendMessage(input)}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") {
+              e.preventDefault(); 
+              if (!isLoading) handleSend(); 
+            }
+          }}
         />
-        <button className="chat-send-btn" onClick={() => sendMessage(input)}>
+        <button
+          className="chat-send-btn"
+          onClick={() => {
+            if (!isLoading) handleSend();
+          }}
+        >
           전송
         </button>
       </div>

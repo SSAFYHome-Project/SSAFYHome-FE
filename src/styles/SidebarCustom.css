@@ -110,7 +110,6 @@
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
 }
 
-/* 말풍선 스타일 */
 .chat-bubble.user .bubble {
   background-color: #fffbd9;
   color: #1b1c1d;
@@ -123,7 +122,6 @@
   border-radius: 16px 16px 16px 4px;
 }
 
-/* 로딩 애니메이션 */
 .bubble.loading .typing {
   display: flex;
   gap: 4px;
@@ -197,7 +195,6 @@
 .chat-input-group {
   display: flex;
   gap: 0.5rem;
-  padding-top: 1rem;
   padding-bottom: env(safe-area-inset-bottom);
   position: sticky;
   bottom: 0;
