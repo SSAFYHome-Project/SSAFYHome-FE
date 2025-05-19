@@ -162,8 +162,8 @@ const MapView = ({ filterValues, onUpdateDeals }: MapViewProps) => {
       const tradeItems = response.data?.trade?.response?.body?.items?.item || [];
       const rentItems = response.data?.rent?.response?.body?.items?.item || [];
 
-      const limitedTrade = tradeItems.slice(0, 120);
-      const limitedRent = rentItems.slice(0, 120);
+      const limitedTrade = tradeItems.slice(0, 100);
+      const limitedRent = rentItems.slice(0, 100);
 
       renderMarkersByType(limitedTrade, "매매");
       renderMarkersByType(limitedRent, "전월세");

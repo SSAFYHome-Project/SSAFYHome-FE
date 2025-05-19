@@ -19,6 +19,7 @@ body,
 .panel-header {
   display: flex;
   align-items: center;
+  justify-content: space-between;
   margin: 3rem 0 1rem 0;
 }
 
@@ -26,6 +27,7 @@ body,
   font-family: "NanumSquareB", sans-serif;
   font-size: 26px;
   margin: 0;
+  color: #000;
 }
 
 .panel-header-subtitle {
@@ -45,7 +47,7 @@ body,
   font-family: "NanumSquareR", sans-serif;
   font-size: 14px;
   cursor: pointer;
-  margin-left: 80px;
+  padding-right: 20px;
 }
 
 .heart-img {
@@ -502,4 +504,76 @@ body,
 
 .skip-btn:hover {
   background-color: #d2d4d6;
+}
+
+.pagination {
+  margin-top: 12px;
+  text-align: center;
+}
+
+.pagination button {
+  margin: 0 4px;
+  padding: 4px 10px;
+  font-size: 14px;
+  border: 1px solid #ddd;
+  background-color: #fff;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.pagination button:hover {
+  background-color: #f0f0f0;
+}
+
+.pagination button.active {
+  background-color: #3182f6;
+  color: white;
+  border-color: #3182f6;
+  font-weight: bold;
+}
+
+.loading-container {
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.loading-text {
+  font-size: 18px;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+
+  background: linear-gradient(90deg, #ccc, #3182f6, #ccc);
+  background-size: 200% auto;
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+
+  animation: shine 3s linear infinite;
+}
+
+.loading-dots span {
+  font-weight: bold;
+  animation: shine 3s linear infinite;
+}
+
+.loading-dots span:nth-child(2) {
+  animation-delay: 0.2s;
+}
+.loading-dots span:nth-child(3) {
+  animation-delay: 0.4s;
+}
+
+@keyframes shine {
+  0% {
+    background-position: 0% center;
+  }
+  100% {
+    background-position: 200% center;
+  }
 }

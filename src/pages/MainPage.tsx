@@ -36,6 +36,9 @@ type DealItem = {
   floor: string;
   umdNm: string;
   monthlyRent?: string;
+  aptCode?: string;
+  sggCd: string;
+  jibun: string;
 };
 
 const MainPage = () => {
@@ -162,6 +165,8 @@ const MainPage = () => {
                   area: String(item.excluUseAr ?? "-"),
                   floor: String(item.floor ?? "-"),
                   umdNm: item.umdNm,
+                  sggCd: item.sggCd,
+                  jibun: item.jibun,
                 }));
                 const normalizedRents = rawRents.map((item) => ({
                   aptName: item.aptNm,
@@ -170,6 +175,8 @@ const MainPage = () => {
                   area: String(item.excluUseAr ?? "-"),
                   floor: String(item.floor ?? "-"),
                   umdNm: item.umdNm,
+                  sggCd: item.sggCd,
+                  jibun: item.jibun,
                 }));
                 setTradeItems(normalizedTrades);
                 setRentItems(normalizedRents);

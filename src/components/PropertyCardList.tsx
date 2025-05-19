@@ -8,6 +8,8 @@ type DealItem = {
   area: string;
   floor: string;
   umdNm: string;
+  ssgCd: string;
+  jibun: string;
   monthlyRent?: string;
 };
 
@@ -44,7 +46,7 @@ const PropertyCardList = ({ title, items, onSelect }: Props) => {
   };
 
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 24;
+  const itemsPerPage = 20;
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
   const currentItems = items.slice(indexOfFirstItem, indexOfLastItem);
