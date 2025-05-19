@@ -68,7 +68,7 @@ const MainPage = () => {
 
   const sidebarPanels = {
     detail: selectedItem ? (
-      <SidebarDetail item={selectedItem} />
+      <SidebarDetail onCloseSidebar={() => setActiveSidebar(null)} item={selectedItem} />
     ) : (
       <SidebarEmpty onCloseSidebar={() => setActiveSidebar(null)} />
     ),

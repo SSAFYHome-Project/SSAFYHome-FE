@@ -21,6 +21,7 @@ interface DealItem {
 
 interface SidebarDetailProps {
   item: DealItem | null;
+  onCloseSidebar: () => void;
 }
 
 interface ChartItem {
@@ -28,9 +29,9 @@ interface ChartItem {
   price: number;
 }
 
-const ITEMS_PER_PAGE = 5;
+const ITEMS_PER_PAGE = 7;
 
-const SidebarDetail = ({ item }: SidebarDetailProps) => {
+const SidebarDetail = ({ onCloseSidebar, item }: SidebarDetailProps) => {
   const [selectedType, setSelectedType] = useState<"매매" | "전월세">("매매");
   const [selectedArea, setSelectedArea] = useState<string>("전체");
   const [currentPage, setCurrentPage] = useState(1);
@@ -41,7 +42,10 @@ const SidebarDetail = ({ item }: SidebarDetailProps) => {
 
   useEffect(() => {
     const fetchDetailData = async () => {
-      if (!item || !item.aptName || !item.sggCd || !item.jibun) return;
+      if (!item || !item.aptName || !item.sggCd || !item.jibun) {
+        onCloseSidebar();
+        return;
+      }
       const url = `/api/apt/detail?aptName=${encodeURIComponent(item.aptName)}&sggCd=${item.sggCd}&jibun=${item.jibun}`;
 
       setLoading(true);
@@ -53,6 +57,7 @@ const SidebarDetail = ({ item }: SidebarDetailProps) => {
       } catch (error: any) {
         console.error("API 요청 실패:", error);
         alert("데이터를 불러오지 못했습니다.");
+        onCloseSidebar();
       } finally {
         setLoading(false);
       }
@@ -120,7 +125,7 @@ const SidebarDetail = ({ item }: SidebarDetailProps) => {
           },
         }
       );
-      alert("즐겨찾기에 등록했어요! ❤️");
+      alert("즐겨찾기에 등록되었습니다!");
     } catch (error) {
       console.error("즐겨찾기 등록 실패:", error);
       alert("즐겨찾기 등록 중 오류가 발생했어요.");
@@ -136,12 +141,29 @@ const SidebarDetail = ({ item }: SidebarDetailProps) => {
   const pagedData = filtered.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE);
 
   const recentDate = selectedType === "매매" ? detailData?.recentTradeDate : detailData?.recentRentDate;
-  const recentPrice = selectedType === "매매" ? detailData?.recentTradePrice : detailData?.recentRentPrice;
+  const recentPriceRaw = selectedType === "매매" ? detailData?.recentTradePrice : detailData?.recentRentPrice;
+  const recentPrice = formatToDecimalEok(recentPriceRaw);
   const recentFloor = selectedType === "매매" ? detailData?.recentTradeFloor : detailData?.recentRentFloor;
 
   const lowestDate = selectedType === "매매" ? detailData?.lowestTradeDate : detailData?.lowestRentDate;
-  const lowestPrice = selectedType === "매매" ? detailData?.lowestTradePrice : detailData?.lowestRentPrice;
+  const lowestPriceRaw = selectedType === "매매" ? detailData?.lowestTradePrice : detailData?.lowestRentPrice;
+  const lowestPrice = formatToDecimalEok(lowestPriceRaw);
   const lowestFloor = selectedType === "매매" ? detailData?.lowestTradeFloor : detailData?.lowestRentFloor;
+
+  function formatToDecimalEok(price: string | null | undefined): string {
+    if (!price || price === "-") return "-";
+
+    const cleaned = price.replace(/,/g, "");
+
+    const eokMatch = cleaned.match(/(\d+)억/);
+    const manMatch = cleaned.match(/(\d+)만원/);
+
+    const eok = eokMatch ? parseInt(eokMatch[1]) : 0;
+    const man = manMatch ? parseInt(manMatch[1]) : 0;
+
+    const total = eok + man / 10000;
+    return total % 1 === 0 ? `${total.toFixed(0)}억` : `${total.toFixed(1)}억`;
+  }
 
   return (
     <div className="sidebar-panel">
@@ -247,13 +269,13 @@ const SidebarDetail = ({ item }: SidebarDetailProps) => {
                     <tr key={idx}>
                       <td>{row.date}</td>
                       <td>{row.type === "매매" ? "매매" : row.price.includes("월세") ? "월세" : "전세"}</td>
-                      <td>{row.price.slice(0, -4)}</td>
+                      <td>{row.type === "전월세" ? row.price.slice(0, -4) : row.price}</td>
                       <td>{row.floor}</td>
                     </tr>
                   ))
                 ) : (
                   <tr>
-                    <td colSpan={4} style={{ textAlign: "center", color: "#888" }}>
+                    <td colSpan={4} style={{ textAlign: "center", color: "#888", marginLeft: "40px" }}>
                       거래 이력이 없습니다.
                     </td>
                   </tr>
@@ -262,22 +284,60 @@ const SidebarDetail = ({ item }: SidebarDetailProps) => {
             </table>
 
             <div className="pagination">
-              {Array.from({ length: Math.min(5, totalPages) }, (_, i) => (
+              <button
+                className="pagination-button"
+                onClick={() => setCurrentPage((prev) => Math.max(1, prev - 1))}
+                disabled={currentPage === 1}
+              >
+                <span className="pagination-arrow">‹</span>
+              </button>
+
+              <button
+                className={`pagination-button ${currentPage === 1 ? "active" : ""}`}
+                onClick={() => setCurrentPage(1)}
+              >
+                1
+              </button>
+
+              {currentPage >= 3 && <span className="ellipsis">...</span>}
+
+              {Array.from({ length: totalPages }, (_, i) => i + 1)
+                .filter((page) => Math.abs(page - currentPage) <= 1 && page !== 1 && page !== totalPages)
+                .map((page) => (
+                  <button
+                    key={page}
+                    className={`pagination-button ${currentPage === page ? "active" : ""}`}
+                    onClick={() => setCurrentPage(page)}
+                  >
+                    {page}
+                  </button>
+                ))}
+
+              {currentPage < totalPages - 2 && <span className="ellipsis">...</span>}
+
+              {totalPages > 1 && (
                 <button
-                  key={i + 1}
-                  className={currentPage === i + 1 ? "active" : ""}
-                  onClick={() => setCurrentPage(i + 1)}
+                  className={`pagination-button ${currentPage === totalPages ? "active" : ""}`}
+                  onClick={() => setCurrentPage(totalPages)}
                 >
-                  {i + 1}
+                  {totalPages}
                 </button>
-              ))}
+              )}
+
+              <button
+                className="pagination-button"
+                onClick={() => setCurrentPage((prev) => Math.min(totalPages, prev + 1))}
+                disabled={currentPage === totalPages}
+              >
+                <span className="pagination-arrow">›</span>
+              </button>
             </div>
           </div>
 
           <p className="data-source">2025.05 국토교통부 기준</p>
         </>
       ) : (
-        <p className="sidebar-panel sidebar-block">상세 정보를 불러오는 중입니다...</p>
+        <></>
       )}
     </div>
   );

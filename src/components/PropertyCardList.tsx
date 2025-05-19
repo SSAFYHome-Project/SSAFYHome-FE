@@ -93,15 +93,53 @@ const PropertyCardList = ({ title, items, onSelect }: Props) => {
 
       {totalPages > 1 && (
         <div className="pagination">
-          {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+          <button
+            className="pagination-button"
+            onClick={() => handlePageChange(Math.max(1, currentPage - 1))}
+            disabled={currentPage === 1}
+          >
+            ‹
+          </button>
+
+          <button
+            className={`pagination-button ${currentPage === 1 ? "active-page" : ""}`}
+            onClick={() => handlePageChange(1)}
+          >
+            1
+          </button>
+
+          {currentPage > 3 && <span className="ellipsis">...</span>}
+
+          {Array.from({ length: totalPages }, (_, i) => i + 1)
+            .filter((page) => Math.abs(page - currentPage) <= 1 && page !== 1 && page !== totalPages)
+            .map((page) => (
+              <button
+                key={page}
+                className={`pagination-button ${page === currentPage ? "active-page" : ""}`}
+                onClick={() => handlePageChange(page)}
+              >
+                {page}
+              </button>
+            ))}
+
+          {currentPage < totalPages - 2 && <span className="ellipsis">...</span>}
+
+          {totalPages > 1 && (
             <button
-              key={page}
-              className={page === currentPage ? "active-page" : ""}
-              onClick={() => handlePageChange(page)}
+              className={`pagination-button ${currentPage === totalPages ? "active-page" : ""}`}
+              onClick={() => handlePageChange(totalPages)}
             >
-              {page}
+              {totalPages}
             </button>
-          ))}
+          )}
+
+          <button
+            className="pagination-button"
+            onClick={() => handlePageChange(Math.min(totalPages, currentPage + 1))}
+            disabled={currentPage === totalPages}
+          >
+            ›
+          </button>
         </div>
       )}
     </div>
