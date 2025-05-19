@@ -35,7 +35,6 @@ body,
   font-size: 14px;
   color: #5a5f67;
   margin: 0.5rem 0 1.5rem 0;
-  padding-bottom: 1rem;
   line-height: 1.6;
 }
 
@@ -249,6 +248,7 @@ body,
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  cursor: pointer;
 }
 
 .favorite-card-body {
@@ -287,23 +287,27 @@ body,
 .favorite-delete-btn {
   background: none;
   border: none;
-  font-size: 14px;
-  color: #f26671;
   cursor: pointer;
   padding: 0;
 }
 
-.favorite-delete-btn.hover {
-  color: #abb2bd;
-}
-
 .favorite-text {
-  color: #5a5f57;
+  color: #f26671;
   transition: color 0.2s ease;
+  font-size: 14px;
 }
 
 .favorite-text.hover {
+  color: #5a5f57;
+}
+
+.delete-text {
   color: #f26671;
+  transition: color 0.2s ease;
+}
+
+.delete-text.hover {
+  color: #5a5f57;
 }
 
 .favorite-price {
@@ -536,6 +540,7 @@ body,
 }
 
 .loading-text {
+  font-family: "NanumSquareR", sans-serif;
   font-size: 18px;
   text-align: center;
   display: flex;

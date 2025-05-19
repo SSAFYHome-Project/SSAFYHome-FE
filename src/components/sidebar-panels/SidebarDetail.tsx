@@ -107,24 +107,35 @@ const SidebarDetail = ({ onCloseSidebar, item }: SidebarDetailProps) => {
     );
   }
 
-  const { aptName, dealAmount, deposit, area, floor, umdNm, monthlyRent } = item;
-
   const handleBookmark = async () => {
+    if (!item || !detailData) return;
+
+    const payload = {
+      aptName: item.aptName,
+      dealType: item.monthlyRent ? "RENT" : "TRADE",
+      regionCode: detailData.doroJuso,
+      jibun: item.jibun || "",
+      deposit: parseInt(item.deposit ?? "0"),
+      monthlyRent: parseInt(item.monthlyRent ?? "0"),
+      dealAmount: parseInt(item.dealAmount ?? "0"),
+      excluUseAr: parseFloat(item.area),
+      dealYear: detailData.dealYear || new Date().getFullYear(),
+      dealMonth: detailData.dealMonth || new Date().getMonth() + 1,
+      dealDay: detailData.dealDay || new Date().getDate(),
+      floor: parseInt(item.floor),
+      buildYear: parseInt(detailData.kaptUsedate?.slice(0, 4) || "0"),
+    };
+
+    console.log("즐겨찾기 등록 요청 payload:", payload);
+
     try {
-      await axios.post(
-        "/api/user/bookmark",
-        {
-          aptNm: aptName,
-          estateAgentAggNm: "중개사무소명",
-          umdNm,
-          dealAmount: parseInt(dealAmount ?? "0"),
+      const response = await axios.post("/api/user/bookmark", payload, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
         },
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
-          },
-        }
-      );
+      });
+
+      console.log("즐겨찾기 등록 성공:", response.data);
       alert("즐겨찾기에 등록되었습니다!");
     } catch (error) {
       console.error("즐겨찾기 등록 실패:", error);
@@ -177,7 +188,7 @@ const SidebarDetail = ({ onCloseSidebar, item }: SidebarDetailProps) => {
               onMouseLeave={() => setHovered(false)}
               onClick={handleBookmark}
             >
-              <img src={hovered ? heartHoverIcon : heartIcon} alt="등록하기" className="heart-img" />
+              <img src={hovered ? heartIcon : heartHoverIcon} alt="등록하기" className="heart-img" />
               <span className={`favorite-text ${hovered ? "hover" : ""}`}>등록하기</span>
             </div>
           </div>
@@ -249,7 +260,7 @@ const SidebarDetail = ({ onCloseSidebar, item }: SidebarDetailProps) => {
             {chartData.length > 0 ? (
               <PriceChart data={chartData} />
             ) : (
-              <p style={{ textAlign: "center", color: "#888" }}>차트 데이터 없음</p>
+              <p style={{ textAlign: "center", color: "#888", marginLeft: "40px" }}>차트 데이터 없음</p>
             )}
           </div>
 

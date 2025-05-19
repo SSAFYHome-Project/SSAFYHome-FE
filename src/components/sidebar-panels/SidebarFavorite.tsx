@@ -2,62 +2,85 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import "../../styles/SidebarPanel.css";
 
-import heartFilledIcon from "../../assets/img/heart-filled.png";
+import heartIcon from "../../assets/img/heart-filled.png";
 import heartHoverIcon from "../../assets/img/heart.png";
 
-interface FavoriteItem {
+interface BookmarkResponse {
   bookmarkIdx: number;
-  aptNm: string;
-  estateAgentAggNm: string;
-  umdNm: string;
+  user: any; // 생략 가능, 현재는 사용하지 않음
+  deal: DealInfo;
+  reg_date: string;
+}
+
+interface DealInfo {
+  dealId: number;
+  aptName: string;
+  dealType: "RENT" | "TRADE";
+  regionCode: string;
+  jibun: string;
+  deposit: number;
+  monthlyRent: number;
   dealAmount: number;
-  createdAt: string;
+  excluUseAr: number;
+  dealYear: number;
+  dealMonth: number;
+  dealDay: number;
+  floor: number;
+  buildYear: number;
 }
 
 const SidebarFavorite = () => {
   const [hoveredIdx, setHoveredIdx] = useState<number | null>(null);
-  const [favorites, setFavorites] = useState<FavoriteItem[]>([]);
+  const [favorites, setFavorites] = useState<BookmarkResponse[]>([]);
 
   useEffect(() => {
-    const loadFavorites = async () => {
-      const data = await fetchFavorites();
-      setFavorites(data);
+    const fetchFavorites = async () => {
+      try {
+        const token = localStorage.getItem("accessToken");
+        const response = await axios.get("/api/user/bookmark", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        setFavorites(response.data);
+      } catch (error) {
+        console.error("관심 매물 목록을 불러오지 못했습니다.", error);
+      }
     };
-    loadFavorites();
+    fetchFavorites();
   }, []);
 
-  const fetchFavorites = async (): Promise<FavoriteItem[]> => {
+  const handleDelete = async (bookmarkIdx: number) => {
+    if (!window.confirm("정말 삭제하시겠습니까?")) return;
     try {
       const token = localStorage.getItem("accessToken");
-      const response = await axios.get("/api/user/bookmark", {
+      await axios.delete(`/api/user/bookmark/${bookmarkIdx}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
-
-      return response.data.map((item: any) => ({
-        bookmarkIdx: item.bookmarkIdx,
-        aptNm: item.aptNm,
-        estateAgentAggNm: item.estateAgentAggNm,
-        umdNm: item.umdNm,
-        dealAmount: item.dealAmount,
-        createdAt: item.createdAt,
-      }));
+      setFavorites((prev) => prev.filter((f) => f.bookmarkIdx !== bookmarkIdx));
+      alert("삭제되었습니다.");
     } catch (error) {
-      console.error("관심 매물 목록을 불러오지 못했습니다.", error);
-      return [];
+      console.error("삭제 실패:", error);
+      alert("삭제 중 오류가 발생했습니다.");
     }
   };
 
-  const formatDealAmount = (amount: number) => {
-    const total = amount * 10000;
-    const eok = Math.floor(total / 100000000);
-    const man = Math.floor((total % 100000000) / 10000);
-    return man === 0 ? `${eok}억` : `${eok}억 ${man.toLocaleString()}만원`;
-  };
+  const getFormattedLabel = (deal: DealInfo): string => {
+    const formatNumber = (num: number) => {
+      return num >= 10000 ? (num / 10000).toFixed(2).replace(/\.?0+$/, "") + "억" : num.toLocaleString() + "만원";
+    };
 
-  const handleDelete = (bookmarkIdx: number) => {
-    alert(`삭제 요청: bookmarkIdx=${bookmarkIdx}`);
+    if (deal.dealType === "RENT") {
+      if (deal.monthlyRent > 0) {
+        return `보증금: ${formatNumber(deal.deposit)} / 월세: ${deal.monthlyRent.toLocaleString()}만원`;
+      } else {
+        return `전세가: ${formatNumber(deal.deposit)}`;
+      }
+    } else {
+      return `실거래가: ${formatNumber(deal.dealAmount)}`;
+    }
   };
 
   return (
@@ -74,38 +97,29 @@ const SidebarFavorite = () => {
       {favorites.length === 0 ? (
         <p className="empty-text">관심 매물이 없습니다.</p>
       ) : (
-        favorites.map((item) => (
-          <div className="favorite-card" key={item.bookmarkIdx}>
+        favorites.map(({ bookmarkIdx, deal }) => (
+          <div className="favorite-card" key={bookmarkIdx}>
             <div className="favorite-card-body">
               <div>
-                {favorites.map((item) => (
-                  <div key={item.bookmarkIdx}>
-                    <h3 className="favorite-title">{item.aptNm}</h3>
-                    <p className="favorite-address">서울특별시 {item.umdNm}</p>
-                  </div>
-                ))}
+                <h3 className="favorite-title">{deal.aptName}</h3>
+                <p className="favorite-address">{deal.regionCode}</p>
               </div>
               <div
                 className="favorite-delete-group"
-                onMouseEnter={() => setHoveredIdx(item.bookmarkIdx)}
+                onMouseEnter={() => setHoveredIdx(bookmarkIdx)}
                 onMouseLeave={() => setHoveredIdx(null)}
+                onClick={() => handleDelete(bookmarkIdx)}
               >
                 <img
-                  src={hoveredIdx === item.bookmarkIdx ? heartHoverIcon : heartFilledIcon}
-                  alt="하트"
-                  className="heart-icon"
+                  src={hoveredIdx === bookmarkIdx ? heartHoverIcon : heartIcon}
+                  alt="삭제하기"
+                  className="heart-img"
                 />
-                <button
-                  className={`favorite-delete-btn ${hoveredIdx === item.bookmarkIdx ? "hover" : ""}`}
-                  onClick={() => handleDelete(item.bookmarkIdx)}
-                >
-                  삭제하기
-                </button>
+                <span className={`favorite-text ${hoveredIdx === bookmarkIdx ? "hover" : ""}`}>삭제하기</span>
               </div>
             </div>
-
             <div className="favorite-price">
-              <span>{formatDealAmount(item.dealAmount)}</span>
+              <span>{getFormattedLabel(deal)}</span>
             </div>
           </div>
         ))
