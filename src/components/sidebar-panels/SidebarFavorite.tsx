@@ -60,26 +60,29 @@ const SidebarFavorite = () => {
         },
       });
       setFavorites((prev) => prev.filter((f) => f.bookmarkIdx !== bookmarkIdx));
-      alert("삭제되었습니다.");
     } catch (error) {
       console.error("삭제 실패:", error);
       alert("삭제 중 오류가 발생했습니다.");
     }
   };
 
-  const getFormattedLabel = (deal: DealInfo): string => {
+  const getFormattedLabel = (item: DealInfo): string => {
     const formatNumber = (num: number) => {
       return num >= 10000 ? (num / 10000).toFixed(2).replace(/\.?0+$/, "") + "억" : num.toLocaleString() + "만원";
     };
 
-    if (deal.dealType === "RENT") {
-      if (deal.monthlyRent > 0) {
-        return `보증금: ${formatNumber(deal.deposit)} / 월세: ${deal.monthlyRent.toLocaleString()}만원`;
-      } else {
-        return `전세가: ${formatNumber(deal.deposit)}`;
-      }
+    if (item.dealAmount) {
+      const deal = parseInt(item.dealAmount.replace(/,/g, ""));
+      return `실거래가: ${formatNumber(deal)}`;
     } else {
-      return `실거래가: ${formatNumber(deal.dealAmount)}`;
+      const deposit = parseInt(String(item.deposit ?? "0").replace(/,/g, ""));
+      const rent = parseInt(String(item.monthlyRent ?? "0").replace(/,/g, ""));
+
+      if (rent === 0) {
+        return `전세가: ${formatNumber(deposit)}`;
+      } else {
+        return `보증금: ${formatNumber(deposit)} / 월세: ${rent.toLocaleString()}만원`;
+      }
     }
   };
 

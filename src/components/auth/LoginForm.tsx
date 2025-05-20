@@ -14,21 +14,6 @@ const LoginForm = () => {
 
   const getActiveClass = (path: string) => (location.pathname === path ? "active" : "");
 
-  useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    const jwt = params.get("jwtAccessToken");
-    if (jwt) {
-      localStorage.setItem("accessToken", jwt);
-      setErrorMessage("");
-      navigate("/");
-    }
-
-    const error = params.get("error");
-    if (error) {
-      setErrorMessage(decodeURIComponent(error));
-    }
-  }, []);
-
   const handleLogin = async () => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
