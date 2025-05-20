@@ -12,7 +12,9 @@
 
 .property-card {
   width: 350px;
+  padding-top: 0;
   padding: 2rem;
+  margin-top: 0;
   margin: 1rem;
   background-color: #fff;
   border: 1px solid #e6e8ec;

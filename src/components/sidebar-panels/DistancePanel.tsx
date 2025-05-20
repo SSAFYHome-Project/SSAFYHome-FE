@@ -85,15 +85,15 @@ const DistancePanel = ({ isLoggedIn, userLocation, onSelectLocation }: Props) =>
             onClick={() => onSelectLocation(parseFloat(addr.x), parseFloat(addr.y), addr.title)}
             style={{ cursor: "pointer" }}
           >
-            <strong className="distance-title">
+            <div className="distance-title">
               <img
                 src={addr.title === "SCHOOL" ? schoolMarker : companyMarker}
                 alt={addr.title === "SCHOOL" ? "학교" : "직장"}
                 className="distance-icon"
               />
-              {addr.title === "SCHOOL" ? "학교" : "직장"}
-            </strong>
-            <p>
+              <strong>{addr.title === "SCHOOL" ? "학교" : "직장"}</strong>
+            </div>
+            <p className="distance-address">
               {addr.address} {addr.detailAddress}
             </p>
           </div>

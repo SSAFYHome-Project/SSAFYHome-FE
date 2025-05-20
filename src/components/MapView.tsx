@@ -2,26 +2,11 @@ import { useEffect, useRef, useState } from "react";
 import axios from "axios";
 import "../styles/MapView.css";
 import myLocation from "../assets/img/my-location-marker.png";
-import rentMarker from "../assets/img/rent-marker.png";
-import tradeMarker from "../assets/img/trade-marker.png";
-
 import DistancePanel from "../components/sidebar-panels/DistancePanel";
 
-const KAKAO_JS_API_KEY = import.meta.env.VITE_KAKAO_JS_API_KEY;
+import { renderMarkersByType, clearOverlays, DealItemRaw } from "../hooks/useMapOverlay";
 
-interface DealItemRaw {
-  aptNm: string;
-  dealAmount?: string;
-  deposit?: string;
-  buildYear: number;
-  excluUseAr?: number;
-  floor?: number;
-  roadAddr?: string;
-  umdNm?: string;
-  jibun?: string;
-  monthlyRent?: string;
-  [key: string]: any;
-}
+const KAKAO_JS_API_KEY = import.meta.env.VITE_KAKAO_JS_API_KEY;
 
 interface MapViewProps {
   filterValues: {
@@ -44,7 +29,6 @@ const MapView = ({ filterValues, onUpdateDeals }: MapViewProps) => {
     carTime: number;
     walkTime: string;
   }>(null);
-  const [selectedLocation, setSelectedLocation] = useState<{ x: number; y: number; name: string } | null>(null);
 
   const isLoggedIn = !!localStorage.getItem("accessToken");
 
@@ -63,96 +47,13 @@ const MapView = ({ filterValues, onUpdateDeals }: MapViewProps) => {
     });
   };
 
-  const formatDealLabel = (apt: DealItemRaw, type: "매매" | "전월세") => {
-    const formatNumber = (num: number) => {
-      return num >= 10000 ? (num / 10000).toFixed(2).replace(/\.?0+$/, "") + "억" : num.toLocaleString() + "만원";
-    };
+  const dealTypes: ("전체" | "매매" | "전월세")[] = ["전체", "매매", "전월세"];
+  const [activeType, setActiveType] = useState<"전체" | "매매" | "전월세">("전체");
 
-    if (type === "매매") {
-      const deal = parseInt(String(apt.dealAmount ?? "0").replace(/,/g, ""));
-      return `실거래가: ${formatNumber(deal)}`;
-    }
-
-    const deposit = parseInt(String(apt.deposit ?? "0").replace(/,/g, ""));
-    const rent = parseInt(String(apt.monthlyRent ?? "0").replace(/,/g, ""));
-
-    if (rent === 0) {
-      return `전세가: ${formatNumber(deposit)}`;
-    } else {
-      return `보증금: ${formatNumber(deposit)} / 월세: ${rent.toLocaleString()}만원`;
-    }
-  };
-
-  let openInfoWindow: any = null;
-
-  const renderMarkersByType = (items: DealItemRaw[], type: "매매" | "전월세") => {
-    const kakao = (window as any).kakao;
-    const geocoder = new kakao.maps.services.Geocoder();
-
-    items.forEach((apt) => {
-      const address = `${apt.roadAddr || apt.umdNm || ""} ${apt.jibun || ""}`.trim();
-
-      geocoder.addressSearch(address, (result: any, status: any) => {
-        if (status === kakao.maps.services.Status.OK) {
-          const latlng = new kakao.maps.LatLng(result[0].y, result[0].x);
-          const markerImage = new kakao.maps.MarkerImage(
-            type === "매매" ? tradeMarker : rentMarker,
-            new kakao.maps.Size(40, 40)
-          );
-
-          const marker = new kakao.maps.Marker({
-            map: mapInstance.current,
-            position: latlng,
-            title: apt.aptNm,
-            image: markerImage,
-          });
-
-          const infoWindow = new kakao.maps.InfoWindow({
-            content: `
-              <div style="
-                padding: 12px 16px;
-                font-size: 13px;
-                font-family: 'Apple SD Gothic Neo', sans-serif;
-                color: #333;
-                min-width: 230px;
-                max-width: 280px;
-                white-space: nowrap;
-                overflow: hidden;
-                text-overflow: ellipsis;
-              ">
-                <div style="
-                  font-size: 14px;
-                  font-weight: bold;
-                  margin-bottom: 6px;
-                  color: #2a2a2a;
-                ">
-                  ${apt.aptNm}
-                </div>
-                <div style="margin-bottom: 4px;">
-                  <span style="color: #3182f6; font-weight: bold;">
-                  ${formatDealLabel(apt, type)}
-                  </span>
-                </div>
-                <div>유형: ${type}</div>
-              </div>
-            `,
-          });
-
-          kakao.maps.event.addListener(marker, "mouseover", () => {
-            if (openInfoWindow) openInfoWindow.close();
-            infoWindow.open(mapInstance.current, marker);
-            openInfoWindow = infoWindow;
-          });
-
-          kakao.maps.event.addListener(marker, "mouseout", () => {
-            infoWindow.close();
-            openInfoWindow = null;
-          });
-        } else {
-          console.warn("좌표 변환 실패:", address);
-        }
-      });
-    });
+  const handleCycleType = () => {
+    const currentIndex = dealTypes.indexOf(activeType);
+    const nextIndex = (currentIndex + 1) % dealTypes.length;
+    setActiveType(dealTypes[nextIndex]);
   };
 
   const getDealData = async (regionCode: string, yyyymm: string) => {
@@ -165,11 +66,14 @@ const MapView = ({ filterValues, onUpdateDeals }: MapViewProps) => {
       const limitedTrade = tradeItems.slice(0, 100);
       const limitedRent = rentItems.slice(0, 100);
 
-      renderMarkersByType(limitedTrade, "매매");
-      renderMarkersByType(limitedRent, "전월세");
+      clearOverlays();
 
-      console.log(limitedTrade);
-      console.log(limitedRent);
+      if (activeType === "전체" || activeType === "매매") {
+        renderMarkersByType(limitedTrade, "매매", mapInstance.current);
+      }
+      if (activeType === "전체" || activeType === "전월세") {
+        renderMarkersByType(limitedRent, "전월세", mapInstance.current);
+      }
 
       onUpdateDeals(limitedTrade, limitedRent);
     } catch (error) {
@@ -238,41 +142,41 @@ const MapView = ({ filterValues, onUpdateDeals }: MapViewProps) => {
       });
       getDealData(filterValues.regionCode, filterValues.yyyymm);
     }
-  }, [filterValues]);
-
-  const handleCurrentLocation = () => {
-    const kakao = (window as any).kakao;
-    if (navigator.geolocation && mapInstance.current && kakao?.maps) {
-      navigator.geolocation.getCurrentPosition((pos) => {
-        const latlng = new kakao.maps.LatLng(pos.coords.latitude, pos.coords.longitude);
-        mapInstance.current.panTo(latlng);
-
-        const markerImage = new kakao.maps.MarkerImage(myLocation, new kakao.maps.Size(36, 40));
-        new kakao.maps.Marker({ map: mapInstance.current, position: latlng, image: markerImage });
-      });
-    }
-  };
-
-  const handleSelectLocation = (x: number, y: number, name: string) => {
-    const kakao = (window as any).kakao;
-    const latlng = new kakao.maps.LatLng(y, x);
-    mapInstance.current.panTo(latlng);
-
-    const markerImage = new kakao.maps.MarkerImage(myLocation, new kakao.maps.Size(36, 40));
-    new kakao.maps.Marker({ map: mapInstance.current, position: latlng, image: markerImage });
-  };
+  }, [filterValues, activeType]);
 
   return (
     <div className="map-wrapper">
       <div ref={mapRef} id="map" className="map-container" />
 
       <div className="map-button" style={{ left: 20 }}>
-        <button onClick={handleCurrentLocation}>내 위치</button>
+        <button
+          onClick={() => {
+            if (navigator.geolocation && mapInstance.current) {
+              navigator.geolocation.getCurrentPosition((pos) => {
+                const kakao = (window as any).kakao;
+                const latlng = new kakao.maps.LatLng(pos.coords.latitude, pos.coords.longitude);
+                mapInstance.current.panTo(latlng);
+
+                const markerImage = new kakao.maps.MarkerImage(myLocation, new kakao.maps.Size(36, 40));
+                new kakao.maps.Marker({ map: mapInstance.current, position: latlng, image: markerImage });
+              });
+            }
+          }}
+        >
+          내 위치
+        </button>
       </div>
 
       <div className={`map-button-distance ${showDistancePanel ? "active" : ""}`} style={{ left: 110 }}>
         <button onClick={() => setShowDistancePanel((prev) => !prev)}>
           {showDistancePanel ? "거리 비교 닫기" : "거리 비교 보기"}
+        </button>
+      </div>
+
+      <div className="map-button-group">
+        <button className="map-blue-button" onClick={handleCycleType}>
+          {activeType}
+          <span className="arrow">▼</span>
         </button>
       </div>
 
@@ -283,15 +187,12 @@ const MapView = ({ filterValues, onUpdateDeals }: MapViewProps) => {
           onSelectLocation={(x, y, name) => {
             const kakao = (window as any).kakao;
             const latlng = new kakao.maps.LatLng(y, x);
-
             mapInstance.current.panTo(latlng);
             new kakao.maps.Marker({
               map: mapInstance.current,
               position: latlng,
               title: name,
             });
-
-            // 거리 비교용 정보로 설정
             setUserLocation({
               name,
               carDistance: 0,

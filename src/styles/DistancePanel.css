@@ -33,36 +33,41 @@
   margin-top: 14px;
   background-color: #fcfcfc;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
-  transition: box-shadow 0.2s;
+  transition: box-shadow 0.2s ease;
+  cursor: pointer;
 }
 
 .distance-item:hover {
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
-.distance-item strong {
-  display: block;
-  font-family: "NanumSquareB", sans-serif;
-  font-size: 18px;
-  color: #111;
-  margin-top: 8px;
-  margin-bottom: 8px;
-}
-
 .distance-title {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
+
   font-family: "NanumSquareB", sans-serif;
   font-size: 18px;
   color: #111;
-  margin-top: 8px;
-  margin-bottom: 8px;
+  margin: 8px 0;
+}
+
+.distance-title strong {
+  font-weight: bold;
 }
 
 .distance-icon {
   width: 18px;
   height: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.distance-address {
+  font-size: 14px;
+  color: #444;
+  line-height: 1.4;
 }
 
 .no-location {

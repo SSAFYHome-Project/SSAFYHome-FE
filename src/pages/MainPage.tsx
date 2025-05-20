@@ -52,7 +52,6 @@ const MainPage = () => {
   const [tradeItems, setTradeItems] = useState<DealItem[]>([]);
   const [rentItems, setRentItems] = useState<DealItem[]>([]);
   const [selectedItem, setSelectedItem] = useState<DealItem | null>(null);
-  const [sortOption, setSortOption] = useState<"price-asc" | "price-desc" | "area-asc" | "area-desc">("price-asc");
 
   const handleSearchResult = (filters: Filters) => {
     setHasResult(true);
@@ -96,48 +95,6 @@ const MainPage = () => {
 지하철 2호선 삼성역까지는 도보 약 10분 거리입니다.
 
 롯데월드, 코엑스몰, 대형마트, 병원 등 주요 편의시설이 가까워 실거주를 고려하시는 분들께 적합한 입지입니다.`;
-
-  const getNum = (val: string | undefined) => parseFloat((val ?? "0").replace(/,/g, ""));
-
-  const sortedItems = [...(activeTab === "trade" ? tradeItems : rentItems)];
-
-  const sortOptions = [
-    { value: "price-desc", label: "가격 높은 순" },
-    { value: "price-asc", label: "가격 낮은 순" },
-    { value: "area-desc", label: "평수 높은 순" },
-    { value: "area-asc", label: "평수 낮은 순" },
-  ];
-
-  if (activeTab === "trade") {
-    sortedItems.sort((a, b) => {
-      let valA = 0,
-        valB = 0;
-
-      if (sortOption.startsWith("price")) {
-        valA = getNum(a.dealAmount);
-        valB = getNum(b.dealAmount);
-      } else {
-        valA = getNum(a.area);
-        valB = getNum(b.area);
-      }
-
-      return sortOption.endsWith("asc") ? valA - valB : valB - valA;
-    });
-  } else {
-    sortedItems.sort((a, b) => {
-      let valA = 0,
-        valB = 0;
-
-      if (sortOption.startsWith("area")) {
-        valA = getNum(a.area);
-        valB = getNum(b.area);
-
-        return sortOption.endsWith("asc") ? valA - valB : valB - valA;
-      }
-
-      return 0;
-    });
-  }
 
   return (
     <div className="main-wrapper">
@@ -185,52 +142,28 @@ const MainPage = () => {
           </div>
 
           {hasResult && (
-            <>
-              <div className="property-toggle-tabs-container">
-                <div className="property-toggle-tabs">
-                  <div className={`indicator ${activeTab}`} />
-                  <button className={activeTab === "trade" ? "active" : ""} onClick={() => setActiveTab("trade")}>
-                    매매 매물
-                  </button>
-                  <button className={activeTab === "rent" ? "active" : ""} onClick={() => setActiveTab("rent")}>
-                    전월세 매물
-                  </button>
-                </div>
-                <div className="sort-button-group">
-                  {sortOptions.map((option) => (
-                    <button
-                      key={option.value}
-                      className={`sort-button ${sortOption === option.value ? "active" : ""}`}
-                      onClick={() => setSortOption(option.value as any)}
-                    >
-                      {option.label}
-                    </button>
-                  ))}
-                </div>
-              </div>
-              <div className="property-lists">
-                {activeTab === "trade" && (
-                  <PropertyCardList
-                    title={activeTab === "trade" ? "매매 매물" : "전월세 매물"}
-                    items={sortedItems}
-                    onSelect={(item) => {
-                      setSelectedItem(item);
-                      setActiveSidebar("detail");
-                    }}
-                  />
-                )}
-                {activeTab === "rent" && (
-                  <PropertyCardList
-                    title={activeTab === "rent" ? "매매 매물" : "전월세 매물"}
-                    items={sortedItems}
-                    onSelect={(item) => {
-                      setSelectedItem(item);
-                      setActiveSidebar("detail");
-                    }}
-                  />
-                )}
-              </div>
-            </>
+            <div className="property-lists">
+              {activeTab === "trade" && (
+                <PropertyCardList
+                  title="매매 매물"
+                  items={tradeItems}
+                  onSelect={(item) => {
+                    setSelectedItem(item);
+                    setActiveSidebar("detail");
+                  }}
+                />
+              )}
+              {activeTab === "rent" && (
+                <PropertyCardList
+                  title="전월세 매물"
+                  items={rentItems}
+                  onSelect={(item) => {
+                    setSelectedItem(item);
+                    setActiveSidebar("detail");
+                  }}
+                />
+              )}
+            </div>
           )}
         </div>
       </div>

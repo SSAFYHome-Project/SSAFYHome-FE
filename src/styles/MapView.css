@@ -66,3 +66,36 @@
   font-size: 14px;
   color: #5a5f67;
 }
+
+.map-button-group {
+  position: absolute;
+  top: 16px;
+  left: 250px;
+  z-index: 10;
+}
+
+.map-blue-button {
+  padding: 0.7rem 1rem;
+  border: 2px solid #ffd600;
+  background-color: #fff;
+  font-family: "NanumSquareB", sans-serif;
+  font-size: 14px;
+  color: #ffd600;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-weight: bold;
+}
+
+.map-blue-button:hover {
+  background-color: #fff9cc;
+  color: #5a5f67;
+}
+
+.map-blue-button .arrow {
+  font-size: 11px;
+  margin-top: 1px;
+}
