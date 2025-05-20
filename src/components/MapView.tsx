@@ -16,10 +16,12 @@ interface MapViewProps {
     regionCode: string;
     yyyymm: string;
   } | null;
+  activeType: "전체" | "매매" | "전월세";
+  setActiveType: (type: "전체" | "매매" | "전월세") => void;
   onUpdateDeals: (trades: DealItemRaw[], rents: DealItemRaw[]) => void;
 }
 
-const MapView = ({ filterValues, onUpdateDeals }: MapViewProps) => {
+const MapView = ({ filterValues, activeType, setActiveType, onUpdateDeals }: MapViewProps) => {
   const mapRef = useRef<HTMLDivElement>(null);
   const mapInstance = useRef<any>(null);
   const [showDistancePanel, setShowDistancePanel] = useState(false);
@@ -48,7 +50,6 @@ const MapView = ({ filterValues, onUpdateDeals }: MapViewProps) => {
   };
 
   const dealTypes: ("전체" | "매매" | "전월세")[] = ["전체", "매매", "전월세"];
-  const [activeType, setActiveType] = useState<"전체" | "매매" | "전월세">("전체");
 
   const handleCycleType = () => {
     const currentIndex = dealTypes.indexOf(activeType);

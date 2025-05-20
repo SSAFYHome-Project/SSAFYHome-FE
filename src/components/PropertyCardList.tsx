@@ -8,9 +8,10 @@ type DealItem = {
   area: string;
   floor: string;
   umdNm: string;
-  ssgCd: string;
-  jibun: string;
   monthlyRent?: string;
+  aptCode?: string;
+  sggCd: string;
+  jibun: string;
 };
 
 type Props = {
@@ -20,9 +21,16 @@ type Props = {
 };
 
 const PropertyCardList = ({ title, items, onSelect }: Props) => {
+  const [visibleCount, setVisibleCount] = useState(20); // 처음에 20개 보임
+  const visibleItems = items.slice(0, visibleCount);
+
   const handleClick = (e: MouseEvent, item: DealItem) => {
     e.preventDefault();
     onSelect(item);
+  };
+
+  const handleShowMore = () => {
+    setVisibleCount((prev) => prev + 20); // 클릭 시 20개 추가
   };
 
   const getFormattedLabel = (item: DealItem): string => {
@@ -36,25 +44,10 @@ const PropertyCardList = ({ title, items, onSelect }: Props) => {
     } else {
       const deposit = parseInt(String(item.deposit ?? "0").replace(/,/g, ""));
       const rent = parseInt(String(item.monthlyRent ?? "0").replace(/,/g, ""));
-
-      if (rent === 0) {
-        return `전세가: ${formatNumber(deposit)}`;
-      } else {
-        return `보증금: ${formatNumber(deposit)} / 월세: ${rent.toLocaleString()}만원`;
-      }
+      return rent === 0
+        ? `전세가: ${formatNumber(deposit)}`
+        : `보증금: ${formatNumber(deposit)} / 월세: ${rent.toLocaleString()}만원`;
     }
-  };
-
-  const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 20;
-  const indexOfLastItem = currentPage * itemsPerPage;
-  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentItems = items.slice(indexOfFirstItem, indexOfLastItem);
-  const totalPages = Math.ceil(items.length / itemsPerPage);
-
-  const handlePageChange = (page: number) => {
-    setCurrentPage(page);
-    window.scrollTo({ top: 850, behavior: "smooth" });
   };
 
   const getSubInfo = (item: DealItem): string => {
@@ -68,10 +61,10 @@ const PropertyCardList = ({ title, items, onSelect }: Props) => {
   return (
     <div className="property-card-list">
       <div className="card-container">
-        {currentItems.length === 0 ? (
+        {visibleItems.length === 0 ? (
           <p className="no-data">매물이 없습니다.</p>
         ) : (
-          currentItems.map((item, index) => (
+          visibleItems.map((item, index) => (
             <div key={index} className="property-card" onClick={(e) => handleClick(e, item)}>
               <div className="card-header">
                 <h4>{item.aptName}</h4>
@@ -97,54 +90,10 @@ const PropertyCardList = ({ title, items, onSelect }: Props) => {
         )}
       </div>
 
-      {totalPages > 1 && (
-        <div className="pagination">
-          <button
-            className="pagination-button"
-            onClick={() => handlePageChange(Math.max(1, currentPage - 1))}
-            disabled={currentPage === 1}
-          >
-            ‹
-          </button>
-
-          <button
-            className={`pagination-button ${currentPage === 1 ? "active-page" : ""}`}
-            onClick={() => handlePageChange(1)}
-          >
-            1
-          </button>
-
-          {currentPage > 3 && <span className="ellipsis">...</span>}
-
-          {Array.from({ length: totalPages }, (_, i) => i + 1)
-            .filter((page) => Math.abs(page - currentPage) <= 1 && page !== 1 && page !== totalPages)
-            .map((page) => (
-              <button
-                key={page}
-                className={`pagination-button ${page === currentPage ? "active-page" : ""}`}
-                onClick={() => handlePageChange(page)}
-              >
-                {page}
-              </button>
-            ))}
-
-          {currentPage < totalPages - 2 && <span className="ellipsis">...</span>}
-
-          {totalPages > 1 && (
-            <button
-              className={`pagination-button ${currentPage === totalPages ? "active-page" : ""}`}
-              onClick={() => handlePageChange(totalPages)}
-            >
-              {totalPages}
-            </button>
-          )}
-
-          <button
-            className="pagination-button"
-            onClick={() => handlePageChange(Math.min(totalPages, currentPage + 1))}
-            disabled={currentPage === totalPages}
-          >
-            ›
+      {visibleCount < items.length && (
+        <div className="show-more-container">
+          <button className="show-more-button" onClick={handleShowMore}>
+            더보기 +
           </button>
         </div>
       )}

@@ -48,7 +48,9 @@ const MainPage = () => {
   const [activeSidebar, setActiveSidebar] = useState<null | "detail" | "favorite" | "recent" | "custom" | "feedback">(
     null
   );
-  const [allItems, setAllItems] = useState<DealItem[]>([]);
+  const [activeType, setActiveType] = useState<"전체" | "매매" | "전월세">("전체");
+  const [tradeItems, setTradeItems] = useState<DealItem[]>([]);
+  const [rentItems, setRentItems] = useState<DealItem[]>([]);
   const [selectedItem, setSelectedItem] = useState<DealItem | null>(null);
 
   const handleSearchResult = (filters: Filters) => {
@@ -113,6 +115,8 @@ const MainPage = () => {
           <div className="map-view">
             <MapView
               filterValues={filterValues}
+              activeType={activeType}
+              setActiveType={setActiveType}
               onUpdateDeals={(rawTrades: any[], rawRents: any[]) => {
                 const normalizedTrades = rawTrades.map((item) => ({
                   aptName: item.aptNm,
@@ -123,6 +127,7 @@ const MainPage = () => {
                   sggCd: item.sggCd,
                   jibun: item.jibun,
                 }));
+
                 const normalizedRents = rawRents.map((item) => ({
                   aptName: item.aptNm,
                   deposit: item.deposit,
@@ -133,21 +138,35 @@ const MainPage = () => {
                   sggCd: item.sggCd,
                   jibun: item.jibun,
                 }));
-                setAllItems([...normalizedTrades, ...normalizedRents]);
+
+                setTradeItems(normalizedTrades);
+                setRentItems(normalizedRents);
               }}
             />
           </div>
 
           {hasResult && (
             <div className="property-lists">
-              <PropertyCardList
-                title="전체 매물"
-                items={allItems}
-                onSelect={(item) => {
-                  setSelectedItem(item);
-                  setActiveSidebar("detail");
-                }}
-              />
+              {activeType === "매매" && (
+                <PropertyCardList
+                  title="매매 매물"
+                  items={tradeItems}
+                  onSelect={(item) => {
+                    setSelectedItem(item);
+                    setActiveSidebar("detail");
+                  }}
+                />
+              )}
+              {activeType === "전월세" && (
+                <PropertyCardList
+                  title="전월세 매물"
+                  items={rentItems}
+                  onSelect={(item) => {
+                    setSelectedItem(item);
+                    setActiveSidebar("detail");
+                  }}
+                />
+              )}
             </div>
           )}
         </div>
