@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
 import "../../styles/LoginForm.css";
@@ -13,6 +13,21 @@ const LoginForm = () => {
   const navigate = useNavigate();
 
   const getActiveClass = (path: string) => (location.pathname === path ? "active" : "");
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const jwt = params.get("jwtAccessToken");
+    if (jwt) {
+      localStorage.setItem("accessToken", jwt);
+      setErrorMessage("");
+      navigate("/");
+    }
+
+    const error = params.get("error");
+    if (error) {
+      setErrorMessage(decodeURIComponent(error));
+    }
+  }, []);
 
   const handleLogin = async () => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -29,24 +44,16 @@ const LoginForm = () => {
     try {
       const response = await axios.post(
         "/api/login",
-        {
-          email,
-          password,
-        },
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
+        { email, password },
+        { headers: { "Content-Type": "application/json" } }
       );
 
       const token = response.data.token;
       if (token) {
         localStorage.setItem("accessToken", token);
+        setErrorMessage("");
+        navigate("/");
       }
-
-      setErrorMessage("");
-      navigate("/");
     } catch (error: any) {
       console.error("로그인 오류:", error);
       if (error.response?.status === 401) {
@@ -61,9 +68,13 @@ const LoginForm = () => {
     navigate("/register");
   };
 
+  const handleGoogleLogin = () => {
+    window.location.href = "http://localhost:8080/oauth2/authorization/google";
+  };
+
   return (
     <div className="auth-box">
-      <button className="google-login">
+      <button className="google-login" onClick={handleGoogleLogin}>
         <img src={googleLogo} alt="Google Logo" className="google-logo" />
         Google 계정으로 로그인
       </button>
