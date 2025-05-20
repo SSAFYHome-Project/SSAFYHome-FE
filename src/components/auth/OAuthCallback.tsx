@@ -17,8 +17,6 @@ const OAuthCallback = () => {
       navigate("/login");
     }
   }, []);
-
-  return <div>로그인 처리 중입니다...</div>;
 };
 
 export default OAuthCallback;

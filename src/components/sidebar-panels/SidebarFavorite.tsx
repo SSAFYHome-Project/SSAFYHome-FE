@@ -7,7 +7,7 @@ import heartHoverIcon from "../../assets/img/heart.png";
 
 interface BookmarkResponse {
   bookmarkIdx: number;
-  user: any; // 생략 가능, 현재는 사용하지 않음
+  user: any;
   deal: DealInfo;
   reg_date: string;
 }
@@ -37,6 +37,7 @@ const SidebarFavorite = () => {
     const fetchFavorites = async () => {
       try {
         const token = localStorage.getItem("accessToken");
+        if (!token) return;
         const response = await axios.get("/api/user/bookmark", {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -54,6 +55,7 @@ const SidebarFavorite = () => {
     if (!window.confirm("정말 삭제하시겠습니까?")) return;
     try {
       const token = localStorage.getItem("accessToken");
+      if (!token) return;
       await axios.delete(`/api/user/bookmark/${bookmarkIdx}`, {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -67,23 +69,40 @@ const SidebarFavorite = () => {
   };
 
   const getFormattedLabel = (item: DealInfo): string => {
-    const formatNumber = (num: number) => {
-      return num >= 10000 ? (num / 10000).toFixed(2).replace(/\.?0+$/, "") + "억" : num.toLocaleString() + "만원";
+    const formatDeposit = (num: number) => {
+      const converted = num / 10;
+      if (converted < 1) {
+        return Math.round(converted * 10000).toLocaleString() + "만원";
+      }
+      return converted.toFixed(1).replace(/\.0$/, "") + "억";
     };
 
-    if (item.dealAmount) {
-      const deal = parseInt(item.dealAmount.replace(/,/g, ""));
-      return `실거래가: ${formatNumber(deal)}`;
-    } else {
-      const deposit = parseInt(String(item.deposit ?? "0").replace(/,/g, ""));
-      const rent = parseInt(String(item.monthlyRent ?? "0").replace(/,/g, ""));
-
-      if (rent === 0) {
-        return `전세가: ${formatNumber(deposit)}`;
-      } else {
-        return `보증금: ${formatNumber(deposit)} / 월세: ${rent.toLocaleString()}만원`;
+    const formatDealAmount = (num: number) => {
+      const converted = num / 10;
+      if (converted < 1) {
+        return Math.round(converted * 10000).toLocaleString() + "만원";
       }
+      return converted.toFixed(1).replace(/\.0$/, "") + "억";
+    };
+
+    const deposit = item.deposit || 0;
+    const rent = item.monthlyRent || 0;
+    const dealAmount = item.dealAmount || 0;
+
+    if (item.dealType === "TRADE") {
+      return `실거래가: ${formatDealAmount(dealAmount)}`;
+    } else {
+      return rent === 0
+        ? `전세가: ${formatDeposit(deposit)}`
+        : `보증금: ${formatDeposit(deposit)} / 월세: ${rent.toLocaleString()}만원`;
     }
+  };
+
+  const getSubInfo = (item: DealInfo): string => {
+    const m2 = item.excluUseAr?.toFixed(1) ?? "-";
+    const pyeong = item.excluUseAr ? `${Math.round(item.excluUseAr * 0.3025)}평` : "-평";
+    const floor = item.floor ?? "-";
+    return `${m2}㎡ · ${pyeong} / ${floor}층`;
   };
 
   return (
@@ -104,8 +123,13 @@ const SidebarFavorite = () => {
           <div className="favorite-card" key={bookmarkIdx}>
             <div className="favorite-card-body">
               <div>
-                <h3 className="favorite-title">{deal.aptName}</h3>
-                <p className="favorite-address">{deal.regionCode}</p>
+                <div>
+                  <h3 className="favorite-title">{deal.aptName}</h3>
+                  <div className="favorite-info">
+                    <p className="favorite-address">{deal.regionCode}</p>
+                    <p className="favorite-address">{getSubInfo(deal)}</p>
+                  </div>
+                </div>
               </div>
               <div
                 className="favorite-delete-group"

@@ -57,6 +57,14 @@ const PropertyCardList = ({ title, items, onSelect }: Props) => {
     window.scrollTo({ top: 850, behavior: "smooth" });
   };
 
+  const getSubInfo = (item: DealItem): string => {
+    const areaNum = parseFloat(item.area || "0");
+    const m2 = isNaN(areaNum) ? "-" : areaNum.toFixed(1);
+    const pyeong = isNaN(areaNum) ? "-평" : `${Math.round(areaNum * 0.3025)}평`;
+    const floor = item.floor ?? "-";
+    return `${m2}㎡ · ${pyeong} / ${floor}층`;
+  };
+
   return (
     <div className="property-card-list">
       <div className="card-container">
@@ -69,10 +77,8 @@ const PropertyCardList = ({ title, items, onSelect }: Props) => {
                 <h4>{item.aptName}</h4>
               </div>
               <div className="card-body">
+                <p className="info">{getSubInfo(item)}</p>
                 <p className="deal-amount">{getFormattedLabel(item)}</p>
-                <p className="info">
-                  {item.area}㎡ / {item.floor}층
-                </p>
               </div>
               <div className="card-footer">
                 <button

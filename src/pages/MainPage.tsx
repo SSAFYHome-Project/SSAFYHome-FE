@@ -48,9 +48,7 @@ const MainPage = () => {
   const [activeSidebar, setActiveSidebar] = useState<null | "detail" | "favorite" | "recent" | "custom" | "feedback">(
     null
   );
-  const [activeTab, setActiveTab] = useState<"trade" | "rent">("trade");
-  const [tradeItems, setTradeItems] = useState<DealItem[]>([]);
-  const [rentItems, setRentItems] = useState<DealItem[]>([]);
+  const [allItems, setAllItems] = useState<DealItem[]>([]);
   const [selectedItem, setSelectedItem] = useState<DealItem | null>(null);
 
   const handleSearchResult = (filters: Filters) => {
@@ -135,34 +133,21 @@ const MainPage = () => {
                   sggCd: item.sggCd,
                   jibun: item.jibun,
                 }));
-                setTradeItems(normalizedTrades);
-                setRentItems(normalizedRents);
+                setAllItems([...normalizedTrades, ...normalizedRents]);
               }}
             />
           </div>
 
           {hasResult && (
             <div className="property-lists">
-              {activeTab === "trade" && (
-                <PropertyCardList
-                  title="매매 매물"
-                  items={tradeItems}
-                  onSelect={(item) => {
-                    setSelectedItem(item);
-                    setActiveSidebar("detail");
-                  }}
-                />
-              )}
-              {activeTab === "rent" && (
-                <PropertyCardList
-                  title="전월세 매물"
-                  items={rentItems}
-                  onSelect={(item) => {
-                    setSelectedItem(item);
-                    setActiveSidebar("detail");
-                  }}
-                />
-              )}
+              <PropertyCardList
+                title="전체 매물"
+                items={allItems}
+                onSelect={(item) => {
+                  setSelectedItem(item);
+                  setActiveSidebar("detail");
+                }}
+              />
             </div>
           )}
         </div>
