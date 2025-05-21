@@ -51,6 +51,7 @@ const MainPage = () => {
   const [activeType, setActiveType] = useState<"전체" | "매매" | "전월세">("전체");
   const [tradeItems, setTradeItems] = useState<DealItem[]>([]);
   const [rentItems, setRentItems] = useState<DealItem[]>([]);
+  const [allItems, setAllItems] = useState<DealItem[]>([]);
   const [selectedItem, setSelectedItem] = useState<DealItem | null>(null);
 
   const handleSearchResult = (filters: Filters) => {
@@ -141,6 +142,7 @@ const MainPage = () => {
 
                 setTradeItems(normalizedTrades);
                 setRentItems(normalizedRents);
+                setAllItems([...normalizedTrades, ...normalizedRents]);
               }}
             />
           </div>
@@ -161,6 +163,16 @@ const MainPage = () => {
                 <PropertyCardList
                   title="전월세 매물"
                   items={rentItems}
+                  onSelect={(item) => {
+                    setSelectedItem(item);
+                    setActiveSidebar("detail");
+                  }}
+                />
+              )}
+              {activeType === "전체" && (
+                <PropertyCardList
+                  title="전체 매물"
+                  items={allItems}
                   onSelect={(item) => {
                     setSelectedItem(item);
                     setActiveSidebar("detail");

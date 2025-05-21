@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-import closeIcon from "../../assets/img/close.png"; // X 아이콘 이미지 1종만 사용
+import closeIcon from "../../assets/img/close.png";
 
 import "../../styles/SidebarPanel.css";
 
