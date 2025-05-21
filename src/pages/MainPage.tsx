@@ -133,6 +133,10 @@ const MainPage = () => {
                 setRentItems(normalizedRents);
                 setAllItems([...normalizedTrades, ...normalizedRents]);
               }}
+              onSelectItem={(item) => {
+                setSelectedItem(item);
+                setActiveSidebar("detail");
+              }}
             />
           </div>
 

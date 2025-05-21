@@ -19,9 +19,10 @@ interface MapViewProps {
   activeType: "전체" | "매매" | "전월세";
   setActiveType: (type: "전체" | "매매" | "전월세") => void;
   onUpdateDeals: (trades: DealItemRaw[], rents: DealItemRaw[]) => void;
+  onSelectItem: (item: DealItemRaw) => void;
 }
 
-const MapView = ({ filterValues, activeType, setActiveType, onUpdateDeals }: MapViewProps) => {
+const MapView = ({ filterValues, activeType, setActiveType, onUpdateDeals, onSelectItem }: MapViewProps) => {
   const mapRef = useRef<HTMLDivElement>(null);
   const mapInstance = useRef<any>(null);
   const [showDistancePanel, setShowDistancePanel] = useState(false);
@@ -70,13 +71,12 @@ const MapView = ({ filterValues, activeType, setActiveType, onUpdateDeals }: Map
       clearOverlays();
 
       if (activeType === "전체" || activeType === "매매") {
-        renderMarkersByType(limitedTrade, "매매", mapInstance.current);
+        renderMarkersByType(limitedTrade, "매매", mapInstance.current, onSelectItem);
       }
       if (activeType === "전체" || activeType === "전월세") {
-        renderMarkersByType(limitedRent, "전월세", mapInstance.current);
+        renderMarkersByType(limitedRent, "전월세", mapInstance.current, onSelectItem);
       }
 
-      console.log(limitedRent);
       onUpdateDeals(limitedTrade, limitedRent);
     } catch (error) {
       console.error("실거래 데이터 불러오기 실패", error);
@@ -167,8 +167,6 @@ const MapView = ({ filterValues, activeType, setActiveType, onUpdateDeals }: Map
                   position: latlng,
                   image: markerImage,
                 });
-
-                console.log("🪧 생성된 마커:", marker);
               });
             }
           }}
