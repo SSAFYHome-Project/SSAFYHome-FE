@@ -30,6 +30,7 @@ export const renderMarkersByType = (items: DealItemRaw[], type: "매매" | "전�
     geocoder.addressSearch(address, (result: any, status: any) => {
       if (status === kakao.maps.services.Status.OK) {
         const latlng = new kakao.maps.LatLng(result[0].y, result[0].x);
+        console.log(latlng);
 
         const formatNumber = (num: number) => {
           return num >= 10000 ? (num / 10000).toFixed(2).replace(/\.0+$/, "") + "억" : num.toLocaleString() + "만원";

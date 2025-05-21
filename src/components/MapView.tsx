@@ -76,6 +76,7 @@ const MapView = ({ filterValues, activeType, setActiveType, onUpdateDeals }: Map
         renderMarkersByType(limitedRent, "전월세", mapInstance.current);
       }
 
+      console.log(limitedRent);
       onUpdateDeals(limitedTrade, limitedRent);
     } catch (error) {
       console.error("실거래 데이터 불러오기 실패", error);
@@ -156,10 +157,18 @@ const MapView = ({ filterValues, activeType, setActiveType, onUpdateDeals }: Map
               navigator.geolocation.getCurrentPosition((pos) => {
                 const kakao = (window as any).kakao;
                 const latlng = new kakao.maps.LatLng(pos.coords.latitude, pos.coords.longitude);
+                console.log("📍 현재 위치 좌표:", latlng);
+
                 mapInstance.current.panTo(latlng);
 
                 const markerImage = new kakao.maps.MarkerImage(myLocation, new kakao.maps.Size(36, 40));
-                new kakao.maps.Marker({ map: mapInstance.current, position: latlng, image: markerImage });
+                const marker = new kakao.maps.Marker({
+                  map: mapInstance.current,
+                  position: latlng,
+                  image: markerImage,
+                });
+
+                console.log("🪧 생성된 마커:", marker);
               });
             }
           }}
