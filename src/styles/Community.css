@@ -1,0 +1,174 @@
+.community-section {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 44px 20px;
+}
+
+.community-logo {
+  width: 230px;
+  height: 230px;
+  margin: 0 auto 60px;
+  display: block;
+}
+
+.community-list {
+  display: flex;
+  flex-direction: column;
+  gap: 48px;
+}
+
+.community-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 24px;
+  padding-bottom: 32px;
+  border-bottom: 1px solid #ddd;
+  transition: color 0.3s ease;
+  cursor: pointer;
+}
+
+.community-info {
+  flex: 1;
+  transition: color 0.3s ease;
+}
+
+.community-category {
+  font-size: 14px;
+  color: #888;
+  margin-bottom: 12px;
+}
+
+.community-title {
+  font-size: 22px;
+  font-weight: 600;
+  color: #1d1d1f;
+  margin-bottom: 10px;
+  transition: color 0.3s ease;
+}
+
+.community-desc {
+  font-size: 16px;
+  color: #666;
+  margin-bottom: 10px;
+}
+
+.community-date {
+  font-size: 14px;
+  color: #aaa;
+}
+
+.community-image-wrapper {
+  flex-shrink: 0;
+  transition: transform 0.3s ease;
+}
+
+.community-image {
+  width: 300px;
+  height: 150px;
+  object-fit: cover;
+  border-radius: 12px;
+  transition: transform 0.3s ease;
+}
+
+.community-item:hover .community-title {
+  color: #ffd900;
+}
+
+.community-item:hover .community-image-wrapper {
+  transform: scale(1.03);
+}
+
+.community-write-wrapper {
+  text-align: right;
+  margin-bottom: 20px;
+}
+
+.community-write-button {
+  padding: 10px 16px;
+  background-color: #ffeb00;
+  color: #5a5f67;
+  font-size: 14px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.community-write-button:hover {
+  background-color: #e2cf00;
+}
+
+.community-columns,
+.community-row {
+  display: flex;
+  gap: 40px;
+  margin-top: 40px;
+}
+
+.community-left {
+  flex: 1;
+}
+
+.community-right {
+  flex: 1;
+}
+
+.community-subtitle {
+  font-size: 20px;
+  font-weight: 600;
+  margin-bottom: 12px;
+}
+
+.community-subtext {
+  font-size: 14px;
+  color: #777;
+  margin-bottom: 22px;
+}
+
+.community-list-simple {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.community-simple-item {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 12px;
+  font-size: 15px;
+  color: #333;
+}
+
+.community-rank {
+  font-weight: bold;
+  color: #1d72e8;
+}
+
+.fortune-box {
+  width: 100%;
+  height: 160px;
+  background: linear-gradient(135deg, #fef9e7, #f7ed94);
+  border-radius: 16px;
+  text-align: center;
+  line-height: 160px;
+  font-size: 16px;
+  color: #999;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s ease;
+  user-select: none;
+}
+
+.fortune-box:hover {
+  font-weight: bold;
+  color: #555;
+}
+
+.fortune-box.revealed {
+  color: #222;
+  background: #fff;
+  border: 1px solid #ddd;
+  transition: background 0.5s, color 0.5s;
+}

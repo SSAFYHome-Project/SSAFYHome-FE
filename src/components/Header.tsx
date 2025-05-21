@@ -78,6 +78,9 @@ const Header = () => {
         <a href="/" className={getActiveClass("/")}>
           안전지역
         </a>
+        <a href="/community" className={getActiveClass("/community")}>
+          커뮤니티
+        </a>
         <a href="/news" className={getActiveClass("/news")}>
           뉴스
         </a>
