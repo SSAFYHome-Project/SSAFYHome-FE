@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import axios from "axios";
+import { marked } from "marked";
 import "../../styles/SidebarCustom.css";
 import logoImg from "../../assets/img/chatbot-logo.png";
 
@@ -11,15 +12,19 @@ const SidebarCustom = () => {
   const userAddress = userInfo?.address || "";
   const bottomRef = useRef<HTMLDivElement | null>(null);
 
-  const [messages, setMessages] = useState<{ from: "user" | "bot"; text: string; time?: string }[]>([
-    {
-      from: "bot",
-      text: `${userName}님, 안녕하세요 👋\n\n${
+  const [messages, setMessages] = useState<{ from: "user" | "bot"; text: string; time?: string }[]>([]);
+  useEffect(() => {
+    const setInitialBotMessage = async () => {
+      const initialBotText = `${userName}님, 안녕하세요 👋\n\n${
         userAddress ? `현재 설정된 주소는 '${userAddress}'입니다. 해당 지역을 기준으로 매물을 안내드릴게요!\n\n` : ""
-      }궁금하신 조건을 입력하시거나,\n아래 항목 중 하나를 선택해 주세요.`,
-      time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
-    },
-  ]);
+      }궁금하신 조건을 입력하시거나,\n아래 항목 중 하나를 선택해 주세요.`;
+      const markedText = await marked(initialBotText);
+      const time = new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+      setMessages([{ from: "bot", text: markedText, time }]);
+    };
+
+    setInitialBotMessage();
+  }, []);
 
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -48,7 +53,7 @@ const SidebarCustom = () => {
           messages: [
             {
               role: "system",
-              content: `너는 안전지역의 부동산 매물 추천 전문가야. 사용자가 입력한 지역, 평수, 전세/매매 조건에 맞춰 안전한 지역의 매물만 추천해줘.${
+              content: `너는 안전지역의 부동산 매물 추천 전문가야. 사용자가 입력한 지역, 평수, 전세/매매 조건에 맞춰 안전한 지역의 매물만 추천해줘. 이모티콘을 사용해서 사용자 친화적으로 알려줘.${
                 userAddress ? ` 참고로 사용자의 주소는 '${userAddress}'야.` : ""
               }`,
             },
@@ -68,7 +73,8 @@ const SidebarCustom = () => {
         }
       );
 
-      const botReply = response.data.choices[0].message.content;
+      const botReplyRaw = response.data.choices[0].message.content;
+      const botReply = await marked(botReplyRaw);
       setMessages((prev) => [...prev, { from: "bot", text: botReply, time: currentTime }]);
     } catch (error) {
       setMessages((prev) => [...prev, { from: "bot", text: "죄송해요, 응답에 실패했어요 😢", time: currentTime }]);
@@ -136,7 +142,11 @@ const SidebarCustom = () => {
 
         {messages.map((msg, idx) => (
           <div key={idx} className={`chat-bubble ${msg.from}`}>
-            <div className="bubble">{msg.text}</div>
+            {msg.from === "bot" ? (
+              <div className="bubble" dangerouslySetInnerHTML={{ __html: msg.text }} />
+            ) : (
+              <div className="bubble">{msg.text}</div>
+            )}
             <div className="bubble-time">{msg.time}</div>
           </div>
         ))}

@@ -5,7 +5,7 @@ import "../../styles/SidebarPanel.css";
 import closeIcon from "../../assets/img/close.png";
 
 interface DealInfo {
-  dealId?: number; // ✅ 일부 서버 데이터에 없을 수도 있으므로 optional
+  dealId?: number;
   aptName: string;
   dealType: "RENT" | "TRADE";
   regionCode: string;
