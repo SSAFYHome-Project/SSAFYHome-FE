@@ -21,7 +21,7 @@ type Props = {
 };
 
 const PropertyCardList = ({ title, items, onSelect }: Props) => {
-  const [visibleCount, setVisibleCount] = useState(20); // 처음에 20개 보임
+  const [visibleCount, setVisibleCount] = useState(20);
   const visibleItems = items.slice(0, visibleCount);
 
   const handleClick = (e: MouseEvent, item: DealItem) => {
@@ -30,7 +30,7 @@ const PropertyCardList = ({ title, items, onSelect }: Props) => {
   };
 
   const handleShowMore = () => {
-    setVisibleCount((prev) => prev + 20); // 클릭 시 20개 추가
+    setVisibleCount((prev) => prev + 20);
   };
 
   const getFormattedLabel = (item: DealItem): string => {

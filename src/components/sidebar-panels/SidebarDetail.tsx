@@ -35,6 +35,7 @@ const SidebarDetail = ({ onCloseSidebar, item }: SidebarDetailProps) => {
   const [selectedType, setSelectedType] = useState<"매매" | "전월세">("매매");
   const [selectedArea, setSelectedArea] = useState<string>("전체");
   const [currentPage, setCurrentPage] = useState(1);
+  const [visibleCount, setVisibleCount] = useState(ITEMS_PER_PAGE);
   const [chartData, setChartData] = useState<ChartItem[]>([]);
   const [hovered, setHovered] = useState(false);
   const [detailData, setDetailData] = useState<any>(null);
@@ -51,7 +52,6 @@ const SidebarDetail = ({ onCloseSidebar, item }: SidebarDetailProps) => {
       setLoading(true);
       try {
         const response = await axios.get(url);
-        console.log("detailData 응답", response.data);
         setDetailData(response.data);
         setChartData(response.data.chartData || []);
       } catch (error: any) {
@@ -71,7 +71,12 @@ const SidebarDetail = ({ onCloseSidebar, item }: SidebarDetailProps) => {
     const newChartData = selectedType === "매매" ? detailData.chartData : detailData.rentChartData;
     setChartData(newChartData || []);
     setCurrentPage(1);
+    setVisibleCount(ITEMS_PER_PAGE);
   }, [selectedType, detailData]);
+
+  const handleShowMore = () => {
+    setVisibleCount((prev) => prev + ITEMS_PER_PAGE);
+  };
 
   if (loading) {
     return (
@@ -126,8 +131,6 @@ const SidebarDetail = ({ onCloseSidebar, item }: SidebarDetailProps) => {
       buildYear: parseInt(detailData.kaptUsedate?.slice(0, 4) || "0"),
     };
 
-    console.log("즐겨찾기 등록 요청 payload:", payload);
-
     try {
       const response = await axios.post("/api/user/bookmark", payload, {
         headers: {
@@ -135,7 +138,6 @@ const SidebarDetail = ({ onCloseSidebar, item }: SidebarDetailProps) => {
         },
       });
 
-      console.log("즐겨찾기 등록 성공:", response.data);
       alert("즐겨찾기에 등록되었습니다!");
     } catch (error) {
       console.error("즐겨찾기 등록 실패:", error);
@@ -148,8 +150,7 @@ const SidebarDetail = ({ onCloseSidebar, item }: SidebarDetailProps) => {
   const filtered = rawHistory.filter(
     (row: any) => row.type === selectedType && (selectedArea === "전체" || row.area === selectedArea)
   );
-  const totalPages = Math.ceil(filtered.length / ITEMS_PER_PAGE);
-  const pagedData = filtered.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE);
+  const pagedData = filtered.slice(0, visibleCount); // ✅ 추가
 
   const recentDate = selectedType === "매매" ? detailData?.recentTradeDate : detailData?.recentRentDate;
   const recentPriceRaw = selectedType === "매매" ? detailData?.recentTradePrice : detailData?.recentRentPrice;
@@ -165,7 +166,6 @@ const SidebarDetail = ({ onCloseSidebar, item }: SidebarDetailProps) => {
     if (!price || price === "-") return "-";
 
     const cleaned = price.replace(/,/g, "");
-
     const eokMatch = cleaned.match(/(\d+)억/);
     const manMatch = cleaned.match(/(\d+)만원/);
 
@@ -178,7 +178,7 @@ const SidebarDetail = ({ onCloseSidebar, item }: SidebarDetailProps) => {
 
   return (
     <div className="sidebar-panel">
-      {detailData ? (
+      {detailData && (
         <>
           <div className="panel-header">
             <h2>{detailData.aptName}</h2>
@@ -220,6 +220,7 @@ const SidebarDetail = ({ onCloseSidebar, item }: SidebarDetailProps) => {
               onChange={(e) => {
                 setSelectedArea(e.target.value);
                 setCurrentPage(1);
+                setVisibleCount(ITEMS_PER_PAGE);
               }}
             >
               {areaOptions.map((area, idx) => (
@@ -294,61 +295,17 @@ const SidebarDetail = ({ onCloseSidebar, item }: SidebarDetailProps) => {
               </tbody>
             </table>
 
-            <div className="pagination">
-              <button
-                className="pagination-button"
-                onClick={() => setCurrentPage((prev) => Math.max(1, prev - 1))}
-                disabled={currentPage === 1}
-              >
-                <span className="pagination-arrow">‹</span>
-              </button>
-
-              <button
-                className={`pagination-button ${currentPage === 1 ? "active" : ""}`}
-                onClick={() => setCurrentPage(1)}
-              >
-                1
-              </button>
-
-              {currentPage >= 3 && <span className="ellipsis">...</span>}
-
-              {Array.from({ length: totalPages }, (_, i) => i + 1)
-                .filter((page) => Math.abs(page - currentPage) <= 1 && page !== 1 && page !== totalPages)
-                .map((page) => (
-                  <button
-                    key={page}
-                    className={`pagination-button ${currentPage === page ? "active" : ""}`}
-                    onClick={() => setCurrentPage(page)}
-                  >
-                    {page}
-                  </button>
-                ))}
-
-              {currentPage < totalPages - 2 && <span className="ellipsis">...</span>}
-
-              {totalPages > 1 && (
-                <button
-                  className={`pagination-button ${currentPage === totalPages ? "active" : ""}`}
-                  onClick={() => setCurrentPage(totalPages)}
-                >
-                  {totalPages}
+            {visibleCount < filtered.length && (
+              <div className="show-more-container">
+                <button className="show-more-button" onClick={handleShowMore}>
+                  더보기 +
                 </button>
-              )}
-
-              <button
-                className="pagination-button"
-                onClick={() => setCurrentPage((prev) => Math.min(totalPages, prev + 1))}
-                disabled={currentPage === totalPages}
-              >
-                <span className="pagination-arrow">›</span>
-              </button>
-            </div>
+              </div>
+            )}
           </div>
 
           <p className="data-source">2025.05 국토교통부 기준</p>
         </>
-      ) : (
-        <></>
       )}
     </div>
   );

@@ -45,7 +45,7 @@ const SidebarRecent = () => {
       </div>
       <div className="panel-header-subtitle">
         <p>
-          최근 본 매물을 확인해보세요. <br />
+          내가 최근 본 매물을 확인해보세요. <br />
           최근 본 매물 삭제가 가능합니다.
         </p>
       </div>
