@@ -34,7 +34,7 @@ const SidebarFavorite = () => {
   const [favorites, setFavorites] = useState<BookmarkResponse[]>([]);
 
   useEffect(() => {
-    const fetchFavorites = async () => {
+    const getFavorites = async () => {
       try {
         const token = localStorage.getItem("accessToken");
         if (!token) return;
@@ -48,7 +48,7 @@ const SidebarFavorite = () => {
         console.error("관심 매물 목록을 불러오지 못했습니다.", error);
       }
     };
-    fetchFavorites();
+    getFavorites();
   }, []);
 
   const handleDelete = async (bookmarkIdx: number) => {

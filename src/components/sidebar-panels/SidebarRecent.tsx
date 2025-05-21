@@ -1,41 +1,123 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import axios from "axios";
+import "../../styles/SidebarPanel.css";
 
 import closeIcon from "../../assets/img/close.png";
 
-import "../../styles/SidebarPanel.css";
-
-interface RecentItem {
-  id: number;
-  aptNm: string;
-  umdNm: string;
+interface DealInfo {
+  dealId?: number; // ✅ 일부 서버 데이터에 없을 수도 있으므로 optional
+  aptName: string;
+  dealType: "RENT" | "TRADE";
+  regionCode: string;
+  jibun: string;
+  deposit: number;
+  monthlyRent: number;
   dealAmount: number;
+  excluUseAr: number;
+  dealYear: number;
+  dealMonth: number;
+  dealDay: number;
+  floor: number;
+  buildYear: number;
 }
 
 const SidebarRecent = () => {
-  const [recentList, setRecentList] = useState<RecentItem[]>([
-    {
-      id: 1,
-      aptNm: "롯데캐슬프레미어",
-      umdNm: "강남구 삼성동 11",
-      dealAmount: 37200,
-    },
-    {
-      id: 2,
-      aptNm: "래미안퍼스티지",
-      umdNm: "강남구 도곡동 88",
-      dealAmount: 39800,
-    },
-  ]);
+  const [recentDeals, setRecentDeals] = useState<DealInfo[]>([]);
 
-  const formatDealAmount = (amount: number) => {
-    const total = amount * 10000;
-    const eok = Math.floor(total / 100000000);
-    const man = Math.floor((total % 100000000) / 10000);
-    return man === 0 ? `${eok}억` : `${eok}억 ${man.toLocaleString()}만원`;
+  useEffect(() => {
+    const getRecents = async () => {
+      try {
+        const token = localStorage.getItem("accessToken");
+        if (!token) return;
+
+        const response = await axios.get("/api/user/recentView", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        setRecentDeals(response.data || []);
+      } catch (error) {
+        console.error("최근 본 매물 목록을 불러오지 못했습니다.", error);
+      }
+    };
+
+    getRecents();
+  }, []);
+
+  const getFormattedLabel = (item: DealInfo): string => {
+    const formatDeposit = (num: number) => {
+      const converted = num / 10;
+      if (converted < 1) {
+        return Math.round(converted * 10000).toLocaleString() + "만원";
+      }
+      return converted.toFixed(1).replace(/\.0$/, "") + "억";
+    };
+
+    const formatDealAmount = (num: number) => {
+      const converted = num / 10;
+      if (converted < 1) {
+        return Math.round(converted * 10000).toLocaleString() + "만원";
+      }
+      return converted.toFixed(1).replace(/\.0$/, "") + "억";
+    };
+
+    const deposit = item.deposit || 0;
+    const rent = item.monthlyRent || 0;
+    const dealAmount = item.dealAmount || 0;
+
+    if (item.dealType === "TRADE") {
+      return `실거래가: ${formatDealAmount(dealAmount)}`;
+    } else {
+      return rent === 0
+        ? `전세가: ${formatDeposit(deposit)}`
+        : `보증금: ${formatDeposit(deposit)} / 월세: ${rent.toLocaleString()}만원`;
+    }
   };
 
-  const handleDelete = (id: number) => {
-    setRecentList((prev) => prev.filter((item) => item.id !== id));
+  const getSubInfo = (item: DealInfo): string => {
+    const m2 = item.excluUseAr?.toFixed(1) ?? "-";
+    const pyeong = item.excluUseAr ? `${Math.round(item.excluUseAr * 0.3025)}평` : "-평";
+    const floor = item.floor ?? "-";
+    return `${m2}㎡ · ${pyeong} / ${floor}층`;
+  };
+
+  const areDealsEqual = (a: DealInfo, b: DealInfo) => {
+    return (
+      a.aptName === b.aptName &&
+      a.dealYear === b.dealYear &&
+      a.dealMonth === b.dealMonth &&
+      a.dealDay === b.dealDay &&
+      a.excluUseAr === b.excluUseAr &&
+      a.floor === b.floor
+    );
+  };
+
+  const handleDelete = async (deal: DealInfo) => {
+    try {
+      const token = localStorage.getItem("accessToken");
+      if (!token) return;
+
+      await axios.delete("/api/user/recentView", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        data: deal,
+      });
+
+      setRecentDeals((prev) =>
+        prev.filter((item) => {
+          if (deal.dealId) {
+            return item.dealId !== deal.dealId;
+          } else {
+            return !areDealsEqual(item, deal);
+          }
+        })
+      );
+    } catch (error) {
+      console.error("삭제 실패:", error);
+      alert("삭제 중 오류가 발생했습니다.");
+    }
   };
 
   return (
@@ -49,22 +131,33 @@ const SidebarRecent = () => {
           최근 본 매물 삭제가 가능합니다.
         </p>
       </div>
+
       <div className="recent-card-container">
-        {recentList.length === 0 ? (
+        {recentDeals.length === 0 ? (
           <p className="empty-text">최근 본 매물이 없습니다.</p>
         ) : (
-          recentList.map((item) => (
-            <div className="recent-card" key={item.id}>
-              <button className="recent-close-btn" onClick={() => handleDelete(item.id)} aria-label="최근 매물 삭제">
-                <img src={closeIcon} alt="삭제" className="close-icon" />
-              </button>
-
-              <div>
-                <div className="recent-card-title">{item.aptNm}</div>
-                <div className="recent-card-address">서울특별시 {item.umdNm}</div>
+          recentDeals.map((item) => (
+            <div
+              className="recent-card"
+              key={
+                item.dealId ?? `${item.aptName}-${item.dealYear}-${item.dealMonth}-${item.dealDay}-${item.excluUseAr}`
+              }
+            >
+              <div className="recent-card-body">
+                <button className="recent-close-btn" onClick={() => handleDelete(item)} aria-label="최근 매물 삭제">
+                  <img src={closeIcon} alt="삭제" className="close-icon" />
+                </button>
+                <div>
+                  <h3 className="recent-title">{item.aptName}</h3>
+                  <div className="recent-info">
+                    <p className="recent-address">{item.regionCode}</p>
+                    <p className="recent-address">{getSubInfo(item)}</p>
+                  </div>
+                </div>
               </div>
-
-              <div className="recent-card-price">{formatDealAmount(item.dealAmount)}</div>
+              <div className="recent-price">
+                <span>{getFormattedLabel(item)}</span>
+              </div>
             </div>
           ))
         )}

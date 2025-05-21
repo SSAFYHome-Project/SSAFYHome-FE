@@ -67,6 +67,41 @@ const SidebarDetail = ({ onCloseSidebar, item }: SidebarDetailProps) => {
   }, [item]);
 
   useEffect(() => {
+    const postRecentItem = async () => {
+      if (!item || !detailData) return;
+
+      const dealInfo = {
+        aptName: item.aptName,
+        dealType: item.monthlyRent ? "RENT" : "TRADE",
+        regionCode: detailData.doroJuso,
+        jibun: item.jibun || "",
+        deposit: parseInt(item.deposit ?? "0"),
+        monthlyRent: parseInt(item.monthlyRent ?? "0"),
+        dealAmount: parseInt(item.dealAmount ?? "0"),
+        excluUseAr: parseFloat(item.area),
+        dealYear: detailData.dealYear || new Date().getFullYear(),
+        dealMonth: detailData.dealMonth || new Date().getMonth() + 1,
+        dealDay: detailData.dealDay || new Date().getDate(),
+        floor: parseInt(item.floor),
+        buildYear: parseInt(detailData.kaptUsedate?.slice(0, 4) || "0"),
+      };
+
+      try {
+        await axios.post("/api/user/recentView", dealInfo, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+          },
+        });
+        console.log("최근 본 매물 등록 완료");
+      } catch (error) {
+        console.error("최근 본 매물 등록 실패:", error);
+      }
+    };
+
+    postRecentItem();
+  }, [item, detailData]);
+
+  useEffect(() => {
     if (!detailData) return;
     const newChartData = selectedType === "매매" ? detailData.chartData : detailData.rentChartData;
     setChartData(newChartData || []);
@@ -150,7 +185,7 @@ const SidebarDetail = ({ onCloseSidebar, item }: SidebarDetailProps) => {
   const filtered = rawHistory.filter(
     (row: any) => row.type === selectedType && (selectedArea === "전체" || row.area === selectedArea)
   );
-  const pagedData = filtered.slice(0, visibleCount); // ✅ 추가
+  const pagedData = filtered.slice(0, visibleCount);
 
   const recentDate = selectedType === "매매" ? detailData?.recentTradeDate : detailData?.recentRentDate;
   const recentPriceRaw = selectedType === "매매" ? detailData?.recentTradePrice : detailData?.recentRentPrice;
