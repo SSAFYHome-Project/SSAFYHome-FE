@@ -58,7 +58,7 @@ const MapView = ({ filterValues, activeType, setActiveType, onUpdateDeals, onSel
     setActiveType(dealTypes[nextIndex]);
   };
 
-  const getDealData = async (regionCode: string, yyyymm: string) => {
+  const getDealData = async (regionCode: string, yyyymm: string, sido: string, gugun: string, dong: string) => {
     try {
       const response = await axios.get(`/api/map/search?regionCode=${regionCode}&yyyymm=${yyyymm}`);
 
@@ -67,6 +67,20 @@ const MapView = ({ filterValues, activeType, setActiveType, onUpdateDeals, onSel
 
       const limitedTrade = tradeItems.slice(0, 100);
       const limitedRent = rentItems.slice(0, 100);
+
+      const tradeItemsWithRegion = limitedTrade.map((item: DealItemRaw) => ({
+        ...item,
+        sido,
+        gugun,
+        dong,
+      }));
+
+      const rentItemsWithRegion = limitedRent.map((item: DealItemRaw) => ({
+        ...item,
+        sido,
+        gugun,
+        dong,
+      }));
 
       clearOverlays();
 
@@ -77,7 +91,7 @@ const MapView = ({ filterValues, activeType, setActiveType, onUpdateDeals, onSel
         renderMarkersByType(limitedRent, "전월세", mapInstance.current, onSelectItem);
       }
 
-      onUpdateDeals(limitedTrade, limitedRent);
+      onUpdateDeals(tradeItemsWithRegion, rentItemsWithRegion);
     } catch (error) {
       console.error("실거래 데이터 불러오기 실패", error);
     }
@@ -142,7 +156,13 @@ const MapView = ({ filterValues, activeType, setActiveType, onUpdateDeals, onSel
         gugun: filterValues.gugun,
         dong: filterValues.dong,
       });
-      getDealData(filterValues.regionCode, filterValues.yyyymm);
+      getDealData(
+        filterValues.regionCode,
+        filterValues.yyyymm,
+        filterValues.sido,
+        filterValues.gugun,
+        filterValues.dong
+      );
     }
   }, [filterValues, activeType]);
 

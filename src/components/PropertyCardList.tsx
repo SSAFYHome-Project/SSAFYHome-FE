@@ -1,7 +1,14 @@
-import { MouseEvent, useState } from "react";
+import { MouseEvent, useState, useEffect } from "react";
+import axios from "axios";
 import "../styles/PropertyCardList.css";
 
+import heartIcon from "../assets/img/heart-filled.png";
+import heartHoverIcon from "../assets/img/heart.png";
+
 type DealItem = {
+  sido: string;
+  gugun: string;
+  dong: string;
   aptName: string;
   dealAmount?: string;
   deposit?: string;
@@ -12,6 +19,8 @@ type DealItem = {
   aptCode?: string;
   sggCd: string;
   jibun: string;
+  dealMonth?: number | string;
+  dealDay?: number | string;
 };
 
 type Props = {
@@ -23,6 +32,7 @@ type Props = {
 const PropertyCardList = ({ title, items, onSelect }: Props) => {
   const [visibleCount, setVisibleCount] = useState(20);
   const visibleItems = items.slice(0, visibleCount);
+  const [favorites, setFavorites] = useState<string[]>([]);
 
   const handleClick = (e: MouseEvent, item: DealItem) => {
     e.preventDefault();
@@ -58,35 +68,87 @@ const PropertyCardList = ({ title, items, onSelect }: Props) => {
     return `${m2}㎡ · ${pyeong} / ${floor}층`;
   };
 
+  const getFormattedDate = (item: DealItem): string => {
+    const month = String(item.dealMonth ?? "-").replace(/^0/, "");
+    const day = String(item.dealDay ?? "-").replace(/^0/, "");
+    return `📅 ${month}월 ${day}일`;
+  };
+
+  useEffect(() => {
+    const getFavorites = async () => {
+      try {
+        const token = localStorage.getItem("accessToken");
+        if (!token) return;
+        const response = await axios.get("/api/user/bookmark", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        const favoriteNames = response.data.map((fav: any) => fav.deal.aptName);
+        setFavorites(favoriteNames);
+      } catch (error) {
+        console.error("관심 매물 목록을 불러오지 못했습니다.", error);
+      }
+    };
+
+    getFavorites();
+  }, []);
+
   return (
     <div className="property-card-list">
       <div className="card-container">
         {visibleItems.length === 0 ? (
           <p className="no-data">매물이 없습니다.</p>
         ) : (
-          visibleItems.map((item, index) => (
-            <div key={index} className="property-card" onClick={(e) => handleClick(e, item)}>
-              <div className="card-header">
-                <h4>{item.aptName}</h4>
-              </div>
-              <div className="card-body">
-                <p className="info">{getSubInfo(item)}</p>
-                <p className="deal-amount">{getFormattedLabel(item)}</p>
-              </div>
-              <div className="card-footer">
-                <button
-                  className="card-action-btn"
+          visibleItems.map((item, index) => {
+            const isFavorite = favorites.some((favName) => item.aptName.includes(favName));
+            return (
+              <div key={index} className="property-card" onClick={(e) => handleClick(e, item)}>
+                <img
+                  className="heart-icon"
+                  src={isFavorite ? heartIcon : heartHoverIcon}
+                  alt="하트"
                   onClick={(e) => {
                     e.stopPropagation();
-                    const query = encodeURIComponent(`${item.umdNm} ${item.aptName}`);
-                    window.open(`https://m.land.naver.com/search/result/${query}`, "_blank");
                   }}
-                >
-                  <span className="naver-icon">N</span> 매물 보기
-                </button>
+                />
+                <div className="card-header">
+                  <h4>{item.aptName}</h4>
+                </div>
+                <div className="card-body">
+                  <p className="address">
+                    {item.sido} {item.gugun} {item.dong} {item.jibun}
+                  </p>
+                  <p className="info">{getSubInfo(item)}</p>
+                  <p className="deal-amount">{getFormattedLabel(item)}</p>
+                  <p className="deal-date">{getFormattedDate(item)}</p>
+                </div>
+                <div className="card-footer">
+                  <button
+                    className="card-action-btn"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      const query = encodeURIComponent(`${item.umdNm} ${item.aptName}`);
+                      window.open(`https://m.land.naver.com/search/result/${query}`, "_blank");
+                    }}
+                  >
+                    <span className="naver-icon">N</span> 매물 보기
+                  </button>
+                  <button
+                    className="card-action-btn"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      const fullAddress = `${item.sido} ${item.gugun} ${item.dong} ${item.jibun} ${item.aptName}`;
+                      const encoded = encodeURIComponent(fullAddress);
+                      window.open(`https://map.naver.com/v5/search/${encoded}`, "_blank");
+                    }}
+                  >
+                    <span className="naver-icon">N</span> 로드뷰 보기
+                  </button>
+                </div>
               </div>
-            </div>
-          ))
+            );
+          })
         )}
       </div>
 

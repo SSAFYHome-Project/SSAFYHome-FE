@@ -29,6 +29,9 @@ type Filters = {
 };
 
 type DealItem = {
+  sido: string;
+  gugun: string;
+  dong: string;
   aptName: string;
   dealAmount?: string;
   deposit?: string;
@@ -39,6 +42,8 @@ type DealItem = {
   aptCode?: string;
   sggCd: string;
   jibun: string;
+  dealMonth: string;
+  dealDay: string;
 };
 
 const MainPage = () => {
@@ -109,6 +114,9 @@ const MainPage = () => {
               setActiveType={setActiveType}
               onUpdateDeals={(rawTrades: any[], rawRents: any[]) => {
                 const normalizedTrades = rawTrades.map((item) => ({
+                  sido: item.sido,
+                  gugun: item.gugun,
+                  dong: item.dong,
                   aptName: item.aptNm,
                   dealAmount: item.dealAmount,
                   area: String(item.excluUseAr ?? "-"),
@@ -116,9 +124,14 @@ const MainPage = () => {
                   umdNm: item.umdNm,
                   sggCd: item.sggCd,
                   jibun: item.jibun,
+                  dealMonth: item.dealMonth,
+                  dealDay: item.dealDay,
                 }));
 
                 const normalizedRents = rawRents.map((item) => ({
+                  sido: item.sido,
+                  gugun: item.gugun,
+                  dong: item.dong,
                   aptName: item.aptNm,
                   deposit: item.deposit,
                   monthlyRent: item.monthlyRent,
@@ -127,6 +140,8 @@ const MainPage = () => {
                   umdNm: item.umdNm,
                   sggCd: item.sggCd,
                   jibun: item.jibun,
+                  dealMonth: item.dealMonth,
+                  dealDay: item.dealDay,
                 }));
 
                 setTradeItems(normalizedTrades);

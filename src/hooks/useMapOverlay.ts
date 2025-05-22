@@ -1,4 +1,7 @@
 export type DealItemRaw = {
+  sido: string;
+  gugun: string;
+  dong: string;
   aptNm: string;
   roadAddr?: string;
   umdNm?: string;
