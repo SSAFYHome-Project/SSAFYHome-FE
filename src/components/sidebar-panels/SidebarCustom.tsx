@@ -125,7 +125,7 @@ const SidebarCustom = () => {
           },
         };
 
-        const res = await axios.post("/api/chatbot/recommend", updatedAnswers, config);
+        const res = await axios.post("/api/chatbot/recommendation", updatedAnswers, config);
         console.log("Response:", res);
         const recommend = res.data.recommend || res.data;
         setMessages((prev) => [...prev, { from: "bot", text: recommend, time }]);
