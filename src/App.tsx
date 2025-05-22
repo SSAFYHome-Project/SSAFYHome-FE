@@ -7,6 +7,7 @@ import OAuthCallback from "./components/auth/OAuthCallback";
 import CommunityPage from "./pages/CommunityPage";
 import CommunityWritePage from "./pages/CommunityWritePage";
 import CommunityDetailPage from "./pages/CommunityDetailPage";
+import CommmunityEditPage from "./pages/CommunityEditPage";
 
 function App() {
   return (
@@ -20,6 +21,7 @@ function App() {
         <Route path="/community" element={<CommunityPage />} />
         <Route path="/community-write" element={<CommunityWritePage />} />
         <Route path="/community-detail" element={<CommunityDetailPage />} />
+        <Route path="/community-edit/:id" element={<CommmunityEditPage />} />
       </Routes>
     </BrowserRouter>
   );

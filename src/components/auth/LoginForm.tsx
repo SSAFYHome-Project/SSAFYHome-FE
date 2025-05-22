@@ -34,8 +34,11 @@ const LoginForm = () => {
       );
 
       const token = response.data.token;
+      const refreshToken = response.data.refreshToken;
       if (token) {
         localStorage.setItem("accessToken", token);
+        localStorage.setItem("refreshToken", refreshToken);
+        localStorage.setItem("userEmail", email);
         setErrorMessage("");
         navigate("/");
       }

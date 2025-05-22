@@ -63,6 +63,7 @@ const Header = () => {
   const handleLogout = () => {
     localStorage.removeItem("accessToken");
     localStorage.removeItem("refreshToken");
+    localStorage.removeItem("userEmail");
     window.location.href = "/";
   };
 
