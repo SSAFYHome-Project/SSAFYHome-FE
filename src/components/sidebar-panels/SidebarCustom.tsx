@@ -104,6 +104,7 @@ const SidebarCustom = () => {
         break;
     }
     setUserAnswers(updatedAnswers);
+    console.log(updatedAnswers);
 
     let nextIndex = questionIndex + 1;
 
@@ -115,7 +116,17 @@ const SidebarCustom = () => {
     if (nextIndex >= questions.length) {
       setIsLoading(true);
       try {
-        const res = await axios.post("http://localhost:8080/api/chatbot/recommendation", updatedAnswers);
+        const token = localStorage.getItem("accessToken");
+        console.log(token);
+        const config = {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        };
+
+        const res = await axios.post("/api/chatbot/recommend", updatedAnswers, config);
+        console.log("Response:", res);
         const recommend = res.data.recommend || res.data;
         setMessages((prev) => [...prev, { from: "bot", text: recommend, time }]);
       } catch {
