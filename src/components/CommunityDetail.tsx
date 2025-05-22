@@ -5,6 +5,7 @@ import "../styles/CommunityDetail.css";
 import heartIcon from "../assets/img/heart.png";
 import heartHoverIcon from "../assets/img/heart-filled.png";
 import eyeIcon from "../assets/img/eye.png";
+import commentIcon from "../assets/img/comment.png";
 import { HiOutlineExclamationCircle } from "react-icons/hi";
 
 export default function CommunityDetail() {
@@ -14,6 +15,7 @@ export default function CommunityDetail() {
   const [post, setPost] = useState<any>(null);
   const [comments, setComments] = useState([]);
   const [newComment, setNewComment] = useState("");
+  const [views, setViews] = useState([]);
   const [likeCount, setLikeCount] = useState(0);
   const [liked, setLiked] = useState(false);
   const token = localStorage.getItem("accessToken");
@@ -30,6 +32,7 @@ export default function CommunityDetail() {
       .get(`/api/community/board/${id}`)
       .then((res) => {
         setPost(res.data);
+        setViews(res.data.boardView || 0);
         setLikeCount(res.data.boardRecommendCnt || 0);
         setLiked(res.data.recommended || false);
       })
@@ -170,8 +173,12 @@ export default function CommunityDetail() {
           <span>{likeCount}</span>
         </div>
         <div className="icon-info">
-          <img src={eyeIcon} alt="댓글 수" className="icon" />
+          <img src={commentIcon} alt="댓글 수" className="icon" />
           <span>{comments.length}</span>
+        </div>
+        <div className="icon-info">
+          <img src={eyeIcon} alt="댓글 수" className="icon" />
+          <span>{views}</span>
         </div>
         <button className="share-button">📤 공유</button>
       </div>
