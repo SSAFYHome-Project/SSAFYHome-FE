@@ -1,10 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import axios from "axios";
-import { marked } from "marked";
 import "../../styles/SidebarCustom.css";
 import logoImg from "../../assets/img/chatbot-logo.png";
-
-const keywords = ["강남구", "30평대", "전세", "매매", "학군"];
 
 const SidebarCustom = () => {
   const userInfo = JSON.parse(localStorage.getItem("userInfo") || "null");
@@ -12,124 +9,143 @@ const SidebarCustom = () => {
   const userAddress = userInfo?.address || "";
   const bottomRef = useRef<HTMLDivElement | null>(null);
 
-  const [messages, setMessages] = useState<{ from: "user" | "bot"; text: string; time?: string }[]>([]);
-  useEffect(() => {
-    const setInitialBotMessage = async () => {
-      const initialBotText = `${userName}님, 안녕하세요 👋\n\n${
-        userAddress ? `현재 설정된 주소는 '${userAddress}'입니다. 해당 지역을 기준으로 매물을 안내드릴게요!\n\n` : ""
-      }궁금하신 조건을 입력하시거나,\n아래 항목 중 하나를 선택해 주세요.`;
-      const markedText = await marked(initialBotText);
-      const time = new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
-      setMessages([{ from: "bot", text: markedText, time }]);
-    };
-
-    setInitialBotMessage();
-  }, []);
+  const [messages, setMessages] = useState([
+    {
+      from: "bot",
+      text: `${userName}님, 안녕하세요 👋\n\n${
+        userAddress ? `현재 설정된 주소는 '${userAddress}'입니다. 해당 지역을 기준으로 동네를 추천드릴게요!\n\n` : ""
+      }궁금하신 조건을 입력하시거나 아래 버튼을 눌러 시작해 주세요.`,
+      time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+    },
+  ]);
 
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [followUpOptions, setFollowUpOptions] = useState<{ text: string; value: string }[]>([]);
+  const [questionIndex, setQuestionIndex] = useState(-1);
+  const [userAnswers, setUserAnswers] = useState<any>({});
 
-  const handleSend = (text?: string) => {
-    const finalText = text ?? input;
-    if (!finalText.trim()) return;
-    sendMessage(finalText);
-    setInput("");
+  const questions = [
+    "희망하시는 지역을 입력해 주세요 (예: 서울 강남구)",
+    "거래 유형을 선택해주세요",
+    "희망 가격대를 선택해주세요",
+    "원하는 평수를 선택해주세요",
+    "가족 구성은 어떻게 되시나요?",
+    "자녀가 있다면 나이를 알려주세요.",
+    "주로 이용하시는 교통수단은 무엇인가요?",
+    "야간에 귀가하시는 경우가 많으신가요?",
+    "선호하시는 동네 분위기를 알려주세요.",
+  ];
+
+  const staticOptions: { [key: number]: string[] } = {
+    1: ["매매", "전세", "월세"],
+    3: ["10~20평", "20~30평", "30~40평", "40평 이상"],
+    4: ["혼자", "부부", "아이와 함께"],
+    5: ["미취학", "초등학생", "중학생", "고등학생"],
+    6: ["지하철", "버스", "자차"],
+    7: ["있다", "가끔 있다", "없다"],
   };
 
-  const sendMessage = async (text: string) => {
-    if (!text.trim()) return;
-    const currentTime = new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
-    setMessages((prev) => [...prev, { from: "user", text, time: currentTime }]);
-    setInput("");
-    setIsLoading(true);
-    setFollowUpOptions([]);
-
-    try {
-      const response = await axios.post(
-        "https://api.openai.com/v1/chat/completions",
-        {
-          model: "gpt-4o",
-          messages: [
-            {
-              role: "system",
-              content: `너는 안전지역의 부동산 매물 추천 전문가야. 사용자가 입력한 지역, 평수, 전세/매매 조건에 맞춰 안전한 지역의 매물만 추천해줘. 이모티콘을 사용해서 사용자 친화적으로 알려줘.${
-                userAddress ? ` 참고로 사용자의 주소는 '${userAddress}'야.` : ""
-              }`,
-            },
-            ...messages.map((msg) => ({
-              role: msg.from === "user" ? "user" : "assistant",
-              content: msg.text,
-            })),
-            { role: "user", content: text },
-          ],
-          temperature: 0.6,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${import.meta.env.VITE_OPENAI_API_KEY}`,
-            "Content-Type": "application/json",
-          },
-        }
-      );
-
-      const botReplyRaw = response.data.choices[0].message.content;
-      const botReply = await marked(botReplyRaw);
-      setMessages((prev) => [...prev, { from: "bot", text: botReply, time: currentTime }]);
-    } catch (error) {
-      setMessages((prev) => [...prev, { from: "bot", text: "죄송해요, 응답에 실패했어요 😢", time: currentTime }]);
-      console.error(error);
-    } finally {
-      setIsLoading(false);
+  const getBudgetOptions = (type: string) => {
+    switch (type) {
+      case "매매":
+        return ["2~4억", "4~6억", "6~8억", "8억 이상"];
+      case "전세":
+        return ["1~2억", "2~4억", "4~6억", "6억 이상"];
+      case "월세":
+        return ["500/40", "1000/50", "3000/60", "5000/70"];
+      default:
+        return [];
     }
   };
 
-  const handleMainSelect = (category: string) => {
-    const currentTime = new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
-    switch (category) {
-      case "safe-area":
-        sendMessage("📍 지금 제일 안전한 동네 추천해줘");
+  const currentOptions =
+    questionIndex === 2
+      ? getBudgetOptions(userAnswers.transactionType).map((v) => ({ text: v, value: v }))
+      : staticOptions[questionIndex]?.map((v) => ({ text: v, value: v }));
+
+  const handleStart = () => {
+    const time = new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+    setMessages((prev) => [...prev, { from: "bot", text: questions[0], time }]);
+    setQuestionIndex(0);
+  };
+
+  const handleAnswer = async (value: string) => {
+    const time = new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+    setMessages((prev) => [...prev, { from: "user", text: value, time }]);
+
+    const updatedAnswers = { ...userAnswers };
+    switch (questionIndex) {
+      case 0:
+        updatedAnswers.region = value;
         break;
-      case "station":
-        setMessages((prev) => [...prev, { from: "bot", text: "어떤 교통 수단이 더 편하신가요?", time: currentTime }]);
-        setFollowUpOptions([
-          { text: "🚆 지하철역 근처", value: "지하철역 근처 매물 추천해줘" },
-          { text: "🚌 버스 정류장 근처", value: "버스 정류장 가까운 매물 보여줘" },
-        ]);
+      case 1:
+        updatedAnswers.transactionType = value;
         break;
-      case "kids":
-        setMessages((prev) => [...prev, { from: "bot", text: "자녀의 학년대는 어떻게 되시나요?", time: currentTime }]);
-        setFollowUpOptions([
-          { text: "👶🏻 초등학교", value: "초등학교 근처 아이 키우기 좋은 동네 추천해줘" },
-          { text: "👧🏻 중학교", value: "중학교 가까운 안전한 동네 추천해줘" },
-          { text: "👨🏻 고등학교", value: "고등학교 근처 안전한 동네 매물 보여줘" },
-        ]);
+      case 2:
+        updatedAnswers.priceRange = value;
         break;
-      case "new":
-        sendMessage("🏢 신축 아파트 위주 매물 보여줘");
-        setTimeout(() => {
-          setMessages((prev) => [
-            ...prev,
-            { from: "bot", text: "예산 범위를 입력해주시면\n더 정확하게 추천드릴 수 있어요 💰", time: currentTime },
-          ]);
-        }, 500);
+      case 3:
+        updatedAnswers.areaSize = value;
         break;
+      case 4:
+        updatedAnswers.familyType = value;
+        break;
+      case 5:
+        updatedAnswers.childrenAge = value;
+        break;
+      case 6:
+        updatedAnswers.transport = value;
+        break;
+      case 7:
+        updatedAnswers.nightReturn = value;
+        break;
+      case 8:
+        updatedAnswers.mood = value;
+        break;
+    }
+    setUserAnswers(updatedAnswers);
+
+    let nextIndex = questionIndex + 1;
+
+    if (questionIndex === 4 && value !== "아이와 함께") {
+      updatedAnswers.childrenAge = null;
+      nextIndex = 6;
+    }
+
+    if (nextIndex >= questions.length) {
+      setIsLoading(true);
+      try {
+        const res = await axios.post("http://localhost:8080/api/chatbot/recommendation", updatedAnswers);
+        const recommend = res.data.recommend || res.data;
+        setMessages((prev) => [...prev, { from: "bot", text: recommend, time }]);
+      } catch {
+        setMessages((prev) => [...prev, { from: "bot", text: "추천 요청 중 오류가 발생했어요 😢", time }]);
+      } finally {
+        setIsLoading(false);
+      }
+    } else {
+      setTimeout(() => {
+        setMessages((prev) => [...prev, { from: "bot", text: questions[nextIndex], time }]);
+        setQuestionIndex(nextIndex);
+      }, 400);
     }
   };
 
-  const today = new Date().toLocaleDateString("ko-KR", { year: "numeric", month: "long", day: "numeric" });
+  const handleSend = () => {
+    if (!input.trim()) return;
+    handleAnswer(input.trim());
+    setInput("");
+  };
 
   useEffect(() => {
-    if (bottomRef.current) {
-      bottomRef.current.scrollIntoView({ behavior: "smooth" });
-    }
+    if (bottomRef.current) bottomRef.current.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
   return (
     <div className="sidebar-panel">
       <div className="chatbot-header-box">
         <div className="chatbot-header">
-          <img src={logoImg} alt="지도 밖은 위험해 로고" className="chatbot-icon" />
+          <img src={logoImg} alt="로고" className="chatbot-icon" />
           <div className="chatbot-title">
             <h1>지도 밖은 위험해 상담봇</h1>
             <p>안전한 지역의 맞춤형 매물만 추천해드립니다. 🏠</p>
@@ -138,45 +154,33 @@ const SidebarCustom = () => {
       </div>
 
       <div className="chat-window">
-        <div className="chat-date-label">{today}</div>
+        <div className="chat-date-label">{new Date().toLocaleDateString("ko-KR")}</div>
 
         {messages.map((msg, idx) => (
           <div key={idx} className={`chat-bubble ${msg.from}`}>
-            {msg.from === "bot" ? (
-              <div className="bubble" dangerouslySetInnerHTML={{ __html: msg.text }} />
-            ) : (
-              <div className="bubble">{msg.text}</div>
-            )}
+            <div className="bubble">{msg.text}</div>
             <div className="bubble-time">{msg.time}</div>
           </div>
         ))}
-        {messages.length === 1 && (
+
+        {questionIndex === -1 && (
           <div className="chat-bubble bot">
             <div className="bubble button-bubble">
               <div className="suggested-buttons">
-                <button className="option-btn" onClick={() => handleMainSelect("safe-area")}>
-                  📍 지금 제일 안전한 동네
-                </button>
-                <button className="option-btn" onClick={() => handleMainSelect("station")}>
-                  🚌 교통 편한 매물
-                </button>
-                <button className="option-btn" onClick={() => handleMainSelect("kids")}>
-                  🎓 아이 키우기 좋은 동네
-                </button>
-                <button className="option-btn" onClick={() => handleMainSelect("new")}>
-                  🏦 신축 아파트 위주
+                <button className="option-btn" onClick={handleStart}>
+                  🎯 맞춤형 매물 추천 받기
                 </button>
               </div>
             </div>
           </div>
         )}
 
-        {followUpOptions.length > 0 && (
+        {questionIndex !== -1 && currentOptions && (
           <div className="chat-bubble bot">
             <div className="bubble button-bubble">
               <div className="suggested-buttons">
-                {followUpOptions.map((btn, idx) => (
-                  <button key={idx} className="option-btn" onClick={() => handleSend(btn.value)}>
+                {currentOptions.map((btn, i) => (
+                  <button key={i} className="option-btn" onClick={() => handleAnswer(btn.value)}>
                     {btn.text}
                   </button>
                 ))}
@@ -200,34 +204,18 @@ const SidebarCustom = () => {
         <div ref={bottomRef} />
       </div>
 
-      <div className="keyword-buttons">
-        {keywords.map((keyword) => (
-          <button key={keyword} className="keyword-btn" onClick={() => handleSend(keyword)}>
-            #{keyword}
-          </button>
-        ))}
-      </div>
-
       <div className="chat-input-group">
         <input
           type="text"
           className="chat-input"
-          placeholder="예: 강남구 30평대 전세"
+          placeholder="답변을 입력해주세요"
           value={input}
           onChange={(e) => setInput(e.target.value)}
           onKeyDown={(e) => {
-            if (e.key === "Enter") {
-              e.preventDefault();
-              if (!isLoading) handleSend();
-            }
+            if (e.key === "Enter") handleSend();
           }}
         />
-        <button
-          className="chat-send-btn"
-          onClick={() => {
-            if (!isLoading) handleSend();
-          }}
-        >
+        <button className="chat-send-btn" onClick={handleSend} disabled={isLoading}>
           전송
         </button>
       </div>
