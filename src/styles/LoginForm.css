@@ -1,4 +1,4 @@
-.auth-box {
+.auth-box-password {
   width: 400px;
   margin: 100px auto;
   padding: 30px;
@@ -7,11 +7,11 @@
   background-color: white;
 }
 
-.auth-box input {
+.auth-box-password input {
   display: block;
   width: 100%;
   padding: 12px;
-  margin: 12px 0;
+  margin: 5px 0;
   border-radius: 8px;
   border: 1px solid #ddd;
   font-size: 13px;
@@ -20,14 +20,40 @@
   transition: border 0.25s ease, background-color 0.25s ease;
 }
 
-.auth-box input::placeholder {
+.auth-box-password h2 {
+  margin-bottom: 20px;
+  font-size: 22px;
+  font-family: "NanumSquareB", sans-serif;
+  color: #333;
+}
+
+.auth-box-password input::placeholder {
   color: #bbb;
 }
 
-.auth-box input:focus {
+.auth-box-password .input-with-icon input:focus {
   border: 2px solid #ffe600;
   background-color: #fffdf3;
   color: #111;
+  outline: none;
+}
+
+.auth-box-password span {
+  align-items: center;
+  justify-content: center;
+}
+
+.password-guide {
+  margin-top: 20px;
+  font-size: 13px;
+  text-align: center;
+}
+
+.password-guide span {
+  color: #f0b500;
+  cursor: pointer;
+  font-family: "NanumSquareR", sans-serif;
+  font-size: 13px;
 }
 
 .google-login {
@@ -116,8 +142,9 @@
   justify-content: space-between;
   align-items: center;
   margin-top: 10px;
-  margin-bottom: 10px;
+  margin-bottom: 20px;
   align-items: flex-end;
+  height: 20px;
 }
 
 .checkbox-wrap {
@@ -178,8 +205,8 @@
   color: #5a5f67;
   cursor: pointer;
   transition: color 0.2s ease;
-  vertical-align: bottom;
-  margin-bottom: 0;
+  align-items: center;
+  margin: 3px;
 }
 
 .forgot-password:hover {
@@ -247,4 +274,22 @@
 
 .divider::after {
   right: 0;
+}
+
+.progress-bar {
+  height: 4px;
+  background-color: #ffe600;
+  animation: loadingBar 4s linear infinite;
+}
+
+@keyframes loadingBar {
+  0% {
+    width: 0%;
+  }
+  50% {
+    width: 80%;
+  }
+  100% {
+    width: 100%;
+  }
 }

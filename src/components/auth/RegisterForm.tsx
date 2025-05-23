@@ -2,17 +2,26 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "../../styles/RegisterForm.css";
 import user from "../../assets/img/user.png";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
 
 const RegisterForm = () => {
   const [name, setName] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [email, setEmail] = useState("");
   const [profileImage, setProfileImage] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState("");
   const [isEmailChecked, setIsEmailChecked] = useState(false);
-  const [agree, setAgree] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [emailId, setEmailId] = useState("");
+  const [emailDomain, setEmailDomain] = useState("gmail.com");
+  const email = `${emailId}@${emailDomain}`;
+  const [agreed, setAgreed] = useState(false);
+  const isValidPassword = (pwd: string) => {
+    const regex = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/;
+    return regex.test(pwd);
+  };
 
   const navigate = useNavigate();
 
@@ -28,10 +37,8 @@ const RegisterForm = () => {
     }
 
     try {
-      console.log("이메일 중복 확인 요청:", email);
       const response = await fetch(`/api/user/register/dup?email=${encodeURIComponent(email)}`);
       const result = await response.text();
-      console.log("이메일 중복 확인 응답:", result);
 
       if (result === "false") {
         alert("사용 가능한 이메일입니다.");
@@ -54,6 +61,11 @@ const RegisterForm = () => {
       return;
     }
 
+    if (!isValidPassword(password)) {
+      setErrorMessage("영문, 숫자, 특수문자 포함 8자 이상이어야 합니다.");
+      return;
+    }
+
     if (password !== confirmPassword) {
       setErrorMessage("비밀번호가 일치하지 않습니다.");
       return;
@@ -61,6 +73,11 @@ const RegisterForm = () => {
 
     if (!isEmailChecked) {
       setErrorMessage("이메일 중복 확인을 해주세요.");
+      return;
+    }
+
+    if (!agreed) {
+      setErrorMessage("개인정보 수집 및 이용에 동의해 주세요.");
       return;
     }
 
@@ -112,31 +129,65 @@ const RegisterForm = () => {
 
       <input type="text" placeholder="이름" value={name} onChange={(e) => setName(e.target.value)} />
 
-      <input type="password" placeholder="비밀번호" value={password} onChange={(e) => setPassword(e.target.value)} />
-
-      <input
-        type="password"
-        placeholder="비밀번호 확인"
-        value={confirmPassword}
-        onChange={(e) => setConfirmPassword(e.target.value)}
-      />
-
-      <div className="input-with-button">
+      <div className="input-with-icon">
         <input
-          type="email"
-          placeholder="이메일"
-          value={email}
+          type={showPassword ? "text" : "password"}
+          placeholder="비밀번호"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+        />
+        <span onClick={() => setShowPassword((prev) => !prev)}>{showPassword ? <FaEyeSlash /> : <FaEye />}</span>
+      </div>
+
+      <div className="input-with-icon">
+        <input
+          type={showConfirmPassword ? "text" : "password"}
+          placeholder="비밀번호 확인"
+          value={confirmPassword}
+          onChange={(e) => setConfirmPassword(e.target.value)}
+        />
+        <span onClick={() => setShowConfirmPassword((prev) => !prev)}>
+          {showConfirmPassword ? <FaEyeSlash /> : <FaEye />}
+        </span>
+      </div>
+
+      <div className="email-input-group">
+        <input
+          type="text"
+          placeholder="이메일 아이디"
+          value={emailId}
           onChange={(e) => {
-            setEmail(e.target.value);
+            setEmailId(e.target.value);
             setIsEmailChecked(false);
           }}
         />
+        <select
+          value={emailDomain}
+          onChange={(e) => {
+            setEmailDomain(e.target.value);
+            setIsEmailChecked(false);
+          }}
+        >
+          <option value="gmail.com">@gmail.com</option>
+          <option value="naver.com">@naver.com</option>
+          <option value="daum.net">@daum.net</option>
+          <option value="hanmail.net">@hanmail.net</option>
+          <option value="kakao.com">@kakao.com</option>
+          <option value="hotmail.com">@hotmail.com</option>
+          <option value="outlook.com">@outlook.com</option>
+        </select>
         <button onClick={handleDuplicateCheck} className="check-btn">
-          중복 확인
+          확인
         </button>
       </div>
 
       <input type="file" accept="image/*" onChange={handleImageChange} />
+
+      <label className="checkbox-wrap">
+        개인정보 수집 및 이용에 동의합니다.
+        <input type="checkbox" checked={agreed} onChange={(e) => setAgreed(e.target.checked)} />
+        <span className="checkmark"></span>
+      </label>
 
       <button className="signup-btn" onClick={handleRegister}>
         가입하기

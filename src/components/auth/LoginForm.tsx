@@ -39,14 +39,20 @@ const LoginForm = () => {
         { headers: { "Content-Type": "application/json" } }
       );
 
-      const token = response.data.token;
-      const refreshToken = response.data.refreshToken;
-      if (token) {
-        localStorage.setItem("accessToken", token);
+      const { accessToken, refreshToken, passwordResetRequired } = response.data;
+
+      if (accessToken) {
+        localStorage.setItem("accessToken", accessToken);
         localStorage.setItem("refreshToken", refreshToken);
         localStorage.setItem("userEmail", email);
         setErrorMessage("");
-        navigate("/");
+
+        if (passwordResetRequired) {
+          alert("현재는 임시 비밀번호로 로그인된 상태입니다. \n비밀번호를 수정해주세요.");
+          navigate("/reset-password");
+        } else {
+          navigate("/");
+        }
       }
     } catch (error: any) {
       console.error("로그인 오류:", error);

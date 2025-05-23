@@ -126,6 +126,10 @@ const InfoForm = ({ isAdmin = false }: InfoFormProps) => {
       password: password || undefined,
     };
 
+    if (password) {
+      userData.passwordResetRequired = false;
+    }
+
     const addresses: any[] = [];
 
     const originalSchool = originalAddresses.find((a: any) => a.title === "SCHOOL");

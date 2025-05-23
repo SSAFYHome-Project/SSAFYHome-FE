@@ -9,6 +9,7 @@ import CommunityWritePage from "./pages/CommunityWritePage";
 import CommunityDetailPage from "./pages/CommunityDetailPage";
 import CommmunityEditPage from "./pages/CommunityEditPage";
 import ForgotPasswordForm from "./pages/ForgotPasswordPage";
+import ResetPasswordForm from "./pages/ResetPasswordPage";
 
 function App() {
   return (
@@ -24,6 +25,7 @@ function App() {
         <Route path="/community-detail" element={<CommunityDetailPage />} />
         <Route path="/community-edit/:id" element={<CommmunityEditPage />} />
         <Route path="/forgot-password" element={<ForgotPasswordForm />} />
+        <Route path="/reset-password" element={<ResetPasswordForm />} />
       </Routes>
     </BrowserRouter>
   );
