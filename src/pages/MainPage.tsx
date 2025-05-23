@@ -1,7 +1,8 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Header from "../components/Header";
 import SearchBar from "../components/SearchBar";
 import FilterBar from "../components/FilterBar";
+import SafeGrade from "../components/SafeGrade";
 import AISummaryButton from "../components/AISummaryButton";
 import SideBar from "../components/SideBar";
 
@@ -58,6 +59,7 @@ const MainPage = () => {
   const [rentItems, setRentItems] = useState<DealItem[]>([]);
   const [allItems, setAllItems] = useState<DealItem[]>([]);
   const [selectedItem, setSelectedItem] = useState<DealItem | null>(null);
+  const [safetyGrade, setSafetyGrade] = useState<string | null>(null);
 
   const handleSearchResult = (filters: Filters) => {
     setHasResult(true);
@@ -65,6 +67,7 @@ const MainPage = () => {
   };
 
   const handleFilterApply = (filters: Filters) => {
+    setSelectedRegion({ sido: filters.sido, gugun: filters.gugun });
     setHasResult(true);
     setFilterValues(filters);
   };
@@ -91,6 +94,8 @@ const MainPage = () => {
     feedback: <SidebarFeedback />,
   };
 
+  const [selectedRegion, setSelectedRegion] = useState<{ sido: string; gugun: string } | null>(null);
+
   return (
     <div className="main-wrapper">
       <div className="sidebar-fixed">
@@ -104,7 +109,11 @@ const MainPage = () => {
           <div className="top-bar">
             <SearchBar onFilterChange={handleSearchResult} />
             <FilterBar onFilterChange={handleFilterApply} />
-            <AISummaryButton isVisible={hasResult} onClick={() => setShowSummary(true)} />
+
+            <div className="button-group">
+              <SafeGrade isVisible={hasResult} selectedRegion={selectedRegion} />
+              <AISummaryButton isVisible={hasResult} onClick={() => setShowSummary(true)} />
+            </div>
           </div>
 
           <div className="map-view">

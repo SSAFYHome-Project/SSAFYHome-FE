@@ -35,7 +35,14 @@
   align-items: center;
   flex-wrap: wrap;
   padding: 1rem;
-  gap: 4rem;
+  gap: 2rem;
+}
+
+.button-group {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 0.5rem 1rem;
 }
 
 .map-view {
@@ -133,5 +140,4 @@
 .sort-button.active {
   background-color: #abb2bd;
   color: #000000;
-  /* font-weight: bold; */
 }

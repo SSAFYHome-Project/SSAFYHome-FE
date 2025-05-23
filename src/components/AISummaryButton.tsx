@@ -1,5 +1,5 @@
-import '../styles/AISummaryButton.css';
-import aiIcon from '../assets/img/ai_icon.png';
+import "../styles/AISummaryButton.css";
+import aiIcon from "../assets/img/ai_icon.png";
 
 interface Props {
   isVisible: boolean;
