@@ -21,12 +21,20 @@ export default function Community() {
     date: string;
     author: string;
     image: string;
+    category: string;
+    profile: string;
+    view: number;
   };
 
   const [posts, setPosts] = useState<Post[]>([]);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const getActiveClass = (path: string) => (location.pathname === path ? "active" : "");
+  const categories = ["전체", "부동산", "청약", "안전매물", "안전지역", "기타"];
+  const [selectedCategory, setSelectedCategory] = useState("전체");
+  const filteredPosts =
+    selectedCategory === "전체" ? posts : posts.filter((post) => post.category === selectedCategory);
   const navigate = useNavigate();
+  const topViewedPosts = [...posts].sort((a, b) => b.view - a.view).slice(0, 5);
 
   useEffect(() => {
     const token = localStorage.getItem("accessToken");
@@ -40,8 +48,11 @@ export default function Community() {
           id: item.boardIdx,
           title: item.boardTitle,
           date: item.boardRegDate.split(" ")[0],
+          category: item.boardCategory,
           author: item.username,
-          image: dummyImages[idx % dummyImages.length],
+          profile: `data:image/png;base64,${item.profile}`,
+          image: item.imgUrls?.[0] || dummyImages[idx % dummyImages.length],
+          view: item.boardView,
         }));
         setPosts(enriched);
       })
@@ -65,21 +76,35 @@ export default function Community() {
       <div className="community-block">
         <h2 className="community-subtitle">방금 올라온 콘텐츠</h2>
         <p className="community-subtext">실시간 업데이트 소식 살펴보기</p>
+        <div className="community-category-filter">
+          {categories.map((category) => (
+            <button
+              key={category}
+              className={`category-button ${selectedCategory === category ? "selected" : ""}`}
+              onClick={() => setSelectedCategory(category)}
+            >
+              {category}
+            </button>
+          ))}
+        </div>
+
         <div className="community-list">
-          {posts.map((post) => (
+          {filteredPosts.map((post) => (
             <div
               key={post.id}
               className="community-item"
               onClick={() => navigate("/community-detail", { state: { id: post.id } })}
             >
               <div className="community-info">
+                <div className={`community-category-badge ${post.category}`}>{post.category}</div>
                 <h3 className="community-title">{post.title}</h3>
                 <p className="community-date">
-                  {post.date} · {post.author}
+                  <img src={post.profile} alt="프로필" className="community-profile-image" />
+                  {post.author} · {post.date}
                 </p>
               </div>
               <div className="community-image-wrapper">
-                <img src={post.image} alt="" className="community-image" />
+                <img src={post.image} alt="게시글 이미지" className="community-image" />
               </div>
             </div>
           ))}
@@ -91,7 +116,7 @@ export default function Community() {
           <h2 className="community-subtitle">지금 많이 보는 콘텐츠</h2>
           <p className="community-subtext">사람들이 주목하는 안전 지역 부동산 이야기</p>
           <ul className="community-list-simple">
-            {posts.slice(0, 5).map((post, index) => (
+            {topViewedPosts.map((post, index) => (
               <li key={post.id} className="community-simple-item">
                 <span className="community-rank">{index + 1}</span>
                 <span className="community-simple-title">{post.title}</span>
