@@ -100,3 +100,79 @@
   font-family: "NanumSquareR", sans-serif;
   font-size: 13px;
 }
+
+.options-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 8px;
+  margin-bottom: 4px;
+  align-items: flex-end;
+}
+
+.checkbox-wrap {
+  display: flex;
+  align-items: center;
+  font-size: 13px;
+  color: #5a5f67;
+  position: relative;
+  cursor: pointer;
+  user-select: none;
+  padding-left: 24px;
+}
+
+.checkbox-wrap input {
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.checkbox-wrap .checkmark {
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 16px;
+  width: 16px;
+  background-color: #eee;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+}
+
+.checkbox-wrap input:checked ~ .checkmark {
+  background-color: #ffe600;
+  border: 1px solid #d4b700;
+}
+
+.checkbox-wrap .checkmark:after {
+  content: "";
+  position: absolute;
+  display: none;
+}
+
+.checkbox-wrap input:checked ~ .checkmark:after {
+  display: block;
+}
+
+.checkbox-wrap .checkmark:after {
+  left: 5px;
+  top: 1px;
+  width: 5px;
+  height: 9px;
+  border: solid #5a5f67;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+}
+
+.forgot-password {
+  font-size: 13px;
+  color: #5a5f67;
+  cursor: pointer;
+  transition: color 0.2s ease;
+  vertical-align: bottom;
+  margin-bottom: 0;
+}
+
+.forgot-password:hover {
+  color: #222;
+  text-decoration: underline;
+}
