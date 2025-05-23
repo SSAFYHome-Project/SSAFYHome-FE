@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
 import "../../styles/LoginForm.css";
 import googleLogo from "../../assets/img/google_logo.png";
 
@@ -11,6 +12,8 @@ const LoginForm = () => {
   const [saveEmail, setSaveEmail] = useState(() => {
     return localStorage.getItem("savedEmail") || "";
   });
+  const [showPassword, setShowPassword] = useState(false);
+  const isLoginEnabled = email && password;
 
   const location = useLocation();
   const navigate = useNavigate();
@@ -73,8 +76,25 @@ const LoginForm = () => {
         <img src={googleLogo} alt="Google Logo" className="google-logo" />
         Google 계정으로 로그인
       </button>
+      <div className="divider">
+        <span>또는 일반 로그인</span>
+      </div>
       <input type="text" placeholder="이메일" value={email} onChange={(e) => setEmail(e.target.value)} />
-      <input type="password" placeholder="비밀번호" value={password} onChange={(e) => setPassword(e.target.value)} />
+      <div className="password-wrapper">
+        <input
+          type={showPassword ? "text" : "password"}
+          placeholder="비밀번호"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+        />
+        <span
+          className="toggle-password"
+          onClick={() => setShowPassword((prev) => !prev)}
+          title={showPassword ? "숨기기" : "보기"}
+        >
+          {showPassword ? <FaEyeSlash /> : <FaEye />}
+        </span>
+      </div>
       <div className="options-row">
         <label className="checkbox-wrap">
           <input
@@ -94,12 +114,16 @@ const LoginForm = () => {
           이메일 저장
         </label>
 
-        <span className="forgot-password" onClick={() => alert("비밀번호 찾기 기능은 준비 중입니다.")}>
+        <span className="forgot-password" onClick={() => navigate("/forgot-password")}>
           비밀번호 찾기
         </span>
       </div>
       <div className="auth-actions">
-        <button className={`login-btn ${getActiveClass("/")}`} onClick={handleLogin}>
+        <button
+          className={`login-btn ${getActiveClass("/")} ${isLoginEnabled ? "active" : ""}`}
+          onClick={handleLogin}
+          disabled={!isLoginEnabled}
+        >
           로그인
         </button>
         <button className={`register-btn ${getActiveClass("/register")}`} onClick={handleRegister}>
