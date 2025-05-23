@@ -35,6 +35,7 @@ export default function CommunityDetail() {
         setViews(res.data.boardView || 0);
         setLikeCount(res.data.boardRecommendCnt || 0);
         setLiked(res.data.recommended || false);
+        console.log(res.data);
       })
       .catch((err) => {
         console.error("글 불러오기 실패:", err);

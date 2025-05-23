@@ -1,8 +1,7 @@
 .community-write-container {
-  max-width: 720px;
-  margin: 60px auto;
-  padding: 40px 30px;
-  transition: all 0.3s ease;
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 44px 20px;
 }
 
 .community-write-title {
@@ -84,16 +83,15 @@
 }
 
 .community-write-submit {
-  padding: 16px;
-  font-size: 16px;
+  padding: 10px 16px;
   background-color: #ffeb00;
   color: #5a5f67;
+  font-size: 14px;
   border: none;
-  border-radius: 12px;
+  border-radius: 8px;
   cursor: pointer;
-  font-weight: 600;
-  letter-spacing: 0.5px;
-  transition: background-color 0.2s ease, transform 0.1s ease;
+  transition: background-color 0.2s ease;
+  max-height: 40px;
 }
 
 .community-write-submit:hover {
@@ -121,4 +119,198 @@
   .community-write-submit {
     font-size: 15px;
   }
+}
+
+.community-write-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+}
+
+.community-write-cancel {
+  padding: 10px 16px;
+  background-color: #eee;
+  color: #555;
+  font-size: 14px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  max-height: 40px;
+}
+
+.community-write-cancel:hover {
+  background-color: #ddd;
+}
+
+.community-dropzone {
+  border: 2px dashed #ccc;
+  border-radius: 12px;
+  padding: 24px;
+  text-align: center;
+  font-size: 14px;
+  color: #777;
+  background-color: #fafafa;
+  transition: background-color 0.2s ease;
+}
+
+.community-dropzone:hover {
+  background-color: #f0f0f0;
+}
+
+.community-logo {
+  width: 230px;
+  height: 230px;
+  margin: 0 auto 60px;
+  display: block;
+}
+
+.community-category-wrapper {
+  position: relative;
+  display: inline-block;
+  margin: 16px;
+}
+
+.community-category-badge {
+  border: none;
+  padding: 6px 14px;
+  border-radius: 16px;
+  font-size: 13px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background-color 0.2s ease;
+}
+
+.community-category-badge:hover {
+  opacity: 0.9;
+}
+
+.community-category-badge.selected {
+  box-shadow: 0 0 0 2px #00000030 inset;
+}
+
+.community-category-dropdown {
+  display: flex;
+  flex-direction: column;
+  position: absolute;
+  top: 36px;
+  left: 0;
+  background-color: white;
+  border: 1px solid #ddd;
+  border-radius: 12px;
+  padding: 8px;
+  z-index: 10;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+  gap: 6px;
+}
+
+.community-category-badge.부동산 {
+  background-color: #bbdefb;
+  color: #0d47a1;
+}
+
+.community-category-badge.청약 {
+  background-color: #c8e6c9;
+  color: #1b5e20;
+}
+
+.community-category-badge.안전매물 {
+  background-color: #ffe0b2;
+  color: #e65100;
+}
+
+.community-category-badge.안전지역 {
+  background-color: #f8bbd0;
+  color: #880e4f;
+}
+
+.community-category-badge.기타 {
+  background-color: #e0e0e0;
+  color: #424242;
+}
+
+.community-write-file {
+  margin-top: 8px;
+  font-size: 14px;
+}
+
+.community-image-list {
+  margin-top: 6px;
+  list-style: disc;
+  padding-left: 20px;
+  color: #444;
+  font-size: 14px;
+}
+
+.community-write-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+}
+
+.community-write-submit {
+  padding: 10px 20px;
+  background-color: #ffeb00;
+  color: #222;
+  font-size: 15px;
+  font-weight: 600;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.community-write-submit:hover {
+  background-color: #e5d700;
+}
+
+.community-write-cancel {
+  padding: 10px 20px;
+  background-color: transparent;
+  color: #666;
+  font-size: 15px;
+  font-weight: 500;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.community-write-cancel:hover {
+  background-color: #f8f8f8;
+  color: #333;
+}
+
+.community-dropzone {
+  border: 2px dashed #bbb;
+  border-radius: 12px;
+  padding: 24px;
+  text-align: center;
+  font-size: 14px;
+  color: #666;
+  background-color: #fcfcfc;
+  transition: background-color 0.3s ease, border-color 0.3s ease;
+  cursor: pointer;
+}
+
+.community-dropzone.active {
+  background-color: #fffbe5;
+  border-color: #ffeb00;
+  color: #222;
+}
+
+.community-image-preview-wrapper {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.community-image-preview img {
+  width: 300px;
+  height: 150px;
+  object-fit: cover;
+  border-radius: 10px;
+  border: 1px solid #ddd;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
 }

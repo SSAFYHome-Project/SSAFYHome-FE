@@ -44,6 +44,7 @@ export default function Community() {
       .get("/api/community/board")
       .then((res) => {
         const data = res.data;
+        console.log(res.data);
         const enriched = data.map((item, idx) => ({
           id: item.boardIdx,
           title: item.boardTitle,
@@ -63,7 +64,7 @@ export default function Community() {
 
   return (
     <div className="community-section">
-      <img src={logoImg} alt="지도밖은위험해 로고" className="community-logo" />
+      <img src={logoImg} alt="지도밖은위험해 로고" className="community-logo-main" />
 
       {isLoggedIn && (
         <div className="community-write-wrapper">
