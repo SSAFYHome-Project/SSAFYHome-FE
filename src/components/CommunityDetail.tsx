@@ -2,11 +2,15 @@ import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
 import "../styles/CommunityDetail.css";
+import defaultProfile from "../assets/img/user.png";
 import heartIcon from "../assets/img/heart.png";
 import heartHoverIcon from "../assets/img/heart-filled.png";
 import eyeIcon from "../assets/img/eye.png";
 import commentIcon from "../assets/img/comment.png";
 import { HiOutlineExclamationCircle } from "react-icons/hi";
+import { FiArrowLeft, FiShare2 } from "react-icons/fi";
+import '@toast-ui/editor/dist/toastui-editor-viewer.css';
+import { Viewer } from '@toast-ui/react-editor';
 
 export default function CommunityDetail() {
   const location = useLocation();
@@ -31,11 +35,11 @@ export default function CommunityDetail() {
     axios
       .get(`/api/community/board/${id}`)
       .then((res) => {
+        console.log("게시물 조회", res.data);
         setPost(res.data);
         setViews(res.data.boardView || 0);
         setLikeCount(res.data.boardRecommendCnt || 0);
         setLiked(res.data.recommended || false);
-        console.log(res.data);
       })
       .catch((err) => {
         console.error("글 불러오기 실패:", err);
@@ -139,21 +143,36 @@ export default function CommunityDetail() {
 
   return (
     <div className="community-detail-container">
-      <div className="community-detail-header">
-        <h1 className="community-detail-title">{post.boardTitle}</h1>
 
+      <button className="back-icon-button" onClick={() => navigate(-1)}>
+        <FiArrowLeft size={25} color="#555" />
+      </button>
+      <button className="share-icon-button">
+        <FiShare2 size={22} color="#555" />
+      </button>
+      
+      <div className="community-detail-header">
+        <span className="community-detail-subcategory">
+          {post.boardCategory}
+        </span>
+        <h1 className="community-detail-title">{post.boardTitle}</h1>
         <div className="writer-info">
+          <img
+            src={`data:image/png;base64,${post.profile || defaultProfile}`}
+            alt="프로필"
+            className="community-write-profile"
+          />
           <span className="writer-name">{post.username}</span>
           <span className="writer-date">{post.boardRegDate}</span>
         </div>
       </div>
 
-      <div className="community-detail-content">{post.boardContent}</div>
+
+        <div className="community-detail-content">
+          <Viewer initialValue={post.boardContent} />
+        </div>
 
       <div className="community-detail-actions">
-        <button onClick={() => navigate("/community")} className="action-button">
-          뒤로가기
-        </button>
         {post.userEmail?.toString() === myUserEmail && (
           <>
             <button onClick={handleEdit} className="action-button edit">
@@ -181,13 +200,12 @@ export default function CommunityDetail() {
           <img src={eyeIcon} alt="댓글 수" className="icon" />
           <span>{views}</span>
         </div>
-        <button className="share-button">📤 공유</button>
       </div>
       <div className="community-detail-comments">
         <div className="comment-tooltip-container">
           <HiOutlineExclamationCircle className="tooltip-icon" />
           <div className="tooltip-box">
-            댓글은 작성하면 수정·삭제가 어려우며, 부적절한 내용은 삭제될 수 있습니다.
+            댓글은 작성하면 수정·삭제가 어려우며, <br/> 부적절한 내용은 삭제될 수 있습니다.
             <br />
             다른 이용자에게 불편함을 줄 수 있는 내용은 피해주세요.
           </div>
@@ -197,19 +215,25 @@ export default function CommunityDetail() {
           댓글 남기기
         </button>
 
-        <ul className="comment-list">
-          {comments.map((comment: any) => (
-            <li key={comment.id} className="comment-item">
-              <div className="comment-profile">
-                <div className="comment-header">
-                  <strong>{comment.username}</strong>
-                  <span className="comment-date">{comment.replyRegDate}</span>
-                </div>
-                <p>{comment.replyContent}</p>
+       <ul className="comment-list">
+        {comments.map((comment: any) => (
+          <li key={comment.id} className="comment-item">
+            <img
+              src={`data:image/png;base64,${comment.profile || defaultProfile}`}
+              alt="프로필"
+              className="comment-avatar"
+            />
+            <div className="comment-content-box">
+              <div className="comment-header">
+                <strong className="comment-author">{comment.username}</strong>
+                <span className="comment-date">{comment.replyRegDate}</span>
               </div>
-            </li>
-          ))}
-        </ul>
+              <p className="comment-text">{comment.replyContent}</p>
+            </div>
+          </li>
+        ))}
+      </ul>
+
       </div>
     </div>
   );

@@ -1,32 +1,58 @@
 .community-detail-container {
-  max-width: 720px;
-  margin: 40px auto;
-  padding: 32px;
-  font-family: "Pretendard", sans-serif;
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 44px 20px;
   position: relative;
 }
 
-.share-button {
+.community-detail-header {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 35px;
+  margin-bottom: 18px;
+  position: relative;
+}
+
+.back-icon-button {
   position: absolute;
-  top: 24px;
-  right: 24px;
-  padding: 6px 14px;
-  background-color: #edf3ff;
-  color: #1a73e8;
+  top: 16px;
+  left: 16px;
+  background: none;
   border: none;
-  border-radius: 10px;
+  padding: 6px;
+  cursor: pointer;
+  z-index: 10;
+  border-radius: 8px;
+  transition: background-color 0.2s ease;
+}
+
+.share-icon-button {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  background: none;
+  border: none;
+  padding: 6px;
+  cursor: pointer;
+  z-index: 10;
+  border-radius: 8px;
+  transition: background-color 0.2s ease;
+}
+
+.share-icon-button:hover {
+  background-color: #f2f2f2;
+}
+
+.share-icon-button:hover svg {
+  color: #000;
+}
+
+.community-detail-subcategory {
+  display: inline-block;
   font-size: 14px;
   font-weight: 500;
-  cursor: pointer;
-  transition: background-color 0.2s;
-}
-
-.share-button:hover {
-  background-color: #dbe7ff;
-}
-
-.community-detail-header {
-  margin-bottom: 32px;
+  color: #5a5f67;
 }
 
 .community-detail-title {
@@ -46,12 +72,53 @@
 }
 
 .community-detail-content {
-  font-size: 16px;
-  line-height: 1.75;
-  color: #333;
-  margin: 24px 0 36px;
-  white-space: pre-wrap;
+  font-size: 16px;       
+  line-height: 1.75;      
+  color: #333;  
+  margin-top: 50px;
+  margin-bottom: 50px;         
 }
+
+.community-detail-content p {
+  margin: 12px 0;
+  font-size: 16px;
+}
+
+.community-detail-content h1,
+.community-detail-content h2,
+.community-detail-content h3 {
+  font-weight: 600;
+  margin-top: 24px;
+  margin-bottom: 12px;
+}
+
+.community-detail-content h1 {
+  font-size: 24px;
+}
+
+.community-detail-content h2 {
+  font-size: 20px;
+}
+
+.community-detail-content h3 {
+  font-size: 18px;
+}
+
+.community-detail-content img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+  margin: 16px 0;
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+}
+
+.community-detail-content hr {
+  margin: 20px 0;
+  border: none;
+  border-top: 1px solid #ccc;
+}
+
 
 .community-detail-actions {
   display: flex;
@@ -114,8 +181,8 @@
   position: relative;
   display: flex;
   justify-content: flex-end;
-  align-items: center;
   margin-bottom: 8px;
+  position: relative;
 }
 
 .tooltip-icon {
@@ -125,15 +192,18 @@
 }
 
 .tooltip-box {
+  justify-content: flex-end;
   position: absolute;
-  right: 28px;
-  top: 0;
+  margin-top: 4px;
+  right: 0;
+  left: auto;
+  transform: none;
   width: 280px;
   background: #f9f9f9;
   color: #333;
   padding: 12px 14px;
   border-radius: 10px;
-  font-size: 13.5px;
+  font-size: 12.5px;
   line-height: 1.5;
   border: 1px solid #e0e4e8;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
@@ -151,7 +221,7 @@
 
 .community-detail-comments textarea {
   width: 100%;
-  padding: 14px;
+  padding: 20px;
   font-size: 15px;
   border: 1px solid #ddd;
   border-radius: 12px;
@@ -159,6 +229,11 @@
   margin-bottom: 12px;
   font-family: "Pretendard", sans-serif;
   background: #fff;
+}
+
+.community-detail-comments textarea:focus {
+  border-color: #ffd400; 
+  outline: none;
 }
 
 .comment-submit {
@@ -171,7 +246,7 @@
   font-weight: 500;
   cursor: pointer;
   transition: background-color 0.2s;
-  margin-bottom: 24px;
+  margin-bottom: 30px;
 }
 
 .comment-submit:hover {
@@ -211,12 +286,6 @@
   color: #333;
 }
 
-.comment-date {
-  font-size: 12px;
-  color: #999;
-  font-weight: 400;
-}
-
 @media (max-width: 600px) {
   .community-detail-container {
     padding: 24px;
@@ -239,4 +308,49 @@
     flex-direction: column;
     align-items: stretch;
   }
+}
+
+.comment-item {
+  display: flex;
+  align-items: flex-start;
+  background: #fff;
+  border-radius: 12px;
+  padding: 20px 16px;
+  margin-bottom: 14px;
+  border: 1px solid #eef3f8;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
+  gap: 12px;
+}
+
+.comment-avatar {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  object-fit: cover;
+  background-color: #f2f2f2;
+}
+
+.comment-content-box {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.comment-author {
+  font-size: 12.5px;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 5px;
+}
+
+.comment-date {
+  font-size: 12px;
+  color: #999;
+}
+
+.comment-text {
+  font-size: 15px;
+  color: #444;
+  line-height: 1.6;
+  white-space: pre-wrap;
 }

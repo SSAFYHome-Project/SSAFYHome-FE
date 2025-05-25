@@ -1,20 +1,33 @@
 .community-write-container {
-  max-width: 960px;
+  max-width: 1100px;
   margin: 0 auto;
   padding: 44px 20px;
+  position: relative;
 }
 
-.community-write-title {
-  font-size: 30px;
-  font-weight: bold;
-  margin-bottom: 30px;
-  text-align: center;
-  color: #222;
+.community-logo {
+  width: 230px;
+  height: 230px;
+  margin: 0 auto 60px;
+  display: block;
+}
+
+.community-write-footer {
+  text-align: right;
+  font-size: 13px;
+  color: #999;
+  margin-top: 10px;
+}
+
+.community-write-footer span {
+  display: block;
+  margin-bottom: 0px;
 }
 
 .community-write-user {
   display: flex;
   align-items: center;
+  margin-top: 35px;
   margin-bottom: 18px;
 }
 
@@ -37,13 +50,6 @@
   color: #222;
 }
 
-.community-write-greeting {
-  margin-bottom: 24px;
-  font-size: 16px;
-  color: #555;
-  font-weight: 400;
-}
-
 .community-write-form {
   display: flex;
   flex-direction: column;
@@ -52,226 +58,76 @@
 
 .community-write-input {
   font-family: "NanumSquareR", sans-serif;
-  color: #000000;
+  color: #000;
   padding: 16px;
   font-size: 16px;
   border: 2px solid #eee;
   border-radius: 12px;
+  height: 50px;
   background-color: #fcfcfc;
 }
 
-.community-write-textarea {
-  font-family: "NanumSquareR", sans-serif;
-  color: #5a5f67;
-  padding: 16px;
-  font-size: 16px;
-  border: 2px solid #eee;
-  border-radius: 12px;
-  background-color: #fcfcfc;
-}
-
-.community-write-input:focus,
-.community-write-textarea:focus {
+.community-write-input:focus {
   border-color: #ffeb00;
   outline: none;
 }
 
-.community-write-textarea {
-  height: 220px;
-  resize: vertical;
-  line-height: 1.6;
-}
-
-.community-write-submit {
-  padding: 10px 16px;
-  background-color: #ffeb00;
-  color: #5a5f67;
-  font-size: 14px;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: background-color 0.2s ease;
-  max-height: 40px;
-}
-
-.community-write-submit:hover {
-  background-color: #e2cf00;
-}
-
-@media (max-width: 768px) {
-  .community-write-container {
-    padding: 30px 20px;
-  }
-  .community-write-title {
-    font-size: 24px;
-  }
-  .community-write-profile {
-    width: 44px;
-    height: 44px;
-  }
-  .community-write-username {
-    font-size: 15px;
-  }
-  .community-write-input,
-  .community-write-textarea {
-    font-size: 15px;
-  }
-  .community-write-submit {
-    font-size: 15px;
-  }
-}
-
 .community-write-actions {
   display: flex;
   gap: 12px;
   justify-content: flex-end;
 }
 
-.community-write-cancel {
-  padding: 10px 16px;
-  background-color: #eee;
-  color: #555;
-  font-size: 14px;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: background-color 0.2s ease;
-  max-height: 40px;
-}
-
-.community-write-cancel:hover {
-  background-color: #ddd;
-}
-
-.community-dropzone {
-  border: 2px dashed #ccc;
-  border-radius: 12px;
-  padding: 24px;
-  text-align: center;
-  font-size: 14px;
-  color: #777;
-  background-color: #fafafa;
-  transition: background-color 0.2s ease;
-}
-
-.community-dropzone:hover {
-  background-color: #f0f0f0;
-}
-
-.community-logo {
-  width: 230px;
-  height: 230px;
-  margin: 0 auto 60px;
-  display: block;
-}
-
-.community-category-wrapper {
-  position: relative;
-  display: inline-block;
-  margin: 16px;
-}
-
-.community-category-badge {
-  border: none;
-  padding: 6px 14px;
-  border-radius: 16px;
-  font-size: 13px;
-  cursor: pointer;
-  font-weight: 500;
-  transition: background-color 0.2s ease;
-}
-
-.community-category-badge:hover {
-  opacity: 0.9;
-}
-
-.community-category-badge.selected {
-  box-shadow: 0 0 0 2px #00000030 inset;
-}
-
-.community-category-dropdown {
-  display: flex;
-  flex-direction: column;
+.back-icon-button {
   position: absolute;
-  top: 36px;
-  left: 0;
-  background-color: white;
-  border: 1px solid #ddd;
-  border-radius: 12px;
-  padding: 8px;
+  top: 16px;
+  left: 16px;
+  background: none;
+  border: none;
+  padding: 6px;
+  cursor: pointer;
   z-index: 10;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
-  gap: 6px;
+  border-radius: 8px;
+  transition: background-color 0.2s ease;
 }
 
-.community-category-badge.부동산 {
-  background-color: #bbdefb;
-  color: #0d47a1;
+.back-icon-button:hover {
+  background-color: #f2f2f2;
 }
 
-.community-category-badge.청약 {
-  background-color: #c8e6c9;
-  color: #1b5e20;
-}
-
-.community-category-badge.안전매물 {
-  background-color: #ffe0b2;
-  color: #e65100;
-}
-
-.community-category-badge.안전지역 {
-  background-color: #f8bbd0;
-  color: #880e4f;
-}
-
-.community-category-badge.기타 {
-  background-color: #e0e0e0;
-  color: #424242;
-}
-
-.community-write-file {
-  margin-top: 8px;
-  font-size: 14px;
-}
-
-.community-image-list {
-  margin-top: 6px;
-  list-style: disc;
-  padding-left: 20px;
-  color: #444;
-  font-size: 14px;
-}
-
-.community-write-actions {
-  display: flex;
-  gap: 12px;
-  justify-content: flex-end;
+.back-icon-button:hover svg {
+  color: #000;
 }
 
 .community-write-submit {
-  padding: 10px 20px;
+  width: 100%;
+  max-width: 100%;
+  padding: 16px 0;
   background-color: #ffeb00;
-  color: #222;
-  font-size: 15px;
-  font-weight: 600;
+  color: #1a1a1a;
+  font-size: 16px;
+  font-weight: 500;
   border: none;
-  border-radius: 10px;
+  border-radius: 12px;
   cursor: pointer;
   transition: background-color 0.2s ease;
 }
 
-.community-write-submit:hover {
-  background-color: #e5d700;
+.community-write-submit:disabled {
+  background-color: #f0f0f0;
+  color: #aaa;
+  cursor: not-allowed;
 }
 
 .community-write-cancel {
-  padding: 10px 20px;
+  flex-shrink: 0;
+  padding: 16px 20px;
   background-color: transparent;
   color: #666;
   font-size: 15px;
   font-weight: 500;
   border: 1px solid #ccc;
-  border-radius: 10px;
+  border-radius: 12px;
   cursor: pointer;
   transition: background-color 0.2s ease, color 0.2s ease;
 }
@@ -282,17 +138,23 @@
 }
 
 .community-dropzone {
+  display: flex;
+  align-items: center;
+  justify-content: center;
   border: 2px dashed #bbb;
   border-radius: 12px;
   padding: 24px;
-  text-align: center;
   font-size: 14px;
   color: #666;
   background-color: #fcfcfc;
   transition: background-color 0.3s ease, border-color 0.3s ease;
   cursor: pointer;
+  height: 100px;
+  text-align: center;
 }
 
+.community-dropzone:hover,
+.community-dropzone.hover,
 .community-dropzone.active {
   background-color: #fffbe5;
   border-color: #ffeb00;
@@ -301,16 +163,215 @@
 
 .community-image-preview-wrapper {
   display: flex;
-  flex-wrap: wrap;
   gap: 12px;
-  margin-top: 12px;
+  flex-wrap: wrap;
+  margin-top: 16px;
+}
+
+.community-image-preview {
+  position: relative;
 }
 
 .community-image-preview img {
-  width: 300px;
+  width: 220px;
   height: 150px;
   object-fit: cover;
   border-radius: 10px;
   border: 1px solid #ddd;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+}
+
+.delete-image-btn {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  background-color: rgba(0, 0, 0, 0.6);
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 22px;
+  height: 22px;
+  font-size: 16px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.2s ease;
+}
+
+.image-count-4 .community-image-preview img {
+  width: 220px;
+  height: 200px;
+}
+
+.image-count-3 .community-image-preview img {
+  width: 220px;
+  height: 200px;
+}
+
+.image-count-2 .community-image-preview img {
+  width: 450px;
+  height: 300px;
+}
+
+.image-count-1 .community-image-preview img {
+  width: 450px;
+  height: 300px;
+}
+
+.category-selected-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 20px;
+  font-size: 14px;
+  font-weight: 500;
+  height: 50px;
+  border: 1px solid #e9ecef;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  background-color: #f8f9fa;
+  color: #495057;
+}
+
+.category-selected-button:hover {
+  background-color: #fff3cd;
+  border-color: #ffeb00;
+}
+
+.dropdown-icon {
+  font-size: 12px;
+  margin-left: 2px;
+  color: #424242;
+}
+
+.community-category-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.category-card {
+  flex: 1 1 130px;
+  height: 180px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px;
+  border: 1px solid #ddd;
+  border-radius: 16px;
+  background-color: #fff;
+  transition: all 0.2s ease;
+  box-sizing: border-box;
+  cursor: pointer;
+}
+
+.category-card.selected {
+  border-radius: 12px;
+  background-color: #fff;
+}
+
+.category-card.selected .community-category-.부동산 {
+  background-color: #bbdefb;
+  color: #0d47a1;
+}
+
+.category-card.selected .community-category.청약 {
+  background-color: #c8e6c9;
+  color: #1b5e20;
+}
+
+.category-card.selected .community-category.안전매물 {
+  background-color: #ffe0b2;
+  color: #e65100;
+}
+
+.category-card.selected .community-category.안전지역 {
+  background-color: #f8bbd0;
+  color: #880e4f;
+}
+
+.category-card.selected .community-category.기타 {
+  background-color: #e0e0e0;
+  color: #424242;
+}
+
+.category-card:hover {
+  background-color: #f9fafb;
+}
+
+.category-icon {
+  width: 36px;
+  height: 36px;
+  object-fit: contain;
+}
+
+.category-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+
+.category-header span {
+  font-size: 14px;
+  font-weight: 600;
+  color: #222;
+  margin-bottom: 10px;
+}
+
+.community-category-badge {
+  display: inline-block;
+  padding: 6px 12px;
+  font-size: 12px;
+  border-radius: 16px;
+  font-weight: 600;
+  background-color: #fff3cd;
+  color: #856404;
+  border: 1px solid #ffeaa7;
+}
+
+.subcategory-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  justify-content: center;
+  align-items: stretch;
+  margin-top: 10px;
+}
+
+.subcategory-pill {
+  background-color: #f1f3f5;
+  color: #444;
+  padding: 5px 10px;
+  border-radius: 14px;
+  font-size: 12px;
+  border: none;
+  transition: background-color 0.2s ease;
+}
+
+@media (max-width: 768px) {
+  .community-write-container {
+    padding: 30px 20px;
+  }
+
+  .community-write-profile {
+    width: 44px;
+    height: 44px;
+  }
+
+  .community-write-username {
+    font-size: 15px;
+  }
+
+  .community-write-input {
+    font-size: 15px;
+  }
+
+  .community-write-submit {
+    font-size: 15px;
+  }
 }
