@@ -137,6 +137,7 @@ const DistancePanel = ({ isLoggedIn, userLocation, onSelectLocation, setUserLoca
     polylineRef.current = polyline;
 
     const result = await fetchRouteInfo(addr.title);
+    console.log(result);
     if (result) {
       const walkMinutes = Math.round(result.distanceKm * 14);
       const walkTime =
@@ -205,7 +206,7 @@ const DistancePanel = ({ isLoggedIn, userLocation, onSelectLocation, setUserLoca
                   <strong>{userLocation.name}</strong> → {userLocation.aptName}
                 </div>
                 <div className="distance-result-info">
-                  차량: {userLocation.carTime}분 ({userLocation.carDistance.toFixed(1)}km)
+                  차량: {userLocation.carTime} ({userLocation.carDistance.toFixed(1)}km)
                   <br />
                   도보: {userLocation.walkTime}
                 </div>
