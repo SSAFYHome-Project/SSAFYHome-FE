@@ -185,7 +185,7 @@ const InfoForm = ({ isAdmin = false }: InfoFormProps) => {
   };
 
   const handleDeleteAccount = async () => {
-    const confirmDelete = window.confirm("정말로 계정을 삭제하시겠습니까?");
+    const confirmDelete = window.confirm("정말로 계정을 탈퇴하시겠습니까?");
     if (!confirmDelete) return;
 
     try {
@@ -195,13 +195,13 @@ const InfoForm = ({ isAdmin = false }: InfoFormProps) => {
         headers: { Authorization: `Bearer ${token}` },
       });
 
-      alert("계정이 삭제되었습니다.");
+      alert("계정이 탈퇴되었습니다.");
       localStorage.removeItem("accessToken");
       localStorage.removeItem("role");
       navigate("/");
     } catch (err: any) {
-      console.error("계정 삭제 오류:", err);
-      setErrorMessage(err.response?.data || "계정 삭제 실패");
+      console.error("계정 탈퇴 오류:", err);
+      setErrorMessage(err.response?.data || "계정 탈퇴 실패");
     }
   };
 
@@ -243,7 +243,7 @@ const InfoForm = ({ isAdmin = false }: InfoFormProps) => {
           수정하기
         </button>
         <button className="delete-btn" onClick={handleDeleteAccount}>
-          삭제하기
+          탈퇴하기
         </button>
       </div>
 
