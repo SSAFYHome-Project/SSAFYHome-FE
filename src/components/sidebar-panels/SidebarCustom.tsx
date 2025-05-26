@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from "react";
+import { marked } from "marked";
 import axios from "axios";
 import "../../styles/SidebarCustom.css";
 import logoImg from "../../assets/img/chatbot-logo.png";
@@ -16,6 +17,7 @@ const SidebarCustom = () => {
             )}'입니다. 해당 지역을 기준으로 동네를 추천드릴게요!\n\n`
           : ""
       }궁금하신 조건을 입력하시거나 아래 버튼을 눌러 시작해 주세요.`,
+      isMarkdown: true,
       time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
     },
   ]);
@@ -128,8 +130,13 @@ const SidebarCustom = () => {
 
         const res = await axios.post("/api/chatbot/recommendation", updatedAnswers, config);
         console.log("Response:", res);
-        const recommend = res.data.recommend || res.data;
-        setMessages((prev) => [...prev, { from: "bot", text: recommend, time }]);
+        // const recommend = res.data.recommend || res.data;
+
+        const markdown = res.data.recommend || res.data;
+        const html = marked.parse(markdown);
+        setMessages((prev) => [...prev, { from: "bot", text: html, isMarkdown: true, time }]);
+
+        // setMessages((prev) => [...prev, { from: "bot", text: recommend, time }]);
       } catch {
         setMessages((prev) => [...prev, { from: "bot", text: "추천 요청 중 오류가 발생했어요 😢", time }]);
       } finally {
@@ -170,7 +177,11 @@ const SidebarCustom = () => {
 
         {messages.map((msg, idx) => (
           <div key={idx} className={`chat-bubble ${msg.from}`}>
-            <div className="bubble">{msg.text}</div>
+            {msg.isMarkdown ? (
+              <div className="bubble markdown" dangerouslySetInnerHTML={{ __html: msg.text }} />
+            ) : (
+              <div className="bubble">{msg.text}</div>
+            )}
             <div className="bubble-time">{msg.time}</div>
           </div>
         ))}

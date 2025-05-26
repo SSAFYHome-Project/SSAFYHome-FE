@@ -245,3 +245,21 @@
 .chat-send-btn:hover {
   background-color: #e2cf00;
 }
+
+.bubble.markdown ul {
+  padding-left: 1rem;
+}
+
+.bubble.markdown ol {
+  padding-left: 1.2rem;
+  margin: 0.5rem 0;
+}
+
+.bubble.markdown p {
+  margin: 0.4rem 0;
+  line-height: 1.6;
+}
+
+.bubble.markdown strong {
+  font-weight: 600;
+}

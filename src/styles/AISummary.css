@@ -189,3 +189,72 @@
     background-position: 200% center;
   }
 }
+
+/* 마크다운 스타일 개선 */
+.summary-box h1,
+.summary-box h2,
+.summary-box h3 {
+  margin: 1.2rem 0 0.8rem;
+  font-weight: 700;
+  color: #1f2937;
+  line-height: 1.4;
+}
+
+.summary-box h1 {
+  font-size: 1.5rem;
+  border-bottom: 2px solid #e5e7eb;
+  padding-bottom: 0.3rem;
+}
+
+.summary-box h2 {
+  font-size: 1.3rem;
+  border-bottom: 1px solid #e5e7eb;
+  padding-bottom: 0.25rem;
+}
+
+.summary-box h3 {
+  font-size: 1.1rem;
+}
+
+.summary-box ul,
+.summary-box ol {
+  margin: 0.5rem 0 1rem;
+  padding-left: 1.5rem;
+}
+
+.summary-box li {
+  margin-bottom: 0.5rem;
+}
+
+.summary-box a {
+  color: #3182f6;
+  text-decoration: underline;
+}
+
+.summary-box blockquote {
+  margin: 1rem 0;
+  padding: 0.75rem 1rem;
+  background-color: #f3f4f6;
+  border-left: 4px solid #3182f6;
+  color: #374151;
+  font-style: italic;
+}
+
+.summary-box code {
+  background-color: #f3f4f6;
+  padding: 0.2em 0.4em;
+  font-family: monospace;
+  font-size: 90%;
+  border-radius: 4px;
+  color: #e11d48;
+}
+
+.summary-box pre code {
+  display: block;
+  padding: 1rem;
+  background-color: #f9fafb;
+  overflow-x: auto;
+  border-radius: 0.5rem;
+  font-size: 14px;
+  color: #111827;
+}

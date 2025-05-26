@@ -30,7 +30,9 @@ const AISummary = ({ sido, gigun, umd, onClose }: Props) => {
       });
 
       const rawSummary = response.data.summary || "요약 결과가 없습니다.";
+      console.log(rawSummary);
       const htmlSummary = marked(rawSummary);
+      console.log(htmlSummary);
       setSummaryText(htmlSummary);
     } catch (error) {
       console.error(error);
