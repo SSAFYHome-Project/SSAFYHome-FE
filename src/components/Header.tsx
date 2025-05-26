@@ -28,12 +28,19 @@ const Header = () => {
             Authorization: `Bearer ${token}`,
           },
         });
+        console.log(response.data);
+
+        const { name, email, address, profile } = response.data;
 
         setUserInfo({
           isLoggedIn: true,
-          name: response.data.name,
-          profile: response.data.profile,
+          name,
+          profile,
         });
+
+        localStorage.setItem("userEmail", email || "");
+        localStorage.setItem("userName", name || "");
+        localStorage.setItem("userAddress", Array.isArray(address) ? address[0]?.address || "" : address || "");
       } catch (error) {
         console.error("유저 정보 불러오기 실패:", error);
         setUserInfo({
@@ -61,9 +68,7 @@ const Header = () => {
   }, []);
 
   const handleLogout = () => {
-    localStorage.removeItem("accessToken");
-    localStorage.removeItem("refreshToken");
-    localStorage.removeItem("userEmail");
+    localStorage.clear();
     window.location.href = "/";
   };
 

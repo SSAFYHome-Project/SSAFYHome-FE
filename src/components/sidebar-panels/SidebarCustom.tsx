@@ -4,16 +4,21 @@ import "../../styles/SidebarCustom.css";
 import logoImg from "../../assets/img/chatbot-logo.png";
 
 const SidebarCustom = () => {
-  const userInfo = JSON.parse(localStorage.getItem("userInfo") || "null");
-  const userName = userInfo?.name || "이민희";
-  const userAddress = userInfo?.address || "";
+  // const userInfo = JSON.parse(localStorage.getItem("userInfo") || "null");
+  // console.log(userInfo);
+  // const userName = userInfo?.name || "이민희";
+  // const userAddress = userInfo?.address || "";
   const bottomRef = useRef<HTMLDivElement | null>(null);
 
   const [messages, setMessages] = useState([
     {
       from: "bot",
-      text: `${userName}님, 안녕하세요 👋\n\n${
-        userAddress ? `현재 설정된 주소는 '${userAddress}'입니다. 해당 지역을 기준으로 동네를 추천드릴게요!\n\n` : ""
+      text: `${localStorage.getItem("userName")}님, 안녕하세요 👋\n\n${
+        localStorage.getItem("userAddress")
+          ? `현재 설정된 주소는 '${localStorage.getItem(
+              "userAddress"
+            )}'입니다. 해당 지역을 기준으로 동네를 추천드릴게요!\n\n`
+          : ""
       }궁금하신 조건을 입력하시거나 아래 버튼을 눌러 시작해 주세요.`,
       time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
     },

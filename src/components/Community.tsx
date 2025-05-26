@@ -1,13 +1,13 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import sampleImage1 from "../assets/img/sample7.png";
+import sampleImage1 from "../assets/img/sample7.jpg";
 import sampleImage2 from "../assets/img/sample2.png";
 import sampleImage3 from "../assets/img/sample3.png";
 import sampleImage4 from "../assets/img/sample4.jpg";
 import sampleImage5 from "../assets/img/sample5.jpg";
 import sampleImage6 from "../assets/img/sample6.jpg";
-import sampleImage7 from "../assets/img/sample1.jpg";
+import sampleImage7 from "../assets/img/sample1.png";
 import logoImg from "../assets/img/logo-feedback.png";
 import "../styles/Community.css";
 import aptImg from "../assets/img/apt.png";

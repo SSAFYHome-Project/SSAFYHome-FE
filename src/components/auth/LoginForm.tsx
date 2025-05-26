@@ -44,7 +44,6 @@ const LoginForm = () => {
       if (accessToken) {
         localStorage.setItem("accessToken", accessToken);
         localStorage.setItem("refreshToken", refreshToken);
-        localStorage.setItem("userEmail", email);
         setErrorMessage("");
 
         if (passwordResetRequired) {
