@@ -142,11 +142,14 @@ const DistancePanel = ({ isLoggedIn, userLocation, onSelectLocation, setUserLoca
       const walkTime =
         walkMinutes >= 60 ? `${Math.floor(walkMinutes / 60)}시간 ${walkMinutes % 60}분` : `${walkMinutes}분`;
 
+      const carMinutes = result.durationMin;
+      const carTime = carMinutes >= 60 ? `${Math.floor(carMinutes / 60)}시간 ${carMinutes % 60}분` : `${carMinutes}분`;
+
       const location = {
         aptName: localStorage.getItem("dealTitle"),
         name: addr.title === "SCHOOL" ? "학교" : "직장",
         carDistance: result.distanceKm,
-        carTime: result.durationMin,
+        carTime,
         walkTime,
       };
 
