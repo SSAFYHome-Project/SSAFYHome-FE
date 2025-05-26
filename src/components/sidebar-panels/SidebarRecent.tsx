@@ -67,7 +67,7 @@ const SidebarRecent = () => {
     const dealAmount = item.dealAmount || 0;
 
     if (item.dealType === "TRADE") {
-      return `실거래가: ${formatDealAmount(dealAmount)}`;
+      return dealAmount > 0 ? `실거래가: ${formatDealAmount(dealAmount)}` : `전세가: ${formatDeposit(deposit)}`;
     } else {
       return rent === 0
         ? `전세가: ${formatDeposit(deposit)}`

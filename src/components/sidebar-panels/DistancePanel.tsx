@@ -138,12 +138,16 @@ const DistancePanel = ({ isLoggedIn, userLocation, onSelectLocation, setUserLoca
 
     const result = await fetchRouteInfo(addr.title);
     if (result) {
+      const walkMinutes = Math.round(result.distanceKm * 14);
+      const walkTime =
+        walkMinutes >= 60 ? `${Math.floor(walkMinutes / 60)}시간 ${walkMinutes % 60}분` : `${walkMinutes}분`;
+
       const location = {
         aptName: localStorage.getItem("dealTitle"),
         name: addr.title === "SCHOOL" ? "학교" : "직장",
         carDistance: result.distanceKm,
         carTime: result.durationMin,
-        walkTime: `${Math.round(result.distanceKm * 14)}분`,
+        walkTime,
       };
 
       setUserLocation(location);
