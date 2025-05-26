@@ -14,10 +14,16 @@ const SearchBar = ({ onFilterChange }: Props) => {
   const [suggestions, setSuggestions] = useState<any[]>([]);
   const [filters, setFilters] = useState<any | null>(null);
   const [selectedIndex, setSelectedIndex] = useState(-1);
+  const [isManualSelect, setIsManualSelect] = useState(false);
 
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
+    if (isManualSelect) {
+      setIsManualSelect(false);
+      return;
+    }
+
     if (!query.trim()) {
       setSuggestions([]);
       return;
@@ -59,6 +65,7 @@ const SearchBar = ({ onFilterChange }: Props) => {
   const handleSelect = async (place: any) => {
     setQuery(place.place_name);
     setSuggestions([]);
+    setIsManualSelect(true);
 
     try {
       const { x: lng, y: lat } = place;
