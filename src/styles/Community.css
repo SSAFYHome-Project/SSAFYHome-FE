@@ -52,7 +52,7 @@
   justify-content: space-between;
   align-items: flex-start;
   margin-top: 40px;
-  margin-bottom: 24px;
+  /* margin-bottom: 24px; */
 }
 
 .community-header-left {
@@ -148,7 +148,7 @@
   justify-content: center;
   align-items: center;
   flex: 1;
-  min-height: 200px; 
+  min-height: 200px;
 }
 
 .community-subtitle {
@@ -190,12 +190,12 @@
 }
 
 .fortune-box {
-  display: flex;                     
-  flex-direction: column;      
-  justify-content: center;    
-  align-items: center;   
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
   /* width: 400px; */
-  width:100%;
+  width: 100%;
   height: 200px;
   background: linear-gradient(135deg, #fef9e7, #f7ed94);
   border-radius: 16px;
@@ -261,7 +261,6 @@
   background-color: #fff8dc !important;
 }
 
-
 .category-icon {
   width: 36px;
   height: 36px;
@@ -308,4 +307,31 @@
   font-size: 12px;
   border: none;
   transition: background-color 0.2s ease;
+}
+
+.community-categories {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 34px;
+  flex-wrap: wrap;
+}
+
+.community-category-btn {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 20px;
+  background-color: #fff8dc;
+  color: #444;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.community-category-btn:hover {
+  background-color: #fff690;
+}
+
+.community-category-btn.active {
+  background-color: #ffeb00;
+  color: #5a5f67;
 }

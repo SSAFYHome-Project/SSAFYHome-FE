@@ -1,13 +1,13 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import sampleImage1 from "../assets/img/sample1.png";
+import sampleImage1 from "../assets/img/sample7.png";
 import sampleImage2 from "../assets/img/sample2.png";
 import sampleImage3 from "../assets/img/sample3.png";
 import sampleImage4 from "../assets/img/sample4.jpg";
 import sampleImage5 from "../assets/img/sample5.jpg";
 import sampleImage6 from "../assets/img/sample6.jpg";
-import sampleImage7 from "../assets/img/sample7.jpg";
+import sampleImage7 from "../assets/img/sample1.jpg";
 import logoImg from "../assets/img/logo-feedback.png";
 import "../styles/Community.css";
 import aptImg from "../assets/img/apt.png";
@@ -71,9 +71,8 @@ export default function Community() {
       });
   }, []);
 
-  const filteredPosts = selectedCategory === "전체"
-    ? posts
-    : posts.filter((post) => post.category === selectedCategory);
+  const filteredPosts =
+    selectedCategory === "전체" ? posts : posts.filter((post) => post.category === selectedCategory);
 
   return (
     <div className="community-section">
@@ -94,29 +93,40 @@ export default function Community() {
         )}
       </div>
 
-
+      <div className="community-categories">
+        {categories.map((category) => (
+          <button
+            key={category}
+            className={`community-category-btn ${selectedCategory === category ? "active" : ""}`}
+            onClick={() => setSelectedCategory(category)}
+          >
+            {category}
+          </button>
+        ))}
+      </div>
 
       <div className="community-block">
-
         {/* <div className="community-category-cards">
-        {Object.entries(categoryMap).map(([cat, { icon, subs }]) => (
-          <div
-            key={cat}
-            className={`category-card ${selectedCategory === cat ? "selected" : ""}`}
-            onClick={() => setSelectedCategory(cat)}
-          >
-            <div className="category-header">
-              <img src={icon} alt={cat} className="category-icon" />
-              <span className="community-category-badge">{cat}</span>
+          {Object.entries(categoryMap).map(([cat, { icon, subs }]) => (
+            <div
+              key={cat}
+              className={`category-card ${selectedCategory === cat ? "selected" : ""}`}
+              onClick={() => setSelectedCategory(cat)}
+            >
+              <div className="category-header">
+                <img src={icon} alt={cat} className="category-icon" />
+                <span className="community-category-badge">{cat}</span>
+              </div>
+              <div className="subcategory-list">
+                {subs.map((sub) => (
+                  <span key={sub} className="subcategory-pill">
+                    {sub}
+                  </span>
+                ))}
+              </div>
             </div>
-            <div className="subcategory-list">
-              {subs.map((sub) => (
-                <span key={sub} className="subcategory-pill">{sub}</span>
-              ))}
-            </div>
-          </div>
-        ))}
-      </div> */}
+          ))}
+        </div> */}
 
         <div className="community-list">
           {filteredPosts.map((post) => (
@@ -126,9 +136,7 @@ export default function Community() {
               onClick={() => navigate("/community-detail", { state: { id: post.id } })}
             >
               <div className="community-info">
-                <span className="community-subcategory">
-                  {post.category}
-                </span>
+                <span className="community-subcategory">{post.category}</span>
                 <h3 className="community-title">{post.title}</h3>
                 <p className="community-date">
                   <img src={post.profile} alt="프로필" className="community-profile-image" />

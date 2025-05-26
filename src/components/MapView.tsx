@@ -41,7 +41,7 @@ const MapView = ({ filterValues, activeType, setActiveType, onUpdateDeals, onSel
       if ((window as any).kakao?.maps) return resolve();
 
       const script = document.createElement("script");
-      script.src = `https://dapi.kakao.com/v2/maps/sdk.js?appkey=${KAKAO_JS_API_KEY}&autoload=false&libraries=services`;
+      script.src = `https://dapi.kakao.com/v2/maps/sdk.js?appkey=${KAKAO_JS_API_KEY}&autoload=false&libraries=services,clusterer`;
       script.async = true;
       script.onload = () => {
         (window as any).kakao.maps.load(resolve);
