@@ -27,6 +27,7 @@ const MapView = ({ filterValues, activeType, setActiveType, onUpdateDeals, onSel
   const mapInstance = useRef<any>(null);
   const [showDistancePanel, setShowDistancePanel] = useState(false);
   const [userLocation, setUserLocation] = useState<null | {
+    aptName: string;
     name: string;
     carDistance: number;
     carTime: number;
@@ -177,7 +178,6 @@ const MapView = ({ filterValues, activeType, setActiveType, onUpdateDeals, onSel
               navigator.geolocation.getCurrentPosition((pos) => {
                 const kakao = (window as any).kakao;
                 const latlng = new kakao.maps.LatLng(pos.coords.latitude, pos.coords.longitude);
-                console.log("📍 현재 위치 좌표:", latlng);
 
                 mapInstance.current.panTo(latlng);
 
@@ -212,6 +212,7 @@ const MapView = ({ filterValues, activeType, setActiveType, onUpdateDeals, onSel
         <DistancePanel
           isLoggedIn={isLoggedIn}
           userLocation={userLocation}
+          setUserLocation={setUserLocation}
           onSelectLocation={(x, y, name) => {
             const kakao = (window as any).kakao;
             const latlng = new kakao.maps.LatLng(y, x);
@@ -220,12 +221,6 @@ const MapView = ({ filterValues, activeType, setActiveType, onUpdateDeals, onSel
               map: mapInstance.current,
               position: latlng,
               title: name,
-            });
-            setUserLocation({
-              name,
-              carDistance: 0,
-              carTime: 0,
-              walkTime: "0분",
             });
           }}
         />

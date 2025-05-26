@@ -13,6 +13,8 @@ export type DealItemRaw = {
   excluUseAr?: number;
   area?: number;
   floor?: number;
+  x?: string;
+  y?: string;
 };
 
 let openInfoWindow: any = null;
@@ -39,8 +41,12 @@ export const renderMarkersByType = (
 
     geocoder.addressSearch(address, (result: any, status: any) => {
       if (status === kakao.maps.services.Status.OK) {
-        const latlng = new kakao.maps.LatLng(result[0].y, result[0].x);
+        const lat = result[0].y;
+        const lng = result[0].x;
+        const latlng = new kakao.maps.LatLng(lat, lng);
 
+        apt.x = lng;
+        apt.y = lat;
         const formatNumber = (num: number) => {
           return num >= 10000 ? (num / 10000).toFixed(2).replace(/\.0+$/, "") + "억" : num.toLocaleString() + "만원";
         };

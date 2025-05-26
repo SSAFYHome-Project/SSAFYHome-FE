@@ -17,6 +17,8 @@ interface DealItem {
   aptCode?: string;
   sggCd?: string;
   jibun?: string;
+  x?: string;
+  y?: string;
 }
 
 interface SidebarDetailProps {
@@ -52,6 +54,7 @@ const SidebarDetail = ({ onCloseSidebar, item }: SidebarDetailProps) => {
       setLoading(true);
       try {
         const response = await axios.get(url);
+        console.log(response.data);
         setDetailData(response.data);
         setChartData(response.data.chartData || []);
       } catch (error: any) {
@@ -84,6 +87,8 @@ const SidebarDetail = ({ onCloseSidebar, item }: SidebarDetailProps) => {
         dealDay: detailData.dealDay || new Date().getDate(),
         floor: parseInt(item.floor),
         buildYear: parseInt(detailData.kaptUsedate?.slice(0, 4) || "0"),
+        dealX: item.x,
+        dealY: item.y,
       };
 
       try {
@@ -93,6 +98,11 @@ const SidebarDetail = ({ onCloseSidebar, item }: SidebarDetailProps) => {
           },
         });
         console.log("최근 본 매물 등록 완료");
+        if (item.x && item.y) {
+          localStorage.setItem("dealX", item.x.toString());
+          localStorage.setItem("dealY", item.y.toString());
+          localStorage.setItem("dealTitle", detailData.aptName.toString());
+        }
       } catch (error) {
         console.error("최근 본 매물 등록 실패:", error);
       }
@@ -223,8 +233,8 @@ const SidebarDetail = ({ onCloseSidebar, item }: SidebarDetailProps) => {
               onMouseLeave={() => setHovered(false)}
               onClick={handleBookmark}
             >
-              <img src={hovered ? heartIcon : heartHoverIcon} alt="등록하기" className="heart-img" />
-              <span className={`favorite-text ${hovered ? "hover" : ""}`}>등록하기</span>
+              <img src={hovered ? heartHoverIcon : heartIcon} alt="등록하기" className="heart-img" />
+              <span className={`favorite-text ${hovered ? "" : "hover"}`}>등록하기</span>
             </div>
           </div>
 
