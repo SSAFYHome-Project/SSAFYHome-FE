@@ -4,10 +4,6 @@ import "../../styles/SidebarCustom.css";
 import logoImg from "../../assets/img/chatbot-logo.png";
 
 const SidebarCustom = () => {
-  // const userInfo = JSON.parse(localStorage.getItem("userInfo") || "null");
-  // console.log(userInfo);
-  // const userName = userInfo?.name || "이민희";
-  // const userAddress = userInfo?.address || "";
   const bottomRef = useRef<HTMLDivElement | null>(null);
 
   const [messages, setMessages] = useState([

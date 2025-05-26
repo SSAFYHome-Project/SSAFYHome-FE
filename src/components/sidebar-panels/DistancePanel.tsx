@@ -119,6 +119,12 @@ const DistancePanel = ({ isLoggedIn, userLocation, onSelectLocation, setUserLoca
       distanceOverlayRef.current.setMap(null);
     }
 
+    const dealLatLng = new kakao.maps.LatLng(
+      Number(localStorage.getItem("dealY")),
+      Number(localStorage.getItem("dealX"))
+    );
+    const targetLatLng = new kakao.maps.LatLng(Number(addr.y), Number(addr.x));
+
     const polyline = new kakao.maps.Polyline({
       path: [dealLatLng, targetLatLng],
       strokeWeight: 4,
