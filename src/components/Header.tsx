@@ -7,6 +7,7 @@ interface UserInfo {
   isLoggedIn: boolean;
   name: string;
   profile: string;
+  role: string;
 }
 
 const Header = () => {
@@ -30,12 +31,13 @@ const Header = () => {
         });
         console.log(response.data);
 
-        const { name, email, address, profile } = response.data;
+        const { name, email, address, profile, role } = response.data;
 
         setUserInfo({
           isLoggedIn: true,
           name,
           profile,
+          role,
         });
 
         localStorage.setItem("userEmail", email || "");
@@ -47,6 +49,7 @@ const Header = () => {
           isLoggedIn: false,
           name: "",
           profile: "",
+          role: "",
         });
       }
     };
@@ -107,6 +110,7 @@ const Header = () => {
               <strong>{userInfo.name}</strong>
             </span>
             <span className="user-info-suffix">님</span>
+
             {isDropdownOpen && (
               <div className="dropdown-menu">
                 <img src={`data:image/png;base64,${userInfo.profile}`} alt="프로필" className="profile-img" />
@@ -116,6 +120,13 @@ const Header = () => {
                 <button className="info-btn" onClick={() => navigate("/info")}>
                   내 정보 수정
                 </button>
+
+                {userInfo.role === "ROLE_ADMIN" && (
+                  <button className="admin-btn" onClick={() => navigate("/admin/users")}>
+                    회원정보 관리
+                  </button>
+                )}
+
                 <button className="logout-btn" onClick={handleLogout}>
                   로그아웃
                 </button>

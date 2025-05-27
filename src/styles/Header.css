@@ -142,7 +142,8 @@
 }
 
 .info-btn,
-.logout-btn {
+.logout-btn,
+.admin-btn {
   display: block;
   width: 100%;
   margin: 6px 0;
@@ -156,11 +157,13 @@
   color: #5a5f67;
 }
 
-.info-btn {
+.info-btn,
+.admin-btn {
   background-color: #d9d9d9;
 }
 
-.info-btn:hover {
+.info-btn:hover,
+.admin-btn:hover {
   background-color: #d1d1d1;
 }
 

@@ -1,0 +1,174 @@
+.admin-user-wrapper {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 44px 20px;
+}
+
+.admin-user-wrapper h2 {
+  text-align: center;
+  font-size: 26px;
+  font-family: "NanumSquareB";
+  margin-bottom: 30px;
+}
+
+.admin-user-search {
+  display: flex;
+  gap: 14px;
+  margin-bottom: 36px;
+}
+
+.admin-user-search input {
+  flex: 1;
+  padding: 14px 18px;
+  font-size: 15px;
+  border: 1.5px solid #ccc;
+  border-radius: 10px;
+}
+
+.admin-user-search input:focus {
+  outline: none;
+  border-color: #ffe600;
+  background-color: #fffef0;
+}
+
+.admin-user-search button {
+  background-color: #ffe600;
+  color: #555;
+  border: none;
+  border-radius: 10px;
+  padding: 12px 20px;
+  font-size: 14px;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+}
+
+.admin-user-search button:hover {
+  background-color: #f5d900;
+}
+
+.admin-user-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  max-height: 640px;
+  overflow-y: auto;
+  padding-right: 4px;
+}
+
+.admin-user-list::-webkit-scrollbar {
+  width: 6px;
+}
+.admin-user-list::-webkit-scrollbar-thumb {
+  background-color: #ddd;
+  border-radius: 3px;
+}
+
+.admin-user-card {
+  display: flex;
+  gap: 24px;
+  background-color: #fdfdfd;
+  border: 1px solid #eee;
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.04);
+  align-items: flex-start;
+}
+
+.profile-section .profile-img {
+  width: 48px;
+  height: 48px;
+  object-fit: cover;
+  border-radius: 50%;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  border: 1px solid #ddd;
+}
+
+.profile-placeholder {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background-color: #ccc;
+}
+
+.info-section {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.info-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.role-badge {
+  padding: 4px 10px;
+  font-size: 12px;
+  border-radius: 8px;
+  font-weight: bold;
+}
+
+.role-badge.admin {
+  background-color: #ffe600;
+  color: #222;
+}
+
+.role-badge.user {
+  background-color: #fff8b5;
+  color: #444;
+}
+
+.info-email {
+  display: flex;
+  align-items: center;
+  font-size: 14px;
+  color: #333;
+  gap: 6px;
+  margin-top: 3px;
+  margin-bottom: 3px;
+}
+
+.info-address {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  font-size: 13px;
+  color: #555;
+}
+
+.address-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.address-icon {
+  width: 16px;
+  height: 16px;
+}
+
+.delete-section {
+  margin-top: auto;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.delete-btn {
+  background-color: #ccc;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 8px 13px;
+  font-size: 13px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.delete-btn:hover {
+  background-color: #e74c3c;
+}
