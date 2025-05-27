@@ -167,7 +167,7 @@ const SidebarCustom = () => {
           <img src={logoImg} alt="로고" className="chatbot-icon" />
           <div className="chatbot-title">
             <h1>지도 밖은 위험해 상담봇</h1>
-            <p>안전한 지역의 맞춤형 매물만 추천해드립니다. 🏠</p>
+            <p>안전한 지역의 맞춤형 동네만 추천해드립니다. 🏠</p>
           </div>
         </div>
       </div>

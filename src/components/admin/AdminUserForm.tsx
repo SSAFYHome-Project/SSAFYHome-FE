@@ -59,7 +59,10 @@ const AdminUserForm = () => {
   const handleDelete = async (email: string) => {
     if (!window.confirm(`정말 ${email} 회원을 삭제하시겠습니까?`)) return;
     try {
-      await axios.delete(`/api/admin/users/${email}`, getAuthHeader());
+      await axios.delete(`/api/admin/users`, {
+        params: { email },
+        ...getAuthHeader(),
+      });
       alert("삭제되었습니다.");
       fetchAllUsers();
     } catch (err) {
